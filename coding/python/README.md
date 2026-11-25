@@ -320,4 +320,4 @@ unjustified `Any`; structured data gets `TypedDict`/dataclass; type checking con
 - [typing reference](https://docs.python.org/3/library/typing.html)
 - [mypy](https://mypy.readthedocs.io/), [pyright](https://microsoft.github.io/pyright/), [ruff](https://docs.astral.sh/ruff/)
 
-Related: [`../CODING_PRINCIPLES.md`](../CODING_PRINCIPLES.md), [`../README.md`](../README.md)
+Related: [`../../CODING_PRINCIPLES.md`](../../CODING_PRINCIPLES.md), [`../README.md`](../README.md)

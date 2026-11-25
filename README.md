@@ -13,6 +13,9 @@ The knowledge base focuses on practical software engineering, clean code, and co
 
 ## Structure
 
+- `AGENTS.md`: operating rules for agents working in this knowledge base.
+- `CODING_PRINCIPLES.md`: language-independent principles (repository root).
+- `VERIFICATION.md`: what has and has not been verified.
 - `inbox/`: Temporary notes, code snippets, and unorganized programming knowledge.
 - `coding/`: Programming principles and language-specific guides.
   - `cpp/`: C++ programming knowledge.
@@ -59,6 +62,47 @@ The knowledge base focuses on practical software engineering, clean code, and co
 3. Keep explanations concise and reusable.
 4. Avoid duplicating existing knowledge.
 5. Preserve useful source links and technical context.
+
+## Reuse Across Projects
+
+This repository is **one source of truth installed into many projects**, never copied per project.
+Copies drift: a principle fixed here would stay stale everywhere else, with no path back.
+
+Install it, in order of preference:
+
+| Situation | Mechanism |
+| --- | --- |
+| One machine, personal use | Symlink the skill into the global skills directory (below). Every project sees it. |
+| Several machines, or shared with others | Package `skills/agent-knowledge-base` as a plugin and install it per machine. Versioned and updatable. |
+| A project must pin a specific revision, or work offline | Add this repository as a `git submodule` and symlink the skill from there. |
+| A project genuinely needs different rules | Only then fork or copy — and treat the copy as a separate knowledge base. |
+
+### Symlink install
+
+```sh
+ln -sfn "$PWD/skills/agent-knowledge-base" ~/.claude/skills/agent-knowledge-base
+```
+
+The skill resolves every path relative to itself (`../../`), so it works from any checkout
+location regardless of how it was installed.
+
+### Per-project usage
+
+A consuming project does not copy knowledge. It adds a short `AGENTS.md` that delegates:
+
+```markdown
+# AGENTS.md
+
+Load the `agent-knowledge-base` skill before any coding, review, or documentation task.
+
+## Project-specific overrides
+
+- <only rules that genuinely differ from the knowledge base>
+```
+
+Precedence: project overrides > knowledge base > generic agent habits.
+Project-specific decisions are recorded in `projects/<project>.md` here, or in the project itself
+when they are implementation details rather than reusable knowledge.
 
 ## Principles
 

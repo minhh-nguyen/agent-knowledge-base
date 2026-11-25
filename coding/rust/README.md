@@ -331,4 +331,4 @@ integration tests that use only the public API.
 - [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/)
 - [std documentation](https://doc.rust-lang.org/std/)
 
-Related: [`../CODING_PRINCIPLES.md`](../CODING_PRINCIPLES.md), [`../README.md`](../README.md)
+Related: [`../../CODING_PRINCIPLES.md`](../../CODING_PRINCIPLES.md), [`../README.md`](../README.md)

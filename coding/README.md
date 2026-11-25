@@ -7,8 +7,8 @@ repository conventions and the task specification above any generic advice.
 ## Structure
 
 ```
+CODING_PRINCIPLES.md       # Repo root: language-independent principles
 coding/
-├── CODING_PRINCIPLES.md   # Language-independent principles, agent and tutor behavior
 ├── README.md              # This file: navigation and authority
 ├── cpp/README.md          # Modern C++ (C++17+, C++20 features)
 ├── python/README.md       # Typed Python (3.10+, mandatory annotations)
@@ -20,13 +20,13 @@ Each language directory contains one self-contained guide.
 
 ## Where to Look
 
-| Task | Read |
-|------|------|
-| Any substantial task: priorities, review, teaching | [`CODING_PRINCIPLES.md`](CODING_PRINCIPLES.md) |
-| C++ features, RAII, templates, memory bugs | [`cpp/README.md`](cpp/README.md) |
-| Typed Python, interfaces, mypy/pyright | [`python/README.md`](python/README.md) |
-| Ownership, borrow errors, async Rust | [`rust/README.md`](rust/README.md) |
-| Kernels, memory hierarchy, GPU performance | [`cuda/README.md`](cuda/README.md) |
+| Task                                               | Read                                           |
+| -------------------------------------------------- | ---------------------------------------------- |
+| Any substantial task: priorities, review, teaching | [`../CODING_PRINCIPLES.md`](../CODING_PRINCIPLES.md) |
+| C++ features, RAII, templates, memory bugs         | [`cpp/README.md`](cpp/README.md)               |
+| Typed Python, interfaces, mypy/pyright             | [`python/README.md`](python/README.md)         |
+| Ownership, borrow errors, async Rust               | [`rust/README.md`](rust/README.md)             |
+| Kernels, memory hierarchy, GPU performance         | [`cuda/README.md`](cuda/README.md)             |
 
 Load only the guide the task needs; don't pull in every language.
 

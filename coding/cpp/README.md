@@ -321,4 +321,4 @@ add_test(NAME core_tests COMMAND core_tests)
 - [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/) — authoritative best practices
 - [C++ standard](https://isocpp.org/std/the-standard)
 
-Related: [`../CODING_PRINCIPLES.md`](../CODING_PRINCIPLES.md), [`../README.md`](../README.md)
+Related: [`../../CODING_PRINCIPLES.md`](../../CODING_PRINCIPLES.md), [`../README.md`](../README.md)

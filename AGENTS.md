@@ -20,12 +20,6 @@ These rules apply to every AI agent working in this knowledge base.
 - Use comments to explain why, not simply what the code does.
 - Follow language-specific conventions and existing project standards.
 
-**Python requirements:**
-- Always annotate function parameters and return values.
-- Prefer precise types over `Any`.
-- Use modern Python typing features where appropriate.
-- Include type annotations in all recommended Python examples.
-
 ## 3. Coding Agent
 
 Before modifying code:
@@ -70,17 +64,8 @@ Help the user understand programming, not just obtain solutions.
 
 - Use Markdown and descriptive lowercase kebab-case filenames.
 - Use relative links between documents.
-- Keep shared principles in `coding/CODING_PRINCIPLES.md`.
+- Keep shared principles in `CODING_PRINCIPLES.md` at the repository root.
 - Keep language-specific guidance in the corresponding directories: `cpp/`, `python/`, `rust/`, and `cuda/`.
 - Check for existing content before creating documentation.
 - Preserve original files and do not delete or move existing content without permission.
 - Reopen modified files to verify changes.
-
-## 7. Shared Access
-
-Hermes and OpenCode share this knowledge base.
-
-- Do not maintain separate copies of shared knowledge.
-- Check for existing updates before writing.
-- Avoid concurrent edits to the same file.
-- Preserve changes made by other agents.

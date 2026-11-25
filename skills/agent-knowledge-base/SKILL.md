@@ -1,11 +1,13 @@
 ---
 name: Agent Knowledge Base
-description: Mandatory coding, review, tutoring, and knowledge-base conventions stored in ~/agent-knowledge-base. Load before any coding, code-review, documentation, or programming-tutoring task.
+description: Mandatory coding, review, tutoring, and knowledge-base conventions from the agent-knowledge-base repository. Load before any coding, code-review, documentation, or programming-tutoring task.
 ---
 
 # Agent Knowledge Base
 
-Repository root: `~/agent-knowledge-base` (absolute: `/Users/minhnguyen/agent-knowledge-base`).
+Repository root: the directory two levels above this file (`../../`). All paths below are
+relative to this skill, so the knowledge base works from any checkout location, on any
+machine, and whether it is installed by symlink, plugin, or submodule.
 
 This skill is authoritative for coding, code review, programming tutoring, and knowledge-base maintenance. Follow it before applying generic habits.
 
@@ -28,15 +30,15 @@ Apply, in this order:
    - `../../coding/python/README.md`
    - `../../coding/rust/README.md`
    - `../../coding/cuda/README.md`
-3. `../../coding/CODING_PRINCIPLES.md` for language-independent rules.
-4. `../../coding/VERIFICATION.md` for what has and has not been verified.
+3. `../../CODING_PRINCIPLES.md` for language-independent rules.
+4. `../../VERIFICATION.md` for what has and has not been verified.
 
 Requirements:
 
 - Inspect the project structure, relevant sources, and dependencies before editing.
 - Keep changes focused and minimal; no unrelated refactors.
 - Python: annotate every parameter and return value; prefer precise types over `Any`.
-- Handle errors and edge cases explicitly; explain *why* in comments, not *what*.
+- Handle errors and edge cases explicitly; explain _why_ in comments, not _what_.
 - Never claim code was tested, built, or verified unless the check actually ran. Report the exact commands executed.
 - Distinguish verified facts from assumptions; never invent APIs or version-dependent behavior.
 
@@ -59,7 +61,7 @@ Requirements:
 
 - Search existing files before creating new ones; update instead of duplicating.
 - Use Markdown and lowercase kebab-case filenames; link with relative paths.
-- Shared principles live only in `coding/CODING_PRINCIPLES.md`; language-specific guidance stays in its language directory.
+- Shared principles live only in `CODING_PRINCIPLES.md` at the repository root; language-specific guidance stays in its language directory.
 - Preserve original sources and existing content; never delete or move without permission.
 - Reopen every modified file to verify the change.
 
