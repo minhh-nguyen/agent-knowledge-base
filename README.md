@@ -22,7 +22,6 @@ The knowledge base focuses on practical software engineering, clean code, and co
   - `python/`: Python programming knowledge.
   - `rust/`: Rust programming knowledge.
   - `cuda/`: CUDA and GPU programming knowledge.
-- `projects/`: Project-specific documentation, architecture, and implementation decisions.
 - `references/`: External documentation, useful resources, and technical references.
 - `templates/`: Reusable templates for programming notes and documentation.
 - `skills/`: OpenCode skill wrappers that expose this knowledge base to agents.
