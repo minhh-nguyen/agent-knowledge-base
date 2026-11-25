@@ -1,47 +1,73 @@
-# Personal Knowledge Base
+# Agent Knowledge Base
 
-A local-first knowledge base shared by Hermes Agent and OpenCode.
+A local-first programming knowledge base shared by Hermes Agent and OpenCode.
 
 ## Purpose
 
-Store and organize long-term technical knowledge, research papers,
-project documentation, experiments, and engineering notes.
+Store, organize, and retrieve long-term programming knowledge to support two main roles:
+
+- **Coding Agent:** Assist with implementation, debugging, code review, testing, refactoring, and software development.
+- **Programming Tutor:** Explain programming concepts, teach problem-solving, and help the user develop programming skills.
+
+The knowledge base focuses on practical software engineering, clean code, and continuous learning.
 
 ## Structure
 
-- `inbox/`: Unprocessed notes and documents.
-- `papers/`: Academic papers organized by research area.
-- `topics/`: Consolidated knowledge about technical subjects.
-- `projects/`: Project-specific knowledge and decisions.
-- `experiments/`: Benchmark configurations, results, and analysis.
-- `references/`: Technical documentation and external references.
-- `templates/`: Reusable templates for research and engineering notes.
+- `inbox/`: Temporary notes, code snippets, and unorganized programming knowledge.
+- `coding/`: Programming principles and language-specific guides.
+  - `cpp/`: C++ programming knowledge.
+  - `python/`: Python programming knowledge.
+  - `rust/`: Rust programming knowledge.
+  - `cuda/`: CUDA and GPU programming knowledge.
+- `projects/`: Project-specific documentation, architecture, and implementation decisions.
+- `references/`: External documentation, useful resources, and technical references.
+- `templates/`: Reusable templates for programming notes and documentation.
 
 ## Workflows
 
-### Adding a paper
-1. Put the original PDF in the appropriate `papers/` subdirectory.
-2. Create a Markdown review using `templates/paper-review.md`.
-3. Record the paper's title, authors, publication, year, and URL or DOI.
-4. Separate the paper's claims from your own interpretation.
-5. Link related topics and research questions.
+### Adding Programming Knowledge
 
-### Adding technical knowledge
-1. Identify the appropriate topic.
-2. Create or update a Markdown file in `topics/`.
-3. Include references and source links.
-4. Link related papers, projects, and experiments.
+1. Identify the relevant programming language or topic.
+2. Search existing documentation before creating a new file.
+3. Add or update the appropriate Markdown document.
+4. Include practical examples and explanations.
+5. Add reliable references when relevant.
+6. Link related concepts and documents.
 
-### Recording an experiment
-1. Create an entry using `templates/experiment.md`.
-2. Record hardware, software versions, workload, and configuration.
-3. Preserve raw results separately when appropriate.
-4. Document conclusions and limitations.
+### Learning a Programming Concept
+
+1. Identify the concept the user wants to understand.
+2. Consult the relevant language guide.
+3. Explain the underlying problem and mechanism.
+4. Use small, practical examples.
+5. Explain important trade-offs and common mistakes.
+6. Provide exercises when appropriate.
+
+### Working on a Project
+
+1. Inspect the project structure and existing documentation.
+2. Understand its architecture, dependencies, and conventions.
+3. Record important project-specific decisions in `projects/`.
+4. Keep documentation synchronized with implementation.
+5. Link relevant programming concepts and references.
+
+### Recording Useful Knowledge
+
+1. Store temporary information in `inbox/`.
+2. Review and organize it into the appropriate directory.
+3. Keep explanations concise and reusable.
+4. Avoid duplicating existing knowledge.
+5. Preserve useful source links and technical context.
 
 ## Principles
 
 - Markdown is the primary format for written knowledge.
-- Keep original documents separate from generated summaries.
-- Prefer links between related notes over duplicated content.
-- Preserve source provenance.
+- Prioritize correctness, readability, and maintainability.
+- Prefer practical examples over generic explanations.
+- Explain why and when a programming technique should be used.
+- Keep language-independent principles separate from language-specific knowledge.
+- Preserve original source documents and distinguish them from generated explanations.
+- Prefer links between related documents over duplicated content.
+- Use reliable references and never invent technical claims.
 - Keep temporary information in `inbox/` until reviewed.
+- Follow `AGENTS.md` when managing or modifying the knowledge base.

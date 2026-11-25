@@ -1,120 +1,61 @@
 # Programming Knowledge Base
 
-This collection provides comprehensive, practical programming knowledge for Hermes Agent to use as both a **coding agent** and a **programming tutor**.
-
-## Purpose
-
-Hermes consults these guides to:
-- Understand and apply language idioms and best practices
-- Implement features, debug problems, review code, and optimize software
-- Teach programming concepts and develop problem-solving skills
-- Distinguish general engineering principles from language-specific practices
+Practical language knowledge for AI agents acting as a **coding agent** and a **programming tutor**.
+Use it to apply idioms, implement and debug, review code, and teach concepts — while keeping
+repository conventions and the task specification above any generic advice.
 
 ## Structure
 
 ```
 coding/
-├── CODING_PRINCIPLES.md          # Language-independent principles
-├── cpp/                           # C++ guide
-│   ├── README.md
-│   └── cpp-guide.md
-├── python/                        # Python guide (mandatory type annotations)
-│   ├── README.md
-│   └── python-guide.md
-├── rust/                          # Rust guide
-│   ├── README.md
-│   └── rust-guide.md
-└── cuda/                          # CUDA guide
-    ├── README.md
-    └── cuda-guide.md
+├── CODING_PRINCIPLES.md   # Language-independent principles, agent and tutor behavior
+├── README.md              # This file: navigation and authority
+├── cpp/README.md          # Modern C++ (C++17+, C++20 features)
+├── python/README.md       # Typed Python (3.10+, mandatory annotations)
+├── rust/README.md         # Rust (1.70+, edition 2021)
+└── cuda/README.md         # CUDA (11+, Ampere/Ada)
 ```
 
-## When to Consult Each Guide
+Each language directory contains one self-contained guide.
 
-### CODING_PRINCIPLES.md
-**When:** Before any significant coding or tutoring task.
-**Contains:** Language-independent principles (code quality, organization, testing, error handling, priorities).
+## Where to Look
 
-### Language Guides
-**Choose based on your task:**
+| Task | Read |
+|------|------|
+| Any substantial task: priorities, review, teaching | [`CODING_PRINCIPLES.md`](CODING_PRINCIPLES.md) |
+| C++ features, RAII, templates, memory bugs | [`cpp/README.md`](cpp/README.md) |
+| Typed Python, interfaces, mypy/pyright | [`python/README.md`](python/README.md) |
+| Ownership, borrow errors, async Rust | [`rust/README.md`](rust/README.md) |
+| Kernels, memory hierarchy, GPU performance | [`cuda/README.md`](cuda/README.md) |
 
-| Task | Consult |
-|------|---------|
-| Implementing C++ features, debugging memory issues, optimizing performance | `cpp/cpp-guide.md` |
-| Writing typed Python, designing interfaces, handling errors | `python/python-guide.md` |
-| Understanding ownership/borrowing, designing safe systems, async Rust | `rust/rust-guide.md` |
-| GPU programming, kernel design, memory management | `cuda/cuda-guide.md` |
-| Any task requiring a clear, maintainable implementation | Start with `CODING_PRINCIPLES.md`, then language guide |
+Load only the guide the task needs; don't pull in every language.
 
-## Quick Reference
+## Working Mode
 
-### For Coding Agent Mode
-1. Inspect the repository structure and existing conventions
-2. Consult the relevant language guide
-3. Understand the existing code patterns
-4. Apply language-idiomatic practices from the guide
-5. Verify changes with appropriate tests
-6. Report results honestly
+1. Read the repository instructions (`AGENTS.md`, contribution guides) and inspect existing code.
+2. Consult the matching language guide for idioms and pitfalls.
+3. Plan: behavior, affected components, edge cases, compatibility.
+4. Implement in the existing style; keep the diff focused.
+5. Verify with the project's build, tests, formatter, and checkers.
+6. Report what changed and what actually ran.
 
-### For Tutor Mode
-1. Identify the user's question or problem
-2. Check relevant guides for authoritative explanations
-3. Use progressive examples to build understanding
-4. Distinguish concepts from language specifics
-5. Guide problem-solving rather than providing complete solutions
-6. Explain trade-offs and reasoning
+## Tutor Mode
 
-### For Code Review
-1. Check repository conventions first (they take priority)
-2. Use language guide for best practices and idioms
-3. Identify correctness and design issues
-4. Explain problems and consequences
-5. Suggest focused improvements
+- **Learn:** explain the problem first, then the mechanism, with small examples and trade-offs.
+- **Implement:** decompose, hint, let the learner attempt, then review — no full solution unless asked.
+- **Review:** explain intent, flow, ownership, and consequences; separate bugs from style preferences.
 
-## Knowledge Retrieval Guidelines
+## Authority
 
-- **Retrieve only relevant knowledge** for the current task (avoid loading everything)
-- **Combine general principles** from `CODING_PRINCIPLES.md` with language-specific guidance
-- **Prioritize repository conventions** when they differ from general recommendations
-- **Verify claims** against official documentation (links provided in guides)
-- **Treat recommendations as guidance**, not absolute rules — context matters
+1. Specification and requirements.
+2. Repository conventions (formatter, linter, patterns, version constraints).
+3. Language guides in this collection.
+4. General principles.
 
-## Interaction Modes
+On conflict, the higher level wins. Recommendations are guidance, not law — context decides.
 
-### Learn Mode
-Explain concepts, guide problem-solving, provide progressive examples, help the user develop independent reasoning.
+## Accuracy
 
-### Implement Mode
-Inspect repository, plan changes, implement carefully, verify thoroughly, report honestly.
-
-### Review Mode
-Assess implementation, identify issues, explain problems and consequences, suggest focused improvements.
-
-## Authority and Hierarchy
-
-1. **Repository conventions** (highest) — follow project-specific practices
-2. **Specification and requirements** — the binding authority for any task
-3. **Language guides** (this collection) — provide idiomatic practices
-4. **General principles** — apply when language-specific guidance doesn't address a situation
-
-## Technical Accuracy
-
-All recommendations in these guides are:
-- Based on official documentation and language specifications
-- Practical and production-ready
-- Demonstrated with real code examples
-- Traceable to authoritative sources (links provided)
-- Never invented APIs, compiler behavior, or language features
-
-## For Hermes Agent
-
-Before substantial coding or tutoring work:
-1. Read the relevant language guide for the task
-2. Check for repository-specific conventions in `AGENTS.md` or contribution guidelines
-3. Inspect existing code to understand patterns
-4. Apply guidance consistently across the codebase
-5. Adapt general recommendations when repository conventions differ
-
----
-
-**Refer to individual language guides for detailed, topic-specific knowledge.**
+- No invented APIs, compiler behavior, or language features.
+- Version-dependent claims are checked against official documentation (links in each guide).
+- Verified facts, assumptions, and unmeasured performance claims are labeled as such.
