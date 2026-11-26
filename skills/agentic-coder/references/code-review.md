@@ -3,6 +3,11 @@
 Checklists for reviewing a change — your own or someone else's. Load before any review task.
 Related: [`principles.md`](principles.md), [`../SKILL.md`](../SKILL.md).
 
+**Scope.** This file covers reviewing a change you can already see: a diff, a file, a patch.
+A two-axis review of a whole branch or pull request against its originating spec belongs to
+the separate `code-review` skill, which drives that as a workflow. Use that one for branch
+scope, this one for the judgement applied inside it.
+
 ## Order of Reporting
 
 1. **Correctness** — the change does the wrong thing, or breaks something that worked.

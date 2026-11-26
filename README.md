@@ -18,6 +18,10 @@ The boundary is intent, not topic: **shipping code → `agentic-coder`; building
 ```
 AGENTS.md                        # rules for agents editing this repository
 VERIFICATION.md                  # what has and has not been verified
+skills.json                      # which skills are active on this machine, and why
+install.sh                       # reconciles ~/.claude/skills with skills.json
+tools/
+└── index-lectures.sh            # builds the page-level search index for lecture material
 skills/
 ├── agentic-coder/
 │   ├── SKILL.md                 # router: workflow, authority, honesty rules
@@ -29,7 +33,9 @@ skills/
 │       ├── rust.md              # Rust (1.70+, edition 2021)
 │       └── cuda.md              # CUDA (11+, Ampere/Ada)
 └── personal-ta/
-    └── SKILL.md                 # teaching loop, mastery tracking, research mentorship
+    ├── SKILL.md                 # teaching loop, mastery tracking, research mentorship
+    └── references/
+        └── lecture-materials.md # token-cheap retrieval from university course material
 inbox/                           # unsorted drafts, not authority
 sources/                         # external references: links, versions, dates checked
 templates/                       # reusable document skeletons
@@ -52,11 +58,41 @@ submodule without rewriting paths.
 ## Install
 
 ```sh
-ln -sfn "$PWD/skills/agentic-coder" ~/.claude/skills/agentic-coder
-ln -sfn "$PWD/skills/personal-ta"   ~/.claude/skills/personal-ta
+./install.sh --dry-run    # show the plan
+./install.sh              # apply
 ```
 
-Every project on the machine then sees both skills. No per-project copies.
+`install.sh` reconciles `~/.claude/skills/` with [`skills.json`](skills.json), the single
+declaration of what is active on this machine. It is idempotent: run it again any time.
+
+Every project on the machine then sees the active skills. No per-project copies.
+
+### What the manifest controls
+
+- **owned** — the skills in this repository. Linked to `skills/<name>`, so editing a `SKILL.md`
+  here is the only step needed to change behavior. Nothing to reinstall.
+- **external** — third-party skills managed by the installer in `~/.agents/skills`. They are
+  **not** copied into this repository, so they keep receiving upstream updates. Only their
+  active state and their boundary against the owned skills are decided here.
+- **disabled** — an external skill whose triggers collide with an owned skill. `install.sh`
+  removes its link from `~/.claude/skills`; the source stays in `~/.agents/skills`, so flipping
+  `active` back to `true` restores it. Every disabled entry carries a mandatory `reason`.
+- **unmanaged_ignore** — directories in the target that the script reports as expected and never
+  touches. `synced` is Claude's own account-synced skill cache.
+
+An unmanaged copy found in the target is moved to `.install-backups/` rather than deleted, then
+replaced with a link. A real directory there is exactly how skills drift out of sync.
+
+### Avoiding trigger collisions
+
+Two skills whose `description` fields match the same request make the agent pick arbitrarily.
+Rules:
+
+- An owned skill states what it does **not** cover and names the skill that does.
+- Where an external skill is genuinely complementary, record the boundary in its manifest entry
+  and in the owned skill's handover table.
+- Where it is a duplicate, disable it. Do not fix a collision by editing a third-party
+  `SKILL.md`: the next upstream update overwrites the edit.
 
 | Situation | Mechanism |
 | --- | --- |
@@ -82,6 +118,24 @@ Load the `agentic-coder` skill before any coding, review, or documentation task.
 ```
 
 Precedence: **specification > project overrides > knowledge base > generic agent habits.**
+
+## Lecture material
+
+`personal-ta` teaches from the user's own course material in `~/Documents/tuda/lectures`,
+organized by semester. Reading those PDFs whole would exhaust the context before the lesson
+starts, so retrieval is indexed:
+
+```sh
+tools/index-lectures.sh ~/Documents/tuda/lectures/4.ws2627
+```
+
+For each PDF the script writes a page-tagged text sidecar under `lectures/.search/`, where every
+line is `p<N>\t<text>`. One `grep` then returns the exact page a topic appears on, and only that
+page is read from the PDF. Measured on this material: a 519-page textbook resolves to page 274,
+a 30-page lecture deck to page 23.
+
+The script never writes into the course directories — several are git repositories. It is
+incremental, skipping PDFs older than their sidecar, and needs poppler (`brew install poppler`).
 
 ## Contributing knowledge
 

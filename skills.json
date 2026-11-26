@@ -1,0 +1,128 @@
+{
+  "comment": [
+    "Single source of truth for which skills are active on this machine.",
+    "Edit this file, then run ./install.sh to reconcile ~/.claude/skills/.",
+    "owned:    skills in this repository; linked to skills/<name>.",
+    "external: third-party skills managed by the skill installer in ~/.agents/skills.",
+    "          They are NOT copied into this repository, so they keep receiving upstream",
+    "          updates. Only their active/disabled state is decided here.",
+    "disabled: reason is mandatory. install.sh removes their link from ~/.claude/skills;",
+    "          the source stays in ~/.agents/skills and can be re-enabled by flipping",
+    "          \"active\" back to true.",
+    "unmanaged_ignore: entries in the target directory that this script must report as expected and never touch. 'synced' is Claude's own account-synced skill cache."
+  ],
+  "target": "~/.claude/skills",
+  "external_root": "~/.agents/skills",
+  "unmanaged_ignore": [
+    "synced"
+  ],
+  "owned": [
+    {
+      "name": "agentic-coder",
+      "active": true,
+      "role": "Production code: implement, debug, review a diff, verify."
+    },
+    {
+      "name": "personal-ta",
+      "active": true,
+      "role": "Teaching and research mentorship."
+    }
+  ],
+  "external": [
+    {
+      "name": "code-review",
+      "active": true,
+      "source": "mattpocock/skills",
+      "role": "Two-axis review of a whole branch or PR via parallel sub-agents.",
+      "boundary": "Owns branch/PR scope. agentic-coder/references/code-review.md owns reviewing a single visible change."
+    },
+    {
+      "name": "simplify",
+      "active": true,
+      "source": "LegendApp/legend-skills",
+      "role": "Reduce a change to its smallest clear form.",
+      "boundary": "Invoked explicitly, usually before a commit. agentic-coder prevents over-engineering while writing; this removes it afterwards."
+    },
+    {
+      "name": "teach",
+      "active": true,
+      "source": "mattpocock/skills",
+      "role": "Stateful teaching workspace: MISSION.md, HTML lessons, learning records on disk.",
+      "boundary": "Manual only (disable-model-invocation). personal-ta owns in-conversation teaching."
+    },
+    {
+      "name": "improve",
+      "active": true,
+      "source": "shadcn/improve",
+      "role": "Read-only codebase audit that emits implementation plans for other agents."
+    },
+    {
+      "name": "find-skills",
+      "active": true,
+      "source": "vercel-labs/skills",
+      "role": "Discover and install new skills."
+    },
+    {
+      "name": "caveman",
+      "active": true,
+      "source": "JuliusBrussee/caveman",
+      "role": "Terse output mode."
+    },
+    {
+      "name": "docs-pro",
+      "active": true,
+      "source": "YuniorGlez/gemini-elite-core",
+      "role": "Standalone documentation authoring and style enforcement.",
+      "boundary": "Owns documentation as a deliverable. agentic-coder only covers docs that ship alongside a code change."
+    },
+    {
+      "name": "pdf",
+      "active": false,
+      "source": "anthropics/skills",
+      "reason": "Claude already syncs the same upstream skill as anthropic-skills:pdf (see the 'synced' cache). Two copies of one skill on identical triggers."
+    },
+    {
+      "name": "uv",
+      "active": true,
+      "source": "astral-sh/agent-plugins",
+      "role": "Python packaging and project management with uv."
+    },
+    {
+      "name": "data-visualization",
+      "active": true,
+      "source": "anthropics/knowledge-work-plugins",
+      "role": "Charts and figures with matplotlib, seaborn, plotly.",
+      "boundary": "Owns Python figures for papers and reports (matplotlib, seaborn, plotly). Claude's synced 'dataviz' skill owns charts rendered inside artifacts."
+    },
+    {
+      "name": "llm-evaluation",
+      "active": true,
+      "source": "wshobson/agents",
+      "role": "Evaluation strategies for LLM applications."
+    },
+    {
+      "name": "cost-aware-llm-pipeline",
+      "active": true,
+      "source": "affaan-m/ECC",
+      "role": "LLM cost routing, budgets, caching."
+    },
+    {
+      "name": "testing",
+      "active": true,
+      "source": "grafana/skills",
+      "role": "Grafana Cloud synthetic monitoring, k6 load tests, Faro frontend observability."
+    },
+    {
+      "name": "socratic-tutor",
+      "active": false,
+      "source": "janestreet/agent_skills",
+      "reason": "Duplicates personal-ta: same 0-5 skill map, diagnostic placement, one-question loop, and final assessment, on the same 'teach me' / 'quiz me' triggers. personal-ta is a superset and adds research mentorship."
+    },
+    {
+      "name": "python-type-safety",
+      "active": false,
+      "source": "wshobson/agents",
+      "reason": "Duplicates agentic-coder/references/python.md, which already mandates full annotations and covers protocols, generics, and mypy/pyright. Both triggered on 'adding type annotations'."
+    }
+  ]
+}

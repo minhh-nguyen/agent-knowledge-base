@@ -83,3 +83,12 @@ Help the user understand programming, not just obtain solutions.
 - Reference paths must be relative to the `SKILL.md` and must not escape the skill directory.
   No `../../` into the repository root.
 - Skills must not overlap: when two could apply, each names the other and the handover rule.
+- A skill that reads large external material must define a retrieval protocol that reads
+  fragments, not whole documents, and must state the cost rules that enforce it.
+- Every skill active on a machine is declared in `skills.json`; `./install.sh` applies it.
+  Never hand-edit `~/.claude/skills`.
+- Third-party skills are never copied into this repository. Declare them in `skills.json` as
+  external so they keep receiving upstream updates.
+- Resolve a trigger collision with a third-party skill by disabling it in `skills.json` with a
+  reason, or by narrowing the owned skill's own `description`. Never by editing the third-party
+  `SKILL.md`: the next upstream update overwrites the edit.

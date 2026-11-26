@@ -1,6 +1,6 @@
 ---
 name: agentic-coder
-description: Engineering standards for writing, debugging, reviewing, and verifying code. Use when implementing a feature or bugfix, refactoring, debugging, reviewing a diff or pull request, or writing technical documentation — especially in C++, Python, Rust, or CUDA. Not for teaching or tutoring; use personal-ta for that.
+description: Engineering standards for writing, debugging, reviewing, and verifying code. Use when implementing a feature or bugfix, refactoring, debugging, reviewing a change, or documenting code that ships with it — especially in C++, Python, Rust, or CUDA. Not for teaching or tutoring (use personal-ta) and not for documentation as a deliverable (use docs-pro).
 ---
 
 # Agentic Coder
@@ -85,8 +85,21 @@ This skill lives in a knowledge-base repository. When updating it:
 - Use Markdown, lowercase kebab-case filenames, and relative links.
 - Reopen every modified file to verify the change.
 
+## 7. Handover to Neighboring Skills
+
+This skill owns writing and verifying code. It defers in these cases:
+
+| Request | Skill |
+| --- | --- |
+| Teaching, tutoring, guided learning, reading a paper | `personal-ta` |
+| Two-axis review of a whole branch or PR against its spec | `code-review` |
+| Reducing an existing change to its smallest clear form | `simplify` |
+| Documentation as the deliverable, style-guide enforcement | `docs-pro` |
+| Read-only codebase audit producing plans for other agents | `improve` |
+
+State the handover rather than doing both jobs at once.
+
 ## Enforcement
 
 If a request conflicts with these rules, state the conflict once and follow the rules, unless
-the user explicitly overrides them. For teaching, tutoring, or guided learning, defer to the
-`personal-ta` skill instead.
+the user explicitly overrides them.
