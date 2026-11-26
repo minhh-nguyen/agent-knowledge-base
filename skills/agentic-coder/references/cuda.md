@@ -323,4 +323,4 @@ For production GEMM, use cuBLAS; hand-written tiles are for learning and special
 - [CUDA Best Practices Guide](https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/)
 - [NVIDIA Nsight documentation](https://docs.nvidia.com/nsight-systems/)
 
-Related: [`../../CODING_PRINCIPLES.md`](../../CODING_PRINCIPLES.md), [`../README.md`](../README.md)
+Related: [`principles.md`](principles.md), [`code-review.md`](code-review.md), [`../SKILL.md`](../SKILL.md)

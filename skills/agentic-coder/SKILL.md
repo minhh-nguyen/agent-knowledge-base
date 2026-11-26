@@ -1,76 +1,92 @@
 ---
-name: Agentic Coder
-description: Mandatory coding, review, tutoring, and knowledge-base conventions from the agent-knowledge-base repository. Load before any coding, code-review, documentation, or programming-tutoring task.
+name: agentic-coder
+description: Engineering standards for writing, debugging, reviewing, and verifying code. Use when implementing a feature or bugfix, refactoring, debugging, reviewing a diff or pull request, or writing technical documentation — especially in C++, Python, Rust, or CUDA. Not for teaching or tutoring; use personal-ta for that.
 ---
 
 # Agentic Coder
 
-Repository root: the directory two levels above this file (`../../`). All paths below are
-relative to this skill, so the knowledge base works from any checkout location, on any
-machine, and whether it is installed by symlink, plugin, or submodule.
+Authoritative conventions for production code work. Follow these before applying generic habits.
 
-This skill is authoritative for coding, code review, programming tutorin. Follow it before applying generic habits.
+All paths below are relative to this file, so the skill works from any checkout location and
+whether it is installed by symlink, plugin, or submodule.
 
-## 1. Load Context First
+## 1. Load Only What the Task Needs
 
-Read these before changing code or documentation:
+| Task | Read |
+| --- | --- |
+| Any substantial change, or a disputed rule | [`references/principles.md`](references/principles.md) |
+| Reviewing a diff, PR, or your own change | [`references/code-review.md`](references/code-review.md) |
+| C++: RAII, templates, memory bugs, C++17/20 | [`references/cpp.md`](references/cpp.md) |
+| Python: typing, interfaces, mypy/pyright | [`references/python.md`](references/python.md) |
+| Rust: ownership, borrow errors, async | [`references/rust.md`](references/rust.md) |
+| CUDA: kernels, memory hierarchy, GPU perf | [`references/cuda.md`](references/cuda.md) |
 
-1. `../../AGENTS.md` — operating rules for this knowledge base.
-2. `../../README.md` — structure, workflows, principles.
+Load one language guide, not all of them. Do not re-read a file already in the conversation.
 
-If they are already present in the conversation, do not re-read them.
+## 2. Authority When Guidance Conflicts
 
-## 2. Coding Tasks
+1. **Specification and requirements** — what the software must do.
+2. **Repository conventions** — how this codebase already does things.
+3. **Language guides** in `references/`.
+4. **General principles** in `references/principles.md`.
 
-Apply, in this order:
+Repository conventions beat generic preference: follow the project's formatter, linter,
+error-handling pattern, and version constraints even where a guide recommends otherwise.
 
-1. The task's specification or the repository's own conventions.
-2. The matching language guide:
-   - `../../coding/cpp/README.md`
-   - `../../coding/python/README.md`
-   - `../../coding/rust/README.md`
-   - `../../coding/cuda/README.md`
-3. `../../CODING_PRINCIPLES.md` for language-independent rules.
-4. `../../VERIFICATION.md` for what has and has not been verified.
+## 3. Workflow
 
-Requirements:
+**Before modifying**
+- Read the project's own instructions (`AGENTS.md`, `CLAUDE.md`, contribution guides).
+- Inspect the affected code, its callers, and its tests. Never guess what you can read.
+- Check dependencies and version constraints before using an API.
 
-- Inspect the project structure, relevant sources, and dependencies before editing.
-- Keep changes focused and minimal; no unrelated refactors.
-- Python: annotate every parameter and return value; prefer precise types over `Any`.
-- Handle errors and edge cases explicitly; explain _why_ in comments, not _what_.
-- Never claim code was tested, built, or verified unless the check actually ran. Report the exact commands executed.
-- Distinguish verified facts from assumptions; never invent APIs or version-dependent behavior.
-- Do not over-engineering
+**Planning** — for substantial work, state the intended behavior, affected components, edge
+cases, compatibility constraints, and the chosen approach. Skip the ceremony for small changes.
 
-## 3. Review Tasks
+**Implementing**
+- Follow existing patterns. Keep the diff focused; no unrelated refactoring.
+- No new dependency without justification. Preserve behavior unless asked to change it.
+- Handle errors and edge cases explicitly. Comments explain _why_, not _what_.
+- Do not over-engineer: no speculative abstraction, no layer without a concrete need.
 
-- Report correctness issues before style issues.
-- Explain the defect and the improvement; do not rewrite everything.
-- Flag unverified claims, missing error handling, and untested paths.
-- Cite the relevant section of the language guide or `CODING_PRINCIPLES.md` when a rule is disputed.
+**Verifying** — run the project's build, tests, formatter, and static analysis. Check edge
+cases and regressions.
 
-## 4. Tutoring Tasks
+**Reporting** — what changed, why, which checks actually ran and their outcome, what remains
+unresolved, and any assumptions made.
 
-- Start from the underlying problem, then the mechanism, then the code.
-- Use small, practical examples.
-- Explain trade-offs, memory, and performance when relevant.
-- Prefer hints and guided reasoning over complete solutions unless the user asks for the solution.
-- Adapt depth to the user's demonstrated knowledge.
+## 4. Non-Negotiable Honesty Rules
 
-## 5. Knowledge Base Maintenance
+- Never claim code was tested, built, or verified unless the check actually ran. Report the
+  exact commands executed and their real output.
+- Never invent APIs, compiler behavior, language features, or version-dependent claims. Verify
+  against official documentation or say that it is unverified.
+- Distinguish verified facts from assumptions and recommendations.
+- Do not claim a performance improvement without a measurement. State the numbers and the
+  machine, or state that it is unmeasured.
+- If a check fails, report the failure and its output. Do not describe partial work as done.
+
+## 5. Debugging
+
+1. Reproduce and isolate: minimal case, binary-search the change set, read the actual error.
+2. Form a hypothesis, then test it. Do not change code at random.
+3. Verify the root cause. A fix that hides a symptom is not a fix.
+4. Add a regression test for every bug fixed.
+
+## 6. Knowledge Base Maintenance
+
+This skill lives in a knowledge-base repository. When updating it:
 
 - Search existing files before creating new ones; update instead of duplicating.
-- Use Markdown and lowercase kebab-case filenames; link with relative paths.
-- Shared principles live only in `CODING_PRINCIPLES.md` at the repository root; language-specific guidance stays in its language directory.
-- Preserve original sources and existing content; never delete or move without permission.
+- Keep this file a router: operational rules here, depth in `references/`.
+- Keep every `SKILL.md` under 500 lines; move overflow into `references/`.
+- Shared, language-independent rules live only in `references/principles.md`; language-specific
+  guidance stays in its own language file.
+- Use Markdown, lowercase kebab-case filenames, and relative links.
 - Reopen every modified file to verify the change.
-
-## 6. Project Work
-
-- Keep documentation synchronized with implementation.
-- Link related concepts instead of copying them.
 
 ## Enforcement
 
-If a request conflicts with these rules, state the conflict and follow the rules unless the user explicitly overrides them.
+If a request conflicts with these rules, state the conflict once and follow the rules, unless
+the user explicitly overrides them. For teaching, tutoring, or guided learning, defer to the
+`personal-ta` skill instead.

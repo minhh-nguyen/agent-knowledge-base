@@ -1,4 +1,4 @@
-# References
+# Sources
 
 Pointers to external documentation and resources.
 

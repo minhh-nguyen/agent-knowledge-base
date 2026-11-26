@@ -64,8 +64,22 @@ Help the user understand programming, not just obtain solutions.
 
 - Use Markdown and descriptive lowercase kebab-case filenames.
 - Use relative links between documents.
-- Keep shared principles in `CODING_PRINCIPLES.md` at the repository root.
-- Keep language-specific guidance in the corresponding directories: `cpp/`, `python/`, `rust/`, and `cuda/`.
+- Knowledge is delivered as skills under `skills/`. Read `README.md` for the layout.
+- Keep shared, language-independent principles only in
+  `skills/agentic-coder/references/principles.md`.
+- Keep language-specific guidance in its own file: `references/{cpp,python,rust,cuda}.md`.
 - Check for existing content before creating documentation.
 - Preserve original files and do not delete or move existing content without permission.
 - Reopen modified files to verify changes.
+
+## 7. Skill Authoring
+
+- A `SKILL.md` is a router: when to trigger, the workflow, hard rules, and a table of which
+  reference to load for which task. Depth belongs in `references/`.
+- Every `SKILL.md` stays under 500 lines. Move overflow into `references/`.
+- Write skills in English, including skills intended for non-English conversations.
+- The frontmatter `description` must state when to use the skill and when not to, because it is
+  the only text an agent sees when deciding whether to load it.
+- Reference paths must be relative to the `SKILL.md` and must not escape the skill directory.
+  No `../../` into the repository root.
+- Skills must not overlap: when two could apply, each names the other and the handover rule.

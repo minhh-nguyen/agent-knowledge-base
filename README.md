@@ -1,117 +1,101 @@
 # Agent Knowledge Base
 
-A local-first programming knowledge base shared by Hermes Agent and OpenCode.
+Long-term engineering and teaching knowledge, packaged as **agent skills**. One source of truth,
+installed into many projects — never copied per project.
 
-## Purpose
+## Skills
 
-Store, organize, and retrieve long-term programming knowledge to support two main roles:
+| Skill | Role | Triggers on |
+| --- | --- | --- |
+| [`agentic-coder`](skills/agentic-coder/SKILL.md) | Production code standards | implementing, refactoring, debugging, reviewing a diff, technical docs |
+| [`personal-ta`](skills/personal-ta/SKILL.md) | Teaching and research mentorship | "teach me", "explain why", assignments, reading papers, experiment design |
 
-- **Coding Agent:** Assist with implementation, debugging, code review, testing, refactoring, and software development.
-- **Programming Tutor:** Explain programming concepts, teach problem-solving, and help the user develop programming skills.
+The boundary is intent, not topic: **shipping code → `agentic-coder`; building understanding →
+`personal-ta`.** Each skill names the other so the agent can hand over instead of blending both.
 
-The knowledge base focuses on practical software engineering, clean code, and continuous learning.
+## Layout
 
-## Structure
+```
+AGENTS.md                        # rules for agents editing this repository
+VERIFICATION.md                  # what has and has not been verified
+skills/
+├── agentic-coder/
+│   ├── SKILL.md                 # router: workflow, authority, honesty rules
+│   └── references/
+│       ├── principles.md        # language-independent principles
+│       ├── code-review.md       # review checklists and reporting
+│       ├── cpp.md               # Modern C++ (C++17+, C++20)
+│       ├── python.md            # Typed Python (3.10+)
+│       ├── rust.md              # Rust (1.70+, edition 2021)
+│       └── cuda.md              # CUDA (11+, Ampere/Ada)
+└── personal-ta/
+    └── SKILL.md                 # teaching loop, mastery tracking, research mentorship
+inbox/                           # unsorted drafts, not authority
+sources/                         # external references: links, versions, dates checked
+templates/                       # reusable document skeletons
+```
 
-- `AGENTS.md`: operating rules for agents working in this knowledge base.
-- `CODING_PRINCIPLES.md`: language-independent principles (repository root).
-- `VERIFICATION.md`: what has and has not been verified.
-- `inbox/`: Temporary notes, code snippets, and unorganized programming knowledge.
-- `coding/`: Programming principles and language-specific guides.
-  - `cpp/`: C++ programming knowledge.
-  - `python/`: Python programming knowledge.
-  - `rust/`: Rust programming knowledge.
-  - `cuda/`: CUDA and GPU programming knowledge.
-- `references/`: External documentation, useful resources, and technical references.
-- `templates/`: Reusable templates for programming notes and documentation.
-- `skills/`: OpenCode skill wrappers that expose this knowledge base to agents.
+### Why skills are self-contained
 
-## Workflows
+Every skill reads only paths **relative to its own `SKILL.md`**. Nothing escapes the skill
+directory with `../../`. That is what makes one checkout usable by symlink, plugin, or git
+submodule without rewriting paths.
 
-### Adding Programming Knowledge
+### Authoring rules
 
-1. Identify the relevant programming language or topic.
-2. Search existing documentation before creating a new file.
-3. Add or update the appropriate Markdown document.
-4. Include practical examples and explanations.
-5. Add reliable references when relevant.
-6. Link related concepts and documents.
+- `SKILL.md` is a router: triggers, workflow, hard rules, and a table of what to load when.
+- Depth goes in `references/`, loaded only when the task needs it.
+- Every `SKILL.md` stays **under 500 lines**. Overflow moves to `references/`.
+- `description` in the frontmatter states **when to use the skill**, and when not to — that text
+  is all an agent sees when deciding whether to load it.
 
-### Learning a Programming Concept
+## Install
 
-1. Identify the concept the user wants to understand.
-2. Consult the relevant language guide.
-3. Explain the underlying problem and mechanism.
-4. Use small, practical examples.
-5. Explain important trade-offs and common mistakes.
-6. Provide exercises when appropriate.
+```sh
+ln -sfn "$PWD/skills/agentic-coder" ~/.claude/skills/agentic-coder
+ln -sfn "$PWD/skills/personal-ta"   ~/.claude/skills/personal-ta
+```
 
-### Working on a Project
-
-1. Inspect the project structure and existing documentation.
-2. Understand its architecture, dependencies, and conventions.
-3. Record important project-specific decisions in `projects/`.
-4. Keep documentation synchronized with implementation.
-5. Link relevant programming concepts and references.
-
-### Recording Useful Knowledge
-
-1. Store temporary information in `inbox/`.
-2. Review and organize it into the appropriate directory.
-3. Keep explanations concise and reusable.
-4. Avoid duplicating existing knowledge.
-5. Preserve useful source links and technical context.
-
-## Reuse Across Projects
-
-This repository is **one source of truth installed into many projects**, never copied per project.
-Copies drift: a principle fixed here would stay stale everywhere else, with no path back.
-
-Install it, in order of preference:
+Every project on the machine then sees both skills. No per-project copies.
 
 | Situation | Mechanism |
 | --- | --- |
-| One machine, personal use | Symlink the skill into the global skills directory (below). Every project sees it. |
-| Several machines, or shared with others | Package `skills/agent-knowledge-base` as a plugin and install it per machine. Versioned and updatable. |
-| A project must pin a specific revision, or work offline | Add this repository as a `git submodule` and symlink the skill from there. |
-| A project genuinely needs different rules | Only then fork or copy — and treat the copy as a separate knowledge base. |
+| One machine, personal use | Symlink, as above |
+| Several machines, or shared with others | Package `skills/` as a plugin; install per machine |
+| A project must pin a revision, or work offline | Add this repository as a `git submodule` |
+| A project genuinely needs different rules | Only then fork, and treat the fork as a separate base |
 
-### Symlink install
+Copies drift: a principle fixed here would stay stale everywhere else, with no path back.
 
-```sh
-ln -sfn "$PWD/skills/agent-knowledge-base" ~/.claude/skills/agent-knowledge-base
-```
+## Per-project usage
 
-The skill resolves every path relative to itself (`../../`), so it works from any checkout
-location regardless of how it was installed.
-
-### Per-project usage
-
-A consuming project does not copy knowledge. It adds a short `AGENTS.md` that delegates:
+A consuming project copies no knowledge. It adds a short `AGENTS.md` that delegates:
 
 ```markdown
 # AGENTS.md
 
-Load the `agent-knowledge-base` skill before any coding, review, or documentation task.
+Load the `agentic-coder` skill before any coding, review, or documentation task.
 
 ## Project-specific overrides
 
 - <only rules that genuinely differ from the knowledge base>
 ```
 
-Precedence: project overrides > knowledge base > generic agent habits.
-Project-specific decisions are recorded in `projects/<project>.md` here, or in the project itself
-when they are implementation details rather than reusable knowledge.
+Precedence: **specification > project overrides > knowledge base > generic agent habits.**
+
+## Contributing knowledge
+
+1. Search the existing skills and references first; update rather than duplicate.
+2. Reusable knowledge belongs in the matching `references/` file. Raw or half-formed notes go to
+   `inbox/` until they are worth promoting.
+3. External claims go in `sources/` with the version and the date checked.
+4. Keep version-dependent statements traceable to official documentation.
+5. Reopen every modified file to verify the change.
 
 ## Principles
 
-- Markdown is the primary format for written knowledge.
-- Prioritize correctness, readability, and maintainability.
-- Prefer practical examples over generic explanations.
-- Explain why and when a programming technique should be used.
-- Keep language-independent principles separate from language-specific knowledge.
-- Preserve original source documents and distinguish them from generated explanations.
-- Prefer links between related documents over duplicated content.
-- Use reliable references and never invent technical claims.
-- Keep temporary information in `inbox/` until reviewed.
-- Follow `AGENTS.md` when managing or modifying the knowledge base.
+- Markdown only; lowercase kebab-case filenames; relative links.
+- Prefer links between documents over duplicated content.
+- Practical examples over generic explanation; mechanisms and trade-offs over lists of features.
+- Never invent APIs, results, or citations. Label verified facts, assumptions, and speculation.
+- Follow [`AGENTS.md`](AGENTS.md) when modifying this repository.

@@ -1,11 +1,8 @@
 # Coding Principles
 
-Language-independent principles for all software work. Language-specific guidance lives in:
-
-- [`cpp/`](coding/cpp/README.md)
-- [`python/`](coding/python/README.md)
-- [`rust/`](coding/rust/README.md)
-- [`cuda/`](coding/cuda/README.md).
+Language-independent principles for all software work. Load this for any substantial task.
+Language-specific guidance: [`cpp.md`](cpp.md), [`python.md`](python.md), [`rust.md`](rust.md),
+[`cuda.md`](cuda.md). Review checklists: [`code-review.md`](code-review.md).
 
 ## Priorities
 
@@ -83,46 +80,6 @@ Language-independent principles for all software work. Language-specific guidanc
 - Record the lesson — in the code comment, the commit message, or here.
 
 ---
-
-## Coding Agent Behavior
-
-**Before modifying:** read the repository's instructions and conventions, inspect the affected code and
-its callers, check dependencies and version constraints. Never change code based on assumptions when the
-implementation can be inspected.
-
-**Planning:** for substantial work, state the intended behavior, affected components, edge cases,
-compatibility constraints, and the chosen approach. Skip the ceremony for small, obvious changes.
-
-**Implementing:** follow existing patterns, keep the diff focused, no unrelated refactoring, no new
-dependencies without justification, preserve behavior unless asked to change it.
-
-**Verifying:** run the relevant build, tests, formatter, and static analysis; check edge cases and
-regressions. Report what actually ran.
-
-**Reviewing your own change:** correctness, resource ownership, error paths, performance, security
-(untrusted input, injection, secrets, overflow), readability, maintainability, unintended side effects.
-
-**Reporting:** what changed, why, what was verified, what remains unresolved, and any assumptions.
-
-## Programming Tutor Behavior
-
-Adapt to intent, and prefer developing the learner's reasoning over producing answers.
-
-**Learn mode** — the user wants to understand a mechanism. Start from the underlying problem, build up
-with small examples, explain how and why it works, compare alternatives and their trade-offs, name common
-misconceptions. Skip advanced detail that doesn't serve the question.
-
-**Implement mode** — the user is solving a problem. Do not hand over a full solution unless asked.
-Clarify the problem, decompose it, identify the relevant concepts, sketch approaches, give hints, let the
-user attempt it, then review. The goal is independence, not copy-paste.
-
-**Review mode** — the user wants their code improved. Go beyond line-by-line description: explain design
-intent, execution flow, data movement, ownership and lifetime, dependencies, performance implications, and
-alternatives. Keep their approach when it is fundamentally sound.
-
-Core rules: distinguish actual bugs from style preferences and say which is which; explain the lesson
-behind a fix; adapt to demonstrated knowledge without assuming it; be precise — a wrong explanation
-teaches a wrong model.
 
 ## Authority When Guidance Conflicts
 
