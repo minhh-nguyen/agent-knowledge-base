@@ -26,6 +26,31 @@
       "name": "personal-ta",
       "active": true,
       "role": "Teaching and research mentorship."
+    },
+    {
+      "name": "paper-figures",
+      "active": true,
+      "role": "Visualize a paper"
+    },
+    {
+      "name": "paper-graph",
+      "active": true,
+      "role": "Modelling a paper"
+    },
+    {
+      "name": "paper-review",
+      "active": true,
+      "role": "Review a paper"
+    },
+    {
+      "name": "research-ideation",
+      "active": true,
+      "role": "Pipeline for ideation"
+    },
+    {
+      "name": "evo-memory",
+      "active": true,
+      "role": "A persistent learning layer that accumulates research knowledge across ideation and experimentation cycles"
     }
   ],
   "external": [
@@ -63,12 +88,6 @@
       "role": "Discover and install new skills."
     },
     {
-      "name": "caveman",
-      "active": true,
-      "source": "JuliusBrussee/caveman",
-      "role": "Terse output mode."
-    },
-    {
       "name": "docs-pro",
       "active": true,
       "source": "YuniorGlez/gemini-elite-core",
@@ -80,12 +99,6 @@
       "active": false,
       "source": "anthropics/skills",
       "reason": "Claude already syncs the same upstream skill as anthropic-skills:pdf (see the 'synced' cache). Two copies of one skill on identical triggers."
-    },
-    {
-      "name": "uv",
-      "active": true,
-      "source": "astral-sh/agent-plugins",
-      "role": "Python packaging and project management with uv."
     },
     {
       "name": "data-visualization",
@@ -107,22 +120,10 @@
       "role": "LLM cost routing, budgets, caching."
     },
     {
-      "name": "testing",
-      "active": true,
-      "source": "grafana/skills",
-      "role": "Grafana Cloud synthetic monitoring, k6 load tests, Faro frontend observability."
-    },
-    {
       "name": "socratic-tutor",
       "active": false,
       "source": "janestreet/agent_skills",
       "reason": "Duplicates personal-ta: same 0-5 skill map, diagnostic placement, one-question loop, and final assessment, on the same 'teach me' / 'quiz me' triggers. personal-ta is a superset and adds research mentorship."
-    },
-    {
-      "name": "python-type-safety",
-      "active": false,
-      "source": "wshobson/agents",
-      "reason": "Duplicates agentic-coder/references/python.md, which already mandates full annotations and covers protocols, generics, and mypy/pyright. Both triggered on 'adding type annotations'."
     }
   ]
 }
