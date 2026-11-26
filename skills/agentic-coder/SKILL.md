@@ -79,7 +79,6 @@ This skill lives in a knowledge-base repository. When updating it:
 
 - Search existing files before creating new ones; update instead of duplicating.
 - Keep this file a router: operational rules here, depth in `references/`.
-- Keep every `SKILL.md` under 500 lines; move overflow into `references/`.
 - Shared, language-independent rules live only in `references/principles.md`; language-specific
   guidance stays in its own language file.
 - Use Markdown, lowercase kebab-case filenames, and relative links.
@@ -98,6 +97,9 @@ This skill owns writing and verifying code. It defers in these cases:
 | Read-only codebase audit producing plans for other agents | `improve` |
 
 State the handover rather than doing both jobs at once.
+
+# 8. Memory
+When mistake was made, write the mistake and the context into the `/memory/coding-mistake-memory.md` to remeber and won't make the mistake again.
 
 ## Enforcement
 
