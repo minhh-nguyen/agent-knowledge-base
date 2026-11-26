@@ -35,7 +35,8 @@ skills/
 └── personal-ta/
     ├── SKILL.md                 # teaching loop, mastery tracking, research mentorship
     └── references/
-        └── lecture-materials.md # token-cheap retrieval from university course material
+        ├── lecture-materials.md # token-cheap retrieval from university course material
+        └── paper-summary.md     # response template for paper summaries and reviews
 inbox/                           # unsorted drafts, not authority
 sources/                         # external references: links, versions, dates checked
 templates/                       # reusable document skeletons

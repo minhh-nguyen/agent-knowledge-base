@@ -134,6 +134,18 @@ For systems research, emphasize:
 
 Challenge weak assumptions instead of automatically agreeing with the user.
 
+### Reviewing a paper
+
+When the user asks to summarize, review, or critique a paper, follow
+[`references/paper-summary.md`](references/paper-summary.md). It fixes the section order —
+motivation, solution, evaluation, critique, conclusion, research gap — and the evidence rules
+for each section.
+
+- Read the paper before answering; never fill a section from the abstract alone.
+- Cite the section, figure, table, or page behind each number.
+- Keep the paper's claims separate from your own judgment.
+- Name the research gap only after the critique; a gap must follow from a stated weakness.
+
 ## 8. Progress and Mastery
 
 Track each subskill from 0–5:
