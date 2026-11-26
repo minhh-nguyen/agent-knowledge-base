@@ -14,8 +14,8 @@ The paper's ESE prompt (in [paper-prompts.md](paper-prompts.md)) is the primary 
 
 1. Read the ESE prompt from `paper-prompts.md`
 2. Fill in the variables:
-   - `{research_proposal}` ← the content of `/research-proposal.md`
-   - `{trajectories}` ← concatenated trajectory logs from all 4 stages (see Step 2 below for file paths) plus the final working code from `/experiments/stage3_method/` (or `/experiments/stage4_ablation/` if ablation modified the implementation)
+   - `{research_proposal}` ← the content of `research-report/research-proposal.md`
+   - `{trajectories}` ← concatenated trajectory logs from all 4 stages (see Step 2 below for file paths) plus the final working code from `experiments/stage3_method/` (or `experiments/stage4_ablation/` if ablation modified the implementation)
 3. Reason through the filled prompt step by step
 4. The output contains two sections:
    - **DATA SUMMARY** → maps to our "Data Processing Strategies" section in M_E
@@ -27,12 +27,12 @@ Use the prompt output as the foundation for Steps 3-6 below, supplementing with 
 ### Step 2: Gather Trajectory Logs
 
 Read all four stage trajectory logs:
-- `/experiments/stage1_baseline/trajectory.md`
-- `/experiments/stage2_tuning/trajectory.md`
-- `/experiments/stage3_method/trajectory.md`
-- `/experiments/stage4_ablation/trajectory.md`
+- `experiments/stage1_baseline/trajectory.md`
+- `experiments/stage2_tuning/trajectory.md`
+- `experiments/stage3_method/trajectory.md`
+- `experiments/stage4_ablation/trajectory.md`
 
-Also read the cross-stage summary at `/experiments/trajectory-summary.md` if available.
+Also read the cross-stage summary at `experiments/trajectory-summary.md` if available.
 
 ### Step 3: Identify What Worked
 

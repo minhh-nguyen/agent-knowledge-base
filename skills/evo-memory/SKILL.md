@@ -74,11 +74,11 @@ See [assets/experiment-memory-template.md](assets/experiment-memory-template.md)
 
 ### IDE — Idea Direction Evolution
 
-**Trigger**: After `[role: research.ideate]` completes Step 5 and saves `/direction-summary.md` for Step 6.
+**Trigger**: After `[role: research.ideate]` completes Step 5 and saves `research-report/direction-summary.md` for Step 6.
 
 **Purpose**: Extract promising research directions from the tournament results and store them in M_I for future cycles.
 
-**Paper Prompt**: Use the IDE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary extraction mechanism. Fill in `{user_goal}` from the original research direction and `{top_ranked_ideas}` from `/direction-summary.md`, then reason through the prompt step by step. The output (DIRECTION SUMMARY with Title, Core idea, Why promising, Requirements, Validation plan) feeds directly into the steps below.
+**Paper Prompt**: Use the IDE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary extraction mechanism. Fill in `{user_goal}` from the original research direction and `{top_ranked_ideas}` from `research-report/direction-summary.md`, then reason through the prompt step by step. The output (DIRECTION SUMMARY with Title, Core idea, Why promising, Requirements, Validation plan) feeds directly into the steps below.
 
 **Process**:
 1. Read current M_I from `~/.claude/kb-memory/ideation-memory.md`
@@ -100,7 +100,7 @@ See [references/ide-protocol.md](references/ide-protocol.md) for the full proces
 
 **Purpose**: Classify WHY the method failed and update M_I accordingly. This is the most critical evolution mechanism because it prevents future cycles from repeating dead-end directions.
 
-**Paper Prompt**: Use the IVE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary classification mechanism. Fill in `{research_proposal}` from `/research-proposal.md` and `{execution_report}` from the stage trajectory logs, then reason through the prompt step by step. The prompt classifies the failure as FAILED(NoExecutableWithinBudget), FAILED(WorseThanBaseline), or NOT_FAILED.
+**Paper Prompt**: Use the IVE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary classification mechanism. Fill in `{research_proposal}` from `research-report/research-proposal.md` and `{execution_report}` from the stage trajectory logs, then reason through the prompt step by step. The prompt classifies the failure as FAILED(NoExecutableWithinBudget), FAILED(WorseThanBaseline), or NOT_FAILED.
 
 **After running the paper prompt**:
 - **FAILED(NoExecutableWithinBudget)** → Implementation failure (retryable). Record as "retry with fixes" in M_I.
@@ -126,7 +126,7 @@ See [references/ive-protocol.md](references/ive-protocol.md) for the full proces
 
 **Purpose**: Distill reusable strategies from the successful experiment run and store them in M_E for future cycles.
 
-**Paper Prompt**: Use the ESE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary extraction mechanism. Fill in `{research_proposal}` from `/research-proposal.md` and `{trajectories}` from all 4 stage trajectory logs, then reason through the prompt step by step. The prompt outputs DATA SUMMARY and MODEL SUMMARY, which map to our Data Processing Strategies and Model Training Strategies sections.
+**Paper Prompt**: Use the ESE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary extraction mechanism. Fill in `{research_proposal}` from `research-report/research-proposal.md` and `{trajectories}` from all 4 stage trajectory logs, then reason through the prompt step by step. The prompt outputs DATA SUMMARY and MODEL SUMMARY, which map to our Data Processing Strategies and Model Training Strategies sections.
 
 **Process**:
 1. Run the paper's ESE prompt (see above), reasoning through it step by step
@@ -235,3 +235,16 @@ How evo-memory connects to other skills in the pipeline:
 | Ideation memory template | [ideation-memory-template.md](assets/ideation-memory-template.md) | Initializing M_I |
 | Experiment memory template | [experiment-memory-template.md](assets/experiment-memory-template.md) | Initializing M_E |
 | Evolution report template | [evolution-report-template.md](assets/evolution-report-template.md) | Documenting memory updates |
+
+## Output Location
+
+Every new file this skill writes to answer, report, summarize, or synthesize goes into
+`research-report/` under the current working directory, as Markdown.
+
+- Create the folder if it does not exist: `mkdir -p research-report`.
+- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+  `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
+- An output path given explicitly by the user wins.
+- An answer given only in the chat needs no file.
+- Exempt: the memory stores and evolution reports under `~/.claude/kb-memory/` are persistent
+  state, not reports, and stay there. Inputs from `[role: research.ideate]` are read from `research-report/`.

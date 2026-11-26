@@ -3,8 +3,8 @@ name: paper-review
 description: "[role: research.self-review] Guides self-review of YOUR OWN academic paper before submission with adversarial stress-testing. Core method: three passes (adversarial deep read; 5-aspect checklist — contribution sufficiency, writing clarity, results quality, testing completeness, method design; mechanical consistency scans and experimental protocol audit of data flow, assumptions, leakage), counterintuitive protocol (reject-first simulation, delete unsupported claims, score trust, promote limitations, attack novelty), reverse-outlining, and figure/table quality checks. Use when: user wants to self-review or self-check their own paper draft before submission, stress-test their claims, prepare for reviewer criticism, or mentions 'self-review', 'check my draft', 'is my paper ready'. Do NOT use for writing a peer review of someone else's paper, and do NOT use after receiving actual reviews (use paper-rebuttal instead). Also runs as a background expert: dispatch it async with a draft path and it reviews end-to-end while you keep working."
 allowed-tools: "read_file edit_file write_file think_tool execute"
 metadata:
-  author: EvoScientist
-  version: '1.3.1'
+  author: EvoScientist - edited: Minh 
+  version: "1.3.1"
   type: [skill, expert]
   tags: [core, writing, academic-writing, peer-review]
 ---
@@ -34,7 +34,7 @@ Run the review as three separate passes, in this order, and merge findings only 
 
 ### Pass 1 — Adversarial deep read (checklists closed)
 
-Read the paper end-to-end as a skeptical expert reviewer, *before* consulting any checklist in this skill. Chase cross-section threads as you read:
+Read the paper end-to-end as a skeptical expert reviewer, _before_ consulting any checklist in this skill. Chase cross-section threads as you read:
 
 - Does the evidence actually support each claim at the place it is made?
 - Does an assumption stated in the setup ever get revisited — or quietly violated — later?
@@ -60,9 +60,9 @@ Union the findings of all three passes and deduplicate. A Pass-1 suspicion that 
 A review finding contains two kinds of statements, with different rules:
 
 - **Factual assertions about the paper** — what a table contains, what a section says, whether something is present or absent. These must be verifiable: check the text before asserting, and anchor the finding to an exact location or short quote. Never state that the paper says something it does not — one fabricated criticism costs more credibility than ten valid ones buy.
-- **Suspicions and judgments** — "these gains may be within seed noise", "this assumption looks unrealistic in deployment". These are allowed and *encouraged*, including at low confidence. Phrase them as what they are: state the suspicion, mark the confidence, and name what evidence would settle it ("no variance is reported; 3 seeds would settle this").
+- **Suspicions and judgments** — "these gains may be within seed noise", "this assumption looks unrealistic in deployment". These are allowed and _encouraged_, including at low confidence. Phrase them as what they are: state the suspicion, mark the confidence, and name what evidence would settle it ("no variance is reported; 3 seeds would settle this").
 
-Do not suppress a suspicion because you cannot prove it. In self-review, a hidden flaw that survives to the real reviewers costs far more than a raised-and-then-cleared suspicion. Precision discipline applies to *facts*, not to *doubts*.
+Do not suppress a suspicion because you cannot prove it. In self-review, a hidden flaw that survives to the real reviewers costs far more than a raised-and-then-cleared suspicion. Precision discipline applies to _facts_, not to _doubts_.
 
 ---
 
@@ -71,6 +71,7 @@ Do not suppress a suspicion because you cannot prove it. In self-review, a hidde
 > Strive for perfection: review your own paper, consider every question a reviewer might ask, and address them one by one.
 
 The best defense against negative reviews is a thorough self-review:
+
 1. **Adversarial review**: Read your own paper as a critical reviewer would
 2. **Seek advisor feedback**: Ask your advisor to review — the more feedback, the better
 3. **Address everything**: For every potential weakness you find, either fix it or prepare a defense
@@ -109,7 +110,7 @@ Ask these questions to evaluate whether the contribution is sufficient:
 > Missing technical details, not reproducible; a method module lacks motivation.
 
 - [ ] **Missing technical details?** Would a reader be able to reproduce the method from the paper alone?
-- [ ] **Missing module motivation?** Does every module in the Method section explain *why* it exists, not just *what* it does?
+- [ ] **Missing module motivation?** Does every module in the Method section explain _why_ it exists, not just _what_ it does?
 - [ ] **Paragraph structure**: Does each paragraph have a clear topic? Does the first sentence state the point?
 - [ ] **Flow**: Is the logical flow between paragraphs and sections smooth?
 - [ ] **Terminology**: Are terms used consistently throughout?
@@ -167,6 +168,7 @@ The most damaging experimental flaws hide in single sentences of the setup — s
 > Every claim in the paper (especially in the Abstract and Introduction) must be correct and supported by experiments. Some reviewers will reject a paper directly for unsupported claims.
 
 Go through every claim in the Abstract and Introduction. For each claim:
+
 - [ ] Is it factually correct?
 - [ ] Is there an experiment or analysis that supports it?
 - [ ] Is the supporting experiment clearly referenced?
@@ -188,6 +190,7 @@ After writing a section (or the entire paper):
 5. **Fix**: Reorganize paragraphs, add transitions, or split/merge paragraphs
 
 Apply this to:
+
 - Introduction (check narrative flow)
 - Method (check if modules are presented in logical order)
 - Experiments (check if results are presented in a meaningful sequence)
@@ -197,6 +200,7 @@ Apply this to:
 ## Figure and Table Quality Checklist
 
 ### Figures
+
 - [ ] Pipeline figure highlights novelty (not just explanation)
 - [ ] Pipeline figure looks distinct from prior work
 - [ ] Teaser figure is compelling and self-contained
@@ -206,6 +210,7 @@ Apply this to:
 - [ ] Figures are referenced in the text
 
 ### Tables
+
 - [ ] Captions are above the table
 - [ ] No vertical lines
 - [ ] Using booktabs (`\toprule`, `\midrule`, `\bottomrule`)
@@ -233,7 +238,7 @@ Apply this to:
 
 Pass 3 runs these against the source files (rationale under Pass 3 above):
 
-1. **Promise–delivery alignment.** List the contributions promised in the abstract and introduction (especially numbered contribution lists). For each, find the section/experiment that delivers it *and* its echo in the conclusion. A contribution promised up front that silently disappears by the conclusion is a finding.
+1. **Promise–delivery alignment.** List the contributions promised in the abstract and introduction (especially numbered contribution lists). For each, find the section/experiment that delivers it _and_ its echo in the conclusion. A contribution promised up front that silently disappears by the conclusion is a finding.
 2. **Claimed-but-missing comparisons.** Any method the paper itself calls "directly comparable", "closest prior work", or state-of-the-art must appear in the results tables — or the paper must say why not. Admitted in related work but absent from experiments is a finding.
 3. **Numeric consistency.** Every number quoted in the abstract, introduction, or conclusion must match its source table. Recompute claimed improvements ("X% better", "reduces Y by Z"). Prose interpretation must match the table — "substantially better" backed by a 0.1-point gap is a finding.
 
@@ -259,6 +264,7 @@ Four more scans belong to this pass but their criteria already live elsewhere in
 ## Handoff to Rebuttal
 
 When reviews come back, use the `paper-rebuttal` skill for:
+
 - Score diagnosis and review color-coding
 - Champion strategy (arming your positive reviewer for discussion)
 - 18 tactical rules for structure, content, and tone
@@ -285,3 +291,14 @@ collecting every citation key, sweeping `\todo`/`TODO`/`FIXME` across paper,
 appendix and bib, recomputing claimed improvements. Run them through the
 interpreter; if it is unavailable, say so in the review rather than implying
 full coverage.
+
+## Output Location
+
+Every new file this skill writes to answer, report, summarize, or synthesize goes into
+`research-report/` under the current working directory, as Markdown.
+
+- Create the folder if it does not exist: `mkdir -p research-report`.
+- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+  `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
+- An output path given explicitly by the user wins.
+- An answer given only in the chat needs no file.

@@ -3,8 +3,8 @@ name: paper-figures
 description: "[role: research.figures] Use this skill to produce standalone, publication-ready PNG graphics and reproducible matplotlib scripts from tabular data (CSVs or DataFrames). It renders numerical data into formal scientific visualizations—including scatter, line, bar, pie, ring, bubble, tornado, KDE, violin, box, heatmap, histogram, and area charts, plus composite multi-panel figures that combine these types in a single image—for scholarly manuscripts. Only trigger when the final deliverable is an individual image file. Do not use for interactive dashboards or HTML-rendered outputs (Plotly, Streamlit, Quarto, Jupyter notebooks), nor when the request involves building a container document or presentation that includes charts (slide deck, conference poster). It is not for non-data conceptual illustrations like flowcharts, algorithm schematics, or process diagrams. This skill focuses on high-fidelity data rendering into final image files, not presentation design, document layout, or reverse-engineering code from existing screenshots."
 allowed-tools: "write_file edit_file read_file think_tool execute"
 metadata:
-  author: EvoScientist
-  version: '0.1.2'
+  author: EvoScientist - edited: Minh 
+  version: "0.1.2"
   tags: [core, figures, visualization, academic-writing]
 ---
 
@@ -23,10 +23,12 @@ A structured approach to producing publication-ready chart figures (PNG) from ta
 ## Inputs and Output
 
 **Inputs the agent will receive:**
+
 - A **data source**: CSV file path, JSON, or inline table.
 - A **description**: natural-language text specifying chart type, axes, title, colors, annotations, legend, scenarios, etc. Sometimes terse, sometimes a full paragraph. The description is the full specification — no reference image is provided.
 
 **Output (always):**
+
 - A standalone Python script `plot.py` that:
   - Loads the data from the provided source
   - Renders the figure with `matplotlib`
@@ -34,13 +36,15 @@ A structured approach to producing publication-ready chart figures (PNG) from ta
 - The rendered `plot.png` next to it (the script is **run** and the PNG produced — do not stop at the script).
 
 **Verification artifacts (write when filesystem access is available):**
+
 - `figure-spec.md` — the compact figure specification extracted before coding.
 - `audit.md` — the post-render audit checklist and any repairs made.
 - `final-status.md` — one visible status label: `PASSED`, `PASSED_WITH_WARNINGS`, `REPAIRED`, or `FAILED_NEEDS_HANDOFF`.
 
 **Output directory:**
+
 - If the user specifies an output directory (e.g. "save to `path/to/dir/`"), write `plot.py` and `plot.png` inside that directory. Create the directory if it does not exist.
-- If no directory is given, write to the current working directory.
+- If no directory is given, write to `research-report/figures/<figure-name>/` (see Output Location).
 - The two filenames are always `plot.py` and `plot.png`. Repeated runs on different inputs go to **different directories**, not different filenames — this keeps the script reference inside the PNG's neighbourhood stable and makes batch comparison easy.
 
 ---
@@ -70,11 +74,11 @@ Treat the workflow as a small validation protocol, not a one-shot drawing task. 
 
 Use exactly one final status:
 
-| Status | Meaning |
-|---|---|
-| `PASSED` | The figure matches the requested chart type, data fields, scales, labels, series, legend, annotations, and output contract. |
-| `PASSED_WITH_WARNINGS` | The figure is usable and faithful to the request, but a minor style/layout mismatch remains and is named in `audit.md`. |
-| `REPAIRED` | The first render failed at least one audit item, the script was revised, and the repaired render now passes. |
+| Status                 | Meaning                                                                                                                                 |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `PASSED`               | The figure matches the requested chart type, data fields, scales, labels, series, legend, annotations, and output contract.             |
+| `PASSED_WITH_WARNINGS` | The figure is usable and faithful to the request, but a minor style/layout mismatch remains and is named in `audit.md`.                 |
+| `REPAIRED`             | The first render failed at least one audit item, the script was revised, and the repaired render now passes.                            |
 | `FAILED_NEEDS_HANDOFF` | A required field, chart semantics, package dependency, or visual requirement could not be verified or repaired. Name the exact blocker. |
 
 Do not award `PASSED` because the script ran. Running only proves the PNG exists; it does not prove the figure matches the request.
@@ -82,6 +86,7 @@ Do not award `PASSED` because the script ran. Running only proves the PNG exists
 ### Step 1: Plan Figure
 
 Before writing any code, identify from the description:
+
 - **Chart type** (line, bar, scatter, pie, KDE, violin, bubble, tornado, ring, heatmap, …). If ambiguous, prefer the type explicitly named; otherwise infer from the axes/data shape.
 - **Axes**: x-label, y-label, units, scale (linear/log), tick formatting. Watch for **shared axes** across subplots, **twin axes** (`ax.twinx()` / `ax.twiny()`) when two series share an x but have different y-units, and **dual / broken axes** when ranges span very different magnitudes.
 - **Title**: use the title verbatim if quoted in the description.
@@ -92,10 +97,11 @@ Before writing any code, identify from the description:
 If the description references quantities ("around 200", "just above 0"), use those as sanity checks against the CSV — descriptions are paraphrased, the CSV is authoritative.
 
 A few patterns that show up repeatedly:
+
 - **Title context for cross-sections**: if the data is a snapshot (a single year, a single experiment), put that context in the title itself — as a parenthetical, comma-separated suffix, or quoted prefix. Don't add a separate "subtitle" via `fig.text` or similar; matplotlib has no clean subtitle API and ad-hoc subtitles tend to drift in alignment and style.
 - **Distinguish multi-series, but don't double-encode**: when there is more than one series, the reader must be able to tell them apart — via direct end-of-line labels, a legend, or distinct linestyles paired with a legend. Don't double up (legend AND end-of-line labels for the same series; legend entry AND on-plot text annotation for the same point or region), but don't drop everything either: producing multiple curves with no key is never acceptable.
 - **Don't drop data silently**: every series and data point in the input must either appear in the plot or be acknowledged. If a value is off-scale, annotate it at the edge. If a whole series is omitted, the description must justify it. Silent omission is a defect — the reader cannot tell what's missing from the plot alone.
-- **Don't invent uninvited elements; do compute what the description asks for**: plot exactly what the description asks for, but no more. Don't add legend entries, annotations, or visual elements the brief didn't request. Don't synthesise extra rows the data doesn't have, and don't compute inferred summaries or aggregations the description doesn't mention. *But*: derived statistics that the description **does** ask for (quartiles, means, smoothed curves, regression fits, density estimates, and similar) are required, not forbidden — compute them faithfully.
+- **Don't invent uninvited elements; do compute what the description asks for**: plot exactly what the description asks for, but no more. Don't add legend entries, annotations, or visual elements the brief didn't request. Don't synthesise extra rows the data doesn't have, and don't compute inferred summaries or aggregations the description doesn't mention. _But_: derived statistics that the description **does** ask for (quartiles, means, smoothed curves, regression fits, density estimates, and similar) are required, not forbidden — compute them faithfully.
 
 If the request has a blocking ambiguity that changes the chart semantics (for example, two possible y variables or an unclear unit conversion), ask one specific question. If the ambiguity is only stylistic, choose the simpler option and record it in `figure-spec.md`.
 
@@ -142,6 +148,7 @@ Before coding, write a compact Markdown spec. It is the contract the audit will 
 ```
 
 Rules:
+
 - `scale` must be explicit for every numeric axis (`linear`, `log`, `symlog`, etc.).
 - `forbidden_elements` must include visual elements that are tempting but not requested, such as regression lines, diagonal reference lines, all-point labels, extra size legends, or aggregation.
 - `category_order` must preserve the description order when one is given. Otherwise preserve data order unless sorting is explicitly requested.
@@ -171,6 +178,7 @@ python scripts/validate_figure.py --output-dir <output-dir> --spec <output-dir>/
 ### Step 7: Audit the result
 
 Re-read the description against your code and the data. Visual inspection of the PNG by the agent is unreliable, so verify structurally instead:
+
 - Did you set the title, both axis labels, and the legend the description asked for?
 - Do the series names, ordering, and colors match what the description says?
 - Do peak/min/trend locations in the data match the narrative (e.g., if it says "the peak is just above 0", does the data actually peak there)?
@@ -212,6 +220,7 @@ If any required item fails, revise `plot.py`, re-run it, and re-run the audit. D
 ### 0. Fidelity before styling
 
 Priority order:
+
 1. Match the requested data semantics.
 2. Match chart type, axis fields, scale, units, labels, legend, annotations, category order, and visual encodings.
 3. Keep the figure readable.
@@ -225,7 +234,7 @@ Hard-code nothing that the user did not ask for. Read data from the provided pat
 
 ### 2. Description is intent, CSV is truth
 
-Descriptions can be paraphrased or rounded. When wording conflicts with the CSV, plot what the CSV says, but match the *narrative* shape (peak locations, trends, orderings) the description implies — a mismatch is a strong signal that you mis-parsed the data.
+Descriptions can be paraphrased or rounded. When wording conflicts with the CSV, plot what the CSV says, but match the _narrative_ shape (peak locations, trends, orderings) the description implies — a mismatch is a strong signal that you mis-parsed the data.
 
 ### 3. One figure, one file, one save
 
@@ -275,7 +284,20 @@ Every time you tweak `rcParams` for one plot, you create a one-off look that's h
 
 ## Reference Navigation
 
-| Topic | Reference File | When to Use |
-|-------|---------------|-------------|
-| Chart-type recipes | [chart-types.md](references/chart-types.md) | Need the right matplotlib idiom for a specific chart type |
-| Publication style | [publication-style.md](references/publication-style.md) | Setting figure size, fonts, palette, DPI, savefig |
+| Topic              | Reference File                                          | When to Use                                               |
+| ------------------ | ------------------------------------------------------- | --------------------------------------------------------- |
+| Chart-type recipes | [chart-types.md](references/chart-types.md)             | Need the right matplotlib idiom for a specific chart type |
+| Publication style  | [publication-style.md](references/publication-style.md) | Setting figure size, fonts, palette, DPI, savefig         |
+
+## Output Location
+
+Every new file this skill writes to answer, report, summarize, or synthesize goes into
+`research-report/` under the current working directory, as Markdown.
+
+- Create the folder if it does not exist: `mkdir -p research-report`.
+- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+  `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
+- An output path given explicitly by the user wins.
+- An answer given only in the chat needs no file.
+- Figures: with no directory given, write each run's bundle (`plot.py`, `plot.png`, `figure-spec.md`,
+  `audit.md`, `final-status.md`) to `research-report/figures/<figure-name>/`.

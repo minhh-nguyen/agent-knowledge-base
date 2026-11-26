@@ -9,6 +9,7 @@ Extracted from the [role: research.ideate] methodology. Use this to guide struct
 **Goal:** Fully understand the method — able to reimplement it.
 
 **Process:**
+
 1. Read abstract + introduction for motivation and claims
 2. Study methodology section in detail:
    - What is the exact formulation / algorithm?
@@ -25,9 +26,10 @@ Extracted from the [role: research.ideate] methodology. Use this to guide struct
 
 ### L2: Analytical Reading (Medium effort)
 
-**Goal:** Understand the *why* — motivation, design rationale, tradeoffs.
+**Goal:** Understand the _why_ — motivation, design rationale, tradeoffs.
 
 **Process:**
+
 1. Read abstract + intro + conclusion first (5 min)
 2. Study figures and tables — they tell the story
 3. Focus on:
@@ -44,6 +46,7 @@ Extracted from the [role: research.ideate] methodology. Use this to guide struct
 **Goal:** Know what it is and where it fits in the landscape.
 
 **Process:**
+
 1. Read title + abstract + TLDR (if available from `scholar_search.py`)
 2. Glance at figures
 3. Read conclusion
@@ -94,12 +97,12 @@ Is this paper directly related to my implementation?
 
 ## Novelty Classification (for Organize stage)
 
-| Type | Description | Example |
-|------|-------------|---------|
-| Type 1 | Milestone — defines a new task or paradigm | Attention Is All You Need |
-| Type 2 | New pipeline or data representation | BERT (pre-train + fine-tune paradigm) |
-| Type 3 | New module or component | Flash Attention (efficient attention module) |
-| Type 4 | Incremental improvement on existing methods | Most papers |
+| Type   | Description                                 | Example                                      |
+| ------ | ------------------------------------------- | -------------------------------------------- |
+| Type 1 | Milestone — defines a new task or paradigm  | Attention Is All You Need                    |
+| Type 2 | New pipeline or data representation         | BERT (pre-train + fine-tune paradigm)        |
+| Type 3 | New module or component                     | Flash Attention (efficient attention module) |
+| Type 4 | Incremental improvement on existing methods | Most papers                                  |
 
 ---
 
@@ -108,17 +111,20 @@ Is this paper directly related to my implementation?
 After reading multiple papers, build a mapping:
 
 **Challenges** (technical problems):
+
 - Extract from each paper: "What problem does it solve?"
 - Group related challenges
 
 **Insights** (solutions / techniques):
+
 - Extract from each paper: "What technique / insight does it use?"
 - Link insights to challenges they address
 
 **Analysis:**
+
 - Which challenges have many solutions? → Well-studied area
 - Which challenges have few solutions? → Research opportunity
 - Which insights are versatile (solve many challenges)? → Powerful technique
 - Which insights are underexplored? → Potential for transfer
 
-Save the tree to `/artifacts/literature-tree.md` and update as you read more papers.
+Save the tree to `research-report/literature-tree.md` and update as you read more papers.

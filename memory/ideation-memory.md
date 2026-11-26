@@ -1,9 +1,45 @@
 # Ideation Memory
 
 Last Updated: 2026-11-26
-Total Cycles: 1
+Total Cycles: 2
 
 ## Feasible Directions
+
+### [Cycle 2] Tier-Aware Fetch Planning Across Azure Blob Price Structures
+
+- **Summary**: Extends RQ1 (price/concurrency-aware coalescing for Parquet scans) — validate one cost model c_req·R + c_byte·Y + λ·T against 5 real price structures in one provider (Azure Premium/Hot/Cool/Cold/HNS + egress). Predicts the optimal gap ranges ~6 KiB→7.7 MiB while the latency-only L·B rule (DuckDB v2.0, Arrow) gives ~1.5 MiB everywhere.
+- **Why Promising**: Runs fully on Mac (GET/bytes/$ deterministic from logs); Azure trial only for cheap calibration; single-provider multi-tier design removes cross-cloud confounds; Azure prices verified via prices.azure.com 2026-11-26.
+- **Requirements**: moto/Garage + delay proxy, DuckDB v2.0.1, PyArrow, one Azure storage account (4 tiers) + Premium account, small in-region Linux VM for TTFB calibration.
+- **Validation Plan**: Mac sweep σ × clustering × TTFB × N × gap; compute $ per tier; measure per-tier TTFB/BW on Azure; check measured-optimal g vs predicted g*; verify HNS read billing granularity (per-4MiB? unverified).
+- **Evidence**: Cycle 2 ELO winner, 1531 (N7 F9 R9 C9). Details: repo reports/direction-summary-2026-11-26-mac-azure.md.
+- **Status**: selected by user (2026-11-27); reading list at repo reports/idea1-reading-list.md; next = Step 7 proposal
+- **Related Entries**: RQ1 remote fetch planning (repo report); Column-Granular Tiering
+- **Retrieval Tags**: object storage, range GET coalescing, Parquet, Azure Blob tiers, request pricing, MacBook-feasible
+- **Date Added**: 2026-11-26
+- **Last Updated**: 2026-11-26
+
+### [Cycle 2] Column-Granular Storage Tiering + Local-Cache Break-Even
+
+- **Summary**: Store hot vs cold Parquet column chunks as separate blobs on different tiers (Hot vs Cool/Cold) plus optional local cache; closed-form per-column break-even extending the cloud five-minute rule to tier choice.
+- **Why Promising**: Column-level tiering for analytics not found in search; Mac-feasible via trace-driven simulator.
+- **Requirements**: query traces (TPC-H/DS, ClickBench), simulator, small Azure lifecycle validation.
+- **Validation Plan**: simulate storage+op+retrieval $ vs latency per policy; validate on Azure small scale.
+- **Evidence**: Cycle 2 ELO rank 2, 1500 (N8 F7 R7 C6). Threats: Five-Minute Rule for Data Analytics in the Cloud (2026); Cache Replacement in Direct-Access Cloud OLAP (arXiv 2611.33977).
+- **Status**: feasible
+- **Retrieval Tags**: storage tiering, column chunks, five-minute rule, caching, Azure Cool/Cold
+- **Date Added**: 2026-11-26
+- **Last Updated**: 2026-11-26
+
+### [Cycle 2] io_uring Guidelines Re-validated on Cloud Ephemeral NVMe (Azure L-series)
+
+- **Summary**: Re-test Jasny et al. (PVLDB 19) io_uring guidelines on virtualised Azure local NVMe; derive cloud corrections; revives cycle-1 adaptive controller on real Linux NVMe.
+- **Why Promising**: Only route to credible io_uring numbers without bare metal.
+- **Requirements**: L-series VM (free-trial vCPU quota/SKU availability unverified — likely blocker), liburing.
+- **Evidence**: Cycle 2 ELO rank 3, 1469 (N6 F5 R8 C7).
+- **Status**: feasible-conditional (needs quota check)
+- **Retrieval Tags**: io_uring, Azure Lsv3, ephemeral NVMe, reproducibility
+- **Date Added**: 2026-11-26
+- **Last Updated**: 2026-11-26
 
 ### Telemetry-Driven Adaptive I/O-Path Controller for OLTP Storage Engines
 
@@ -51,7 +87,20 @@ Total Cycles: 1
 
 ## Unsuccessful Directions
 
-_None yet — first cycle; no direction has reached experimental validation._
+### io_uring experiments on macOS host
+
+- **Failure type**: fundamental (hardware/OS) — XNU has no io_uring; POSIX AIO = 4 kernel threads doing sync reads; Linux VM disks = virtio over APFS RAW image. Cycle-1 io_uring directions are NOT Mac-feasible; need Linux NVMe (cloud VM or bare metal).
+- **Date**: 2026-11-26
+
+### Cross-cloud price comparison as main contribution
+
+- **Failure type**: fundamental (novelty/confounds) — differing networks confound timing; price comparison alone not research.
+- **Date**: 2026-11-26
+
+### Learned column-tiering policy
+
+- **Failure type**: implementation-level prune — crowded learned-cache space; keep closed-form rule instead.
+- **Date**: 2026-11-26
 
 ## Archive
 

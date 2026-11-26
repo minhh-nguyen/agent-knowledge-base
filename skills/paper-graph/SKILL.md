@@ -3,8 +3,8 @@ name: paper-graph
 description: "[role: research.lineage] Map the genealogical lineage and historical progression of a research field. Visualize how earlier technical challenges led to later approaches and improvements, producing a Markdown report with embedded Mermaid diagrams. Trigger when the user asks for a topic's developmental trajectory, a model's family tree, significant predecessors or follow-ups to a seed paper, or how a research line matured over time. Do not trigger for inventories of datasets, benchmarks, libraries, or other artifacts; finding one latest paper; simple keyword search; one-paper summaries; or head-to-head comparisons. Use this skill for chronological synthesis across multiple works, not for bibliography cataloging or one-off retrieval."
 allowed-tools: "write_file edit_file read_file execute"
 metadata:
-  author: EvoScientist
-  version: '0.1.3'
+  author: EvoScientist - edited: Minh 
+  version: "0.1.3"
   tags: [research, literature-review, graph, mermaid]
 ---
 
@@ -27,6 +27,7 @@ Trigger when the user asks something like:
 - "Citation tree of <paper>" / "Idea trace of <topic>"
 
 Skip when:
+
 - The user just wants a one-paper summary or single search hit (no relational/evolutionary aspect).
 - The request is for non-academic citation work.
 - The user explicitly wants a plain bibliography rather than a graph.
@@ -36,27 +37,31 @@ Skip when:
 ## Inputs and Output
 
 **Inputs:**
+
 - A **research query**: a topic, a seed paper title/citation, or a hybrid. Free-form text.
-- **Output path** (required): path for the final Markdown report. If not given, ask before running.
-- *(Optional)* number of papers to fetch (`--n` flag on `fetch_papers`). Default **10**.
-- *(Optional)* Mermaid theme `light` or `dark` (`--theme` on render steps, or `MERMAID_THEME` env). Default **light**.
+- **Output path**: path for the final Markdown report. Default: `research-report/lineage-<topic>-<YYYY-MM-DD>.md` (see Output Location).
+- _(Optional)_ number of papers to fetch (`--n` flag on `fetch_papers`). Default **10**.
+- _(Optional)_ Mermaid theme `light` or `dark` (`--theme` on render steps, or `MERMAID_THEME` env). Default **light**.
 
 **Output:** a single Markdown file at the user-specified path with these sections:
+
 1. **Research goal** (extracted from the query)
 2. **High-level taxonomy** — one Mermaid graph: root → challenges → solutions → paper references
 3. **Per-solution evolution paths** — one Mermaid graph per solution, showing paper-to-paper "evolution from" edges, evolution points, open challenges
 4. **Paper appendix** — the numbered list of papers with title / year / authors / abstract / conclusion excerpt
 
-Mermaid is just text inside ```` ```mermaid ```` fences — the file renders directly in GitHub, Obsidian, VS Code with the Mermaid extension, etc.
+Mermaid is just text inside ` ```mermaid ` fences — the file renders directly in GitHub, Obsidian, VS Code with the Mermaid extension, etc.
 
 ---
 
 ## Setup
 
 **Required env (the skill fails verbosely if missing):**
+
 - `S2_API_KEY` — Semantic Scholar API key.
 
 **Optional env:**
+
 - `DEEPXIV_API_TOKEN` (or `DEEPXIV_TOKEN`) — DeepXiv arXiv search fallback. Install with `pip install deepxiv-sdk`; auto-provision with `deepxiv token`. Without it, S2 must fill the cite-number budget on its own.
 - `MERMAID_THEME` — `light` (default) or `dark`. Overridden by `--theme` on each render call.
 
@@ -132,9 +137,11 @@ Read `references/parse_query.md`. Substitute `{seed_block}` with the contents of
 Parse the response as JSON with this exact shape:
 
 ```json
-{"goal": "<one sentence>",
- "searches": ["<keyword phrase 1>", "<keyword phrase 2>", "..."],
- "definitions": {"<term>": "<one-sentence definition>", "...": "..."}}
+{
+  "goal": "<one sentence>",
+  "searches": ["<keyword phrase 1>", "<keyword phrase 2>", "..."],
+  "definitions": { "<term>": "<one-sentence definition>", "...": "..." }
+}
 ```
 
 Per the prompt's own instructions, `searches` should contain 2–4 phrases each of 2–5 keywords (these are two different counts — phrases vs. keywords-per-phrase).
@@ -227,6 +234,7 @@ python scripts/cli.py format_papers \
 ```
 
 Read `references/outline.md`. Substitute:
+
 - `{goal}` — contents of `<workdir>/goal_block.txt`.
 - `{papers_input}` — contents of `<workdir>/papers_input_core.txt`.
 - `{allowed_numbers}` — contents of `<workdir>/core_filter.json.allowed.txt`.
@@ -274,6 +282,7 @@ For each `<workdir>/solutions/<key>.json` produced in step 9:
 (a) The per-solution `{papers_input}` is the CORE pool: every solution context's `allowed` is the full CORE set, so the block is the same for every solution and identical to `<workdir>/papers_input_core.txt` from Step 8 (with its `.allowed.txt` sibling). Reuse those two files. Running `format_papers --filter <workdir>/solutions/<key>.json --out <workdir>/details/<key>_input.txt` per solution still works and writes the same content; it is only needed if Step 8's files are gone.
 
 (b) Substitute into `references/detail.md`:
+
 - `{goal}` — contents of `<workdir>/goal_block.txt` (the file built in Step 8).
 - `{challenge_name}` — from the solution context (`challenge_name`).
 - `{solution_name}` — from the solution context (`solution_name`).
@@ -297,9 +306,10 @@ The parsed JSON's `edges` list is the input to Step 11.
 If the host supports concurrent tool calls, fan all per-solution LLM calls + their parse_detail follow-ups out in parallel.
 
 **Fan-out task brief (when delegating step 10b to a subagent per solution).** The subagent's prompt must be self-contained: do **not** point the subagent at SKILL.md, do **not** instruct it to "run paper-graph for solution X," and do **not** give it any CLI invocation to run. The orchestrator does the substitution itself and hands the subagent only:
+
 - The fully-substituted prompt string (already with `{goal}`, `{challenge_name}`, `{solution_name}`, `{primary_numbers}`, `{papers_input}`, `{allowed_numbers}` filled in).
 - The expected response shape: raw Markdown evolution tree per `references/detail.md`'s output spec.
-- An explicit instruction: *"Call your LLM with the prompt below and return only the raw Markdown response. Do not read any other file, do not run any shell command, do not invoke any other skill."*
+- An explicit instruction: _"Call your LLM with the prompt below and return only the raw Markdown response. Do not read any other file, do not run any shell command, do not invoke any other skill."_
 
 Do **not** point the subagent at SKILL.md, do **not** instruct it to "run paper-graph for solution X", and do **not** give it any CLI invocation to run. The subagent returns the Markdown text; the orchestrator writes it to `<workdir>/details/<key>_raw.md` and runs `parse_detail` itself. **A subagent that re-reads SKILL.md will restart the whole workflow from step 1** — the fix is to keep the subagent prompt bounded as above.
 
@@ -312,6 +322,7 @@ Read `references/audit_edge.md` **once** at the start of this step; substitute p
 For each `<workdir>/parsed/<key>.json`'s `edges` list, audit each edge against the source / target abstracts and conclusion excerpts.
 
 For every `{source_n, target_n, gap}` edge in the solution:
+
 - Look up source paper = `papers[source_n - 1]` and target = `papers[target_n - 1]` from `<workdir>/papers.json`.
 - Substitute the placeholders in `references/audit_edge.md`: `{m_n}`, `{m_title}`, `{m_year}`, `{m_abstract}` (truncated to 1500 chars), `{m_excerpt}` (the `_conclusion_section` or `(no excerpt)`, truncated to 1500 chars), `{n_n}`, `{n_title}`, `{n_year}`, `{n_abstract}`, `{n_excerpt}`, `{gap_text}`.
 - Call the LLM (low temperature ~0.1, reasoning off, ~1000 max tokens — enough for two quotes of up to 300 characters and the reason). Parse the response:
@@ -326,9 +337,10 @@ For every `{source_n, target_n, gap}` edge in the solution:
 On parse failure, default the verdict to `REJECT`. Only `SUPPORTED_BY_ABSTRACT` and `SUPPORTED_BY_SECTION` become directed evolution edges. `INFERRED` records a possible relationship for the audit trail but is not rendered as a directed lineage claim.
 
 **Fan-out task brief (when delegating per edge or per solution to subagents).** Same discipline as step 10: do **not** point the subagent at SKILL.md, do **not** instruct it to "run paper-graph audit," and do **not** give it any CLI invocation. The orchestrator does the substitution itself and hands the subagent only:
+
 - The fully-substituted prompt string (already with `{m_n}`, `{m_title}`, `{m_year}`, `{m_abstract}`, `{m_excerpt}`, `{n_n}`, `{n_title}`, `{n_year}`, `{n_abstract}`, `{n_excerpt}`, `{gap_text}` filled in).
 - The expected response shape: a JSON object with `verdict`, `source_quote`, `target_quote`, and `reason`.
-- An explicit instruction: *"Call your LLM with the prompt below and return only the JSON verdict object. Do not read any other file, do not run any shell command, do not invoke any other skill."*
+- An explicit instruction: _"Call your LLM with the prompt below and return only the JSON verdict object. Do not read any other file, do not run any shell command, do not invoke any other skill."_
 
 The subagent returns the verdict JSON; the orchestrator aggregates per-solution lists into `<workdir>/verdicts/<key>.json`. A subagent given a prompt that references SKILL.md will restart the workflow from step 1 — keep the brief bounded.
 
@@ -395,8 +407,9 @@ Walks `details/` for every render JSON, sorts by `(challenge_idx, s_major, s_min
 ## Verification
 
 After step 13 completes, read the first ~40 lines of the report to confirm:
+
 - The taxonomy has at least 2 challenges and each has at least 1 solution.
-- Each Mermaid block opens with ```` ```mermaid ```` and closes with ```` ``` ````.
+- Each Mermaid block opens with ` ```mermaid ` and closes with ` ``` `.
 - The paper appendix exists at the bottom of the file.
 
 If any of those fail, the most likely cause is the outline LLM (step 8) returning malformed Markdown. Re-run step 8; if it fails twice, lower `--n` on step 5 or sharpen the query.
@@ -414,3 +427,16 @@ If any of those fail, the most likely cause is the outline LLM (step 8) returnin
 - **`papers.json` is checked once per subcommand**: every step that reads it exits with code 2 and the offending entry numbers when the file is not an array of paper objects, instead of failing later on a missing field.
 - **Failure mode preference**: loud over silent. Missing keys, malformed LLM output, zero papers from search — all abort with a printed reason rather than producing a degraded artifact.
 - **English-only**: the upstream `paper-graph` prompts emitted bilingual labels; this skill strips Chinese and keeps English only.
+
+## Output Location
+
+Every new file this skill writes to answer, report, summarize, or synthesize goes into
+`research-report/` under the current working directory, as Markdown.
+
+- Create the folder if it does not exist: `mkdir -p research-report`.
+- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+  `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
+- An output path given explicitly by the user wins.
+- An answer given only in the chat needs no file.
+- The final report defaults to `research-report/lineage-<topic>-<YYYY-MM-DD>.md`; do not ask for an
+  output path. Its `.work/` scratch directory sits next to it.

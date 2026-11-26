@@ -18,7 +18,7 @@ The paper's IVE prompt (see [paper-prompts.md](paper-prompts.md)) is the primary
 
 1. Read the IVE prompt from `paper-prompts.md`
 2. Fill in the variables:
-   - `{research_proposal}` ← the content of `/research-proposal.md`
+   - `{research_proposal}` ← the content of `research-report/research-proposal.md`
    - `{execution_report}` ← Stage 3 trajectory logs and metrics (or the stage where failure occurred)
 3. Reason through the filled prompt step by step
 4. The prompt performs a two-step classification:

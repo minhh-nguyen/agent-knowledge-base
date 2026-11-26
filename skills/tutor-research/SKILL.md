@@ -202,3 +202,14 @@ Never claim progress is permanently saved unless a persistence mechanism exists.
 ## Final Principle
 
 Success means the user can independently explain concepts, solve unfamiliar problems, critically evaluate ideas, and conduct scientific reasoning without depending on the TA.
+
+## Output Location
+
+Every new file this skill writes to answer, report, summarize, or synthesize goes into
+`research-report/` under the current working directory, as Markdown.
+
+- Create the folder if it does not exist: `mkdir -p research-report`.
+- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+  `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
+- An output path given explicitly by the user wins.
+- An answer given only in the chat needs no file.

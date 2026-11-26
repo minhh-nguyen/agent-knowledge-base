@@ -3,8 +3,8 @@ name: research-ideation
 description: "[role: research.ideate] End-to-end research ideation pipeline: literature grounding → multi-track idea generation (3 personas: innovator/pragmatist/critic) → iterative refinement → ELO tournament ranking → update [role: research.memory] (IDE) → user selects direction → expand into manuscript-quality proposal. Use when: user wants to find a research direction, brainstorm ideas, evaluate idea novelty, design a novel solution, rank/compare research ideas, or generate a research proposal. Do NOT use for finding/searching/reading papers (use [role: research.find]), literature survey reports (use [role: research.survey]), or planning a paper (use paper-planning)."
 allowed-tools: "write_file edit_file read_file think_tool execute"
 metadata:
-  author: EvoScientist
-  version: '2.1.2'
+  author: EvoScientist - edited: Minh 
+  version: "2.1.2"
   tags: [core, research, ideation, tournament, proposal]
 ---
 
@@ -82,6 +82,7 @@ From the collected papers, construct a **challenge-insight tree** — a many-to-
 - **Map connections**: Which insights address which challenges?
 
 **How this drives ideation**:
+
 - Challenges with few insights → **unsolved problem** (candidate for Step 3)
 - Insights not yet applied to a challenge → **cross-domain transfer opportunity** (candidate for Step 4)
 - Challenges with many insights → well-studied, avoid unless you have a fundamentally new angle
@@ -98,11 +99,11 @@ Generate 3 initial research ideas from 3 distinct research directions, grounded 
 
 ### Three Personas
 
-| Persona | Focus |
-|---------|-------|
-| **Innovator** | Novelty & creativity — groundbreaking, high-risk/high-reward |
-| **Pragmatist** | Feasibility — realistic, clearly executable |
-| **Critic** | Scientific value — advances understanding, rigorous |
+| Persona        | Focus                                                        |
+| -------------- | ------------------------------------------------------------ |
+| **Innovator**  | Novelty & creativity — groundbreaking, high-risk/high-reward |
+| **Pragmatist** | Feasibility — realistic, clearly executable                  |
+| **Critic**     | Scientific value — advances understanding, rigorous          |
 
 ### Process
 
@@ -158,12 +159,12 @@ Rank the 3 track champions through pairwise comparison, then **present all three
 
 ### Four Dimensions
 
-| Dimension | What It Measures |
-|-----------|-----------------|
-| **Novelty** | How different from existing published work? |
-| **Feasibility** | Can this be implemented within reasonable resources? |
-| **Relevance** | Does this address an important problem aligned with the goal? |
-| **Clarity** | Is the idea well-defined enough to start immediately? |
+| Dimension       | What It Measures                                              |
+| --------------- | ------------------------------------------------------------- |
+| **Novelty**     | How different from existing published work?                   |
+| **Feasibility** | Can this be implemented within reasonable resources?          |
+| **Relevance**   | Does this address an important problem aligned with the goal? |
+| **Clarity**     | Is the idea well-defined enough to start immediately?         |
 
 ### Tournament
 
@@ -223,6 +224,7 @@ Which idea would you like to develop into a full proposal? (1/2/3, or combine el
 ```
 
 **After presenting top-3, trigger Step 6 ([role: research.memory] IDE) before finalizing user selection.** The user may:
+
 - Pick one of the top-3
 - Ask to combine elements from multiple ideas
 - Request modifications before expanding
@@ -232,7 +234,7 @@ Which idea would you like to develop into a full proposal? (1/2/3, or combine el
 
 After the tournament and before the user selects, trigger `[role: research.memory]` IDE (Idea Direction Evolution):
 
-1. Save the top-3 directions to `/direction-summary.md`
+1. Save the top-3 directions to `research-report/direction-summary.md`
 2. Trigger IDE protocol via `[role: research.memory]` skill with the direction summary
 3. Each top direction is added to M_I as a feasible direction with its ELO score
 4. Any ideas that were clearly unworkable during refinement (Step 4) are recorded as unsuccessful directions with failure classification (fundamental vs implementation)
@@ -257,6 +259,7 @@ See `assets/proposal-template.md` for the complete field-specific section guide 
 ### Phase 2: Write the Proposal
 
 Fill the generated template following these universal principles:
+
 - Write for a top-tier reviewer in the field — every claim supported, every design justified
 - Avoid variable confusion: clearly isolate the core contribution
 - Match the field's rigor standards (math for quantitative fields, protocols for experimental fields, coding schemes for qualitative fields)
@@ -286,39 +289,52 @@ Run experiments on representative data. If the approach fails, return to Step 3 
 
 All paper discovery goes through `[role: research.find]`. This skill does not search for papers itself. **Using WebSearch, WebFetch, or any generic search tool to find papers is PROHIBITED** — these tools cannot access Semantic Scholar, citation graphs, or academic recommendation systems. Always use `[role: research.find]` and its scripts (scholar_search, citation_traverse, arxiv_monitor, recommend, trending, etc.) for all paper discovery needs in Steps 2, 3, and 4.
 
-| Step | Requires [role: research.find] for |
-|------|------------------------------|
-| Step 2 | Collect 30-50 relevant papers for literature tree construction |
-| Step 3 | Verify no well-established solution exists for selected problems |
+| Step   | Requires [role: research.find] for                                |
+| ------ | ----------------------------------------------------------------- |
+| Step 2 | Collect 30-50 relevant papers for literature tree construction    |
+| Step 3 | Verify no well-established solution exists for selected problems  |
 | Step 4 | Cross-domain search for transferable techniques during refinement |
 
 ## [role: research.memory] Integration
 
-| When | Action | Details |
-|------|--------|---------|
-| **Step 0** (before ideation) | **Read M_I** | Load `~/.claude/kb-memory/ideation-memory.md`, select top-2 relevant entries, use feasible directions as seeds, avoid fundamental failures |
-| **Step 6** (after tournament) | **Write M_I via IDE** | Save top-3 directions with ELO scores as feasible; save dead-end ideas as unsuccessful with failure classification |
+| When                          | Action                | Details                                                                                                                                    |
+| ----------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Step 0** (before ideation)  | **Read M_I**          | Load `~/.claude/kb-memory/ideation-memory.md`, select top-2 relevant entries, use feasible directions as seeds, avoid fundamental failures |
+| **Step 6** (after tournament) | **Write M_I via IDE** | Save top-3 directions with ELO scores as feasible; save dead-end ideas as unsuccessful with failure classification                         |
 
 ## Handoff
 
-| To | When | Key Artifacts |
-|----|------|---------------|
-| `paper-planning` | Proposal complete (Step 7) → plan paper structure | `/research-proposal.md`, `/direction-summary.md` |
-| `experiment-pipeline` | Proposal complete (Step 7) → start experiments | `/research-proposal.md`, `/direction-summary.md` |
-| `[role: research.memory]` | After tournament (Step 6) → update Ideation Memory via IDE protocol | `/direction-summary.md` |
+| To                        | When                                                                | Key Artifacts                                                                  |
+| ------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `paper-planning`          | Proposal complete (Step 7) → plan paper structure                   | `research-report/research-proposal.md`, `research-report/direction-summary.md` |
+| `experiment-pipeline`     | Proposal complete (Step 7) → start experiments                      | `research-report/research-proposal.md`, `research-report/direction-summary.md` |
+| `[role: research.memory]` | After tournament (Step 6) → update Ideation Memory via IDE protocol | `research-report/direction-summary.md`                                         |
 
 ---
 
 ## References & Assets
 
-| Topic | File |
-|-------|------|
-| Literature tree construction | `references/literature-tree.md` |
-| Problem selection framework | `references/problem-selection.md` |
-| Solution design methodology | `references/solution-design.md` |
-| ELO formula & rubric | `references/elo-ranking-guide.md` |
-| Proposal section guidance | `references/proposal-extension.md` |
-| Idea candidate template | `assets/idea-candidate-template.md` |
-| Ranking scorecard | `assets/ranking-scorecard-template.md` |
-| Direction summary | `assets/direction-summary-template.md` |
-| Proposal example (E-FNO) | `assets/proposal-template.md` |
+| Topic                        | File                                   |
+| ---------------------------- | -------------------------------------- |
+| Literature tree construction | `references/literature-tree.md`        |
+| Problem selection framework  | `references/problem-selection.md`      |
+| Solution design methodology  | `references/solution-design.md`        |
+| ELO formula & rubric         | `references/elo-ranking-guide.md`      |
+| Proposal section guidance    | `references/proposal-extension.md`     |
+| Idea candidate template      | `assets/idea-candidate-template.md`    |
+| Ranking scorecard            | `assets/ranking-scorecard-template.md` |
+| Direction summary            | `assets/direction-summary-template.md` |
+| Proposal example (E-FNO)     | `assets/proposal-template.md`          |
+
+## Output Location
+
+Every new file this skill writes to answer, report, summarize, or synthesize goes into
+`research-report/` under the current working directory, as Markdown.
+
+- Create the folder if it does not exist: `mkdir -p research-report`.
+- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+  `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
+- An output path given explicitly by the user wins.
+- An answer given only in the chat needs no file.
+- `direction-summary.md` and `research-proposal.md` keep their fixed names in `research-report/`, because
+  `[role: research.memory]` reads them from there.

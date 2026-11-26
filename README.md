@@ -15,14 +15,14 @@ Each skill also has a **mode**:
 - **learn**: coaches the user, who does the work. Hints, questions, critique — never the answer.
 - **do**: produces the output (papers found, survey written, figure rendered).
 
-Routing a request means answering two questions: *which domain?* and *learn or do?*
+Routing a request means answering two questions: _which domain?_ and _learn or do?_
 
-| Domain | learn | do |
-| --- | --- | --- |
-| **study** | `study.tutor` — teach a course topic from the lecture slides | `study.lecture` — generate lessons + quiz banks; `study.workspace` — on-disk lesson workspace (manual only) |
-| **code** | `code.tutor` — review the user's code, coach labs; never gives the solution | `code.build` — implement the requested change, clean and minimal |
-| **research** | `research.mentor` — coach reading, critique, gaps, experiment design | the pipeline below |
-| **util** | — | `util.audit`, `util.find-skills` |
+| Domain       | learn                                                                       | do                                                                                                          |
+| ------------ | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **study**    | `study.tutor` — teach a course topic from the lecture slides                | `study.lecture` — generate lessons + quiz banks; `study.workspace` — on-disk lesson workspace (manual only) |
+| **code**     | `code.tutor` — review the user's code, coach labs; never gives the solution | `code.build` — implement the requested change, clean and minimal                                            |
+| **research** | `research.mentor` — coach reading, critique, gaps, experiment design        | the pipeline below                                                                                          |
+| **util**     | —                                                                           | `util.audit`, `util.find-skills`                                                                            |
 
 The research **do** pipeline:
 
@@ -48,6 +48,7 @@ tools/
 └── index-lectures.sh  # page-level search index for lecture PDFs
 inbox/               # unsorted drafts, not authority
 sources/             # external references with version and date checked
+research-report/     # Markdown answers, reports, and syntheses produced by research skills
 templates/           # reusable document skeletons
 ```
 
@@ -58,15 +59,15 @@ file here changes behavior immediately.
 
 Before committing a skill change, check by hand:
 
-| Check | Catches |
-| --- | --- |
-| Every `[role: <domain>.<function>]` used in the skill resolves to a role declared by some `SKILL.md` | A handover to a removed or renamed role |
-| Frontmatter `name` = folder name | A half-done rename |
-| Each description carries its own role tag | A skill the router cannot address |
-| One skill per role | Two skills fighting over the same requests |
-| `SKILL.md` under 500 lines | Skills too long to route well |
-| Relative links resolve; no broken symlinks | Renamed or moved files |
-| No `/memory/` absolute paths | Writes to the filesystem root |
+| Check                                                                                                | Catches                                    |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Every `[role: <domain>.<function>]` used in the skill resolves to a role declared by some `SKILL.md` | A handover to a removed or renamed role    |
+| Frontmatter `name` = folder name                                                                     | A half-done rename                         |
+| Each description carries its own role tag                                                            | A skill the router cannot address          |
+| One skill per role                                                                                   | Two skills fighting over the same requests |
+| `SKILL.md` under 500 lines                                                                           | Skills too long to route well              |
+| Relative links resolve; no broken symlinks                                                           | Renamed or moved files                     |
+| No `/memory/` absolute paths                                                                         | Writes to the filesystem root              |
 
 ### Renaming a skill
 

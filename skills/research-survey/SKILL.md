@@ -3,8 +3,8 @@ name: research-survey
 description: "[role: research.survey] Generates structured literature survey reports from collected papers using a multi-stage pipeline: outline generation (query-type adaptive) → draft survey → section-by-section expansion → summary section refinement → final assembly. Produces survey-grade output with taxonomy-based method analysis, LaTeX formalizations, comparative tables, and dense citations. Use when: user wants a literature review, research survey, field overview, or systematic synthesis of multiple papers. Do NOT use for finding/searching papers (use [role: research.find]), generating research ideas (use [role: research.ideate]), or writing a paper's Related Work section (use paper-writing)."
 allowed-tools: "write_file edit_file read_file think_tool"
 metadata:
-  author: EvoScientist
-  version: '1.0.0'
+  author: EvoScientist - edited: Minh 
+  version: "1.0.0"
   tags: [core, research, literature, survey, synthesis]
 ---
 
@@ -67,11 +67,11 @@ With the domain-specific template as the framework, generate the outline:
 
 #### Query Type Classification
 
-| Type | Example | Structure |
-|------|---------|-----------|
-| **A: Single-topic deep dive** | "Catalyst design for electrochemical CO2 reduction" | Intro → Problem Definition → **Methods (by mechanism/approach)** → Evaluation → Challenges → Conclusion |
-| **B: Multi-topic parallel** | "Drug resistance mechanisms and therapeutic strategies in cancer immunotherapy" | Intro → **Topic 1 (definition + methods)** → **Topic 2 (definition + methods)** → Evaluation → Challenges → Conclusion |
-| **C: Pipeline/stage-based** | "From sample preparation to data analysis in single-cell RNA sequencing" | Chapters organized by workflow stages |
+| Type                          | Example                                                                         | Structure                                                                                                              |
+| ----------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **A: Single-topic deep dive** | "Catalyst design for electrochemical CO2 reduction"                             | Intro → Problem Definition → **Methods (by mechanism/approach)** → Evaluation → Challenges → Conclusion                |
+| **B: Multi-topic parallel**   | "Drug resistance mechanisms and therapeutic strategies in cancer immunotherapy" | Intro → **Topic 1 (definition + methods)** → **Topic 2 (definition + methods)** → Evaluation → Challenges → Conclusion |
+| **C: Pipeline/stage-based**   | "From sample preparation to data analysis in single-cell RNA sequencing"        | Chapters organized by workflow stages                                                                                  |
 
 #### Outline Requirements
 
@@ -103,14 +103,14 @@ Expand each non-summary section using **all collected papers** (30-120). This is
 
 ### Section Expansion Targets
 
-| Section Type | Target Length | Focus |
-|---|---|---|
-| **Methods** | 6000+ words per paradigm chapter | Technical narratives, mechanism analysis, comparison tables |
-| **Evaluation** | 3500+ words | Benchmark taxonomy, metric analysis, SOTA summary |
-| **Challenges** | 3000+ words | Problem definition + evidence + opportunity per challenge |
-| **Applications** | 3000+ words | Real-world use cases with specific achievements |
-| **Problem Definition** | 2000+ words | LaTeX formalization, constraints, assumptions |
-| **Other** | 2500+ words | Default |
+| Section Type           | Target Length                    | Focus                                                       |
+| ---------------------- | -------------------------------- | ----------------------------------------------------------- |
+| **Methods**            | 6000+ words per paradigm chapter | Technical narratives, mechanism analysis, comparison tables |
+| **Evaluation**         | 3500+ words                      | Benchmark taxonomy, metric analysis, SOTA summary           |
+| **Challenges**         | 3000+ words                      | Problem definition + evidence + opportunity per challenge   |
+| **Applications**       | 3000+ words                      | Real-world use cases with specific achievements             |
+| **Problem Definition** | 2000+ words                      | LaTeX formalization, constraints, assumptions               |
+| **Other**              | 2500+ words                      | Default                                                     |
 
 ### Expansion Rules
 
@@ -146,14 +146,17 @@ After all content sections are expanded, refine the **summary sections** (Abstra
 ### Summary Section Standards
 
 **Abstract** (300-500 words):
+
 - Continuous narrative, NO bullet points or bold labels
 - Must cover: background → gap → scope → key findings → outlook
 
 **Introduction**:
+
 - Continuous narrative, NO subsections or bullet points
 - Must cover: research background → why traditional methods fail → method summary → scope & organization
 
 **Conclusion**:
+
 - Summarize findings, state which paradigm is most promising
 - Respond to user's original research goal
 - Provide clear "next step" recommendation
@@ -168,7 +171,7 @@ Assemble sections in outline order, then append formatted references:
 **1. Title** (Year). _Authors_. *Venue*. Citations: N. [[Link]](url)
 ```
 
-Save to `/artifacts/survey-{topic}-{date}.md`.
+Save to `research-report/survey-{topic}-{date}.md`.
 
 ---
 
@@ -192,19 +195,30 @@ Save to `/artifacts/survey-{topic}-{date}.md`.
 
 ## Reference Materials
 
-| Resource | Location | Purpose |
-|----------|----------|---------|
-| Multi-stage pipeline details | `references/survey-methodology.md` | Full methodology: outline rules, section standards, expansion targets |
-| Section quality checklist | `references/section-quality-checklist.md` | Per-section verification checklist before finalizing |
-| Survey output template | `assets/survey-template.md` | English Markdown template with section structure, table formats, and placeholder guidance |
+| Resource                     | Location                                  | Purpose                                                                                   |
+| ---------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Multi-stage pipeline details | `references/survey-methodology.md`        | Full methodology: outline rules, section standards, expansion targets                     |
+| Section quality checklist    | `references/section-quality-checklist.md` | Per-section verification checklist before finalizing                                      |
+| Survey output template       | `assets/survey-template.md`               | English Markdown template with section structure, table formats, and placeholder guidance |
 
 ---
 
 ## Handoff
 
-| From → To | When |
-|-----------|------|
-| `[role: research.find]` → here | Papers collected, user wants synthesis |
-| Here → `[role: research.ideate]` | Survey reveals research gaps worth pursuing |
-| Here → `paper-writing` | Survey informs Related Work section of a paper |
-| Here → `paper-planning` | Survey provides literature context for story design |
+| From → To                        | When                                                |
+| -------------------------------- | --------------------------------------------------- |
+| `[role: research.find]` → here   | Papers collected, user wants synthesis              |
+| Here → `[role: research.ideate]` | Survey reveals research gaps worth pursuing         |
+| Here → `paper-writing`           | Survey informs Related Work section of a paper      |
+| Here → `paper-planning`          | Survey provides literature context for story design |
+
+## Output Location
+
+Every new file this skill writes to answer, report, summarize, or synthesize goes into
+`research-report/` under the current working directory, as Markdown.
+
+- Create the folder if it does not exist: `mkdir -p research-report`.
+- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+  `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
+- An output path given explicitly by the user wins.
+- An answer given only in the chat needs no file.
