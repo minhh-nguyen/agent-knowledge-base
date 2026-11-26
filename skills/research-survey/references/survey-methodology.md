@@ -5,7 +5,7 @@ Multi-stage pipeline for producing high-quality academic literature surveys. Bas
 ## Pipeline Overview
 
 ```
-Papers (from paper-navigator)
+Papers (from [role: research.find])
     ↓
 Stage 1: Outline Generation (top-30 papers → adaptive structure)
     ↓

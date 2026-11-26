@@ -65,9 +65,15 @@ Help the user understand programming, not just obtain solutions.
 - Use Markdown and descriptive lowercase kebab-case filenames.
 - Use relative links between documents.
 - Knowledge is delivered as skills under `skills/`. Read `README.md` for the layout.
-- Keep shared, language-independent principles only in
-  `skills/agentic-coder/references/principles.md`.
-- Keep language-specific guidance in its own file: `references/{cpp,python,rust,cuda}.md`.
+- Keep shared, language-independent coding principles only in `references/principles.md` of the
+  code skills (`[role: code.tutor]` and `[role: code.build]`). The two copies must stay identical
+  apart from links to references a skill does not bundle (for example `code-review.md`): change
+  both in the same commit.
+- Keep language-specific guidance in its own file next to it: `references/{cpp,python,rust,cuda}.md`,
+  mirrored the same way.
+- Keep `references/verification.md` mirrored between the two code skills: the coverage,
+  consistency, and limitations sections stay identical apart from links to references a skill does
+  not bundle, while the checklist differs by mode (tutor vs builder).
 - Check for existing content before creating documentation.
 - Preserve original files and do not delete or move existing content without permission.
 - Reopen modified files to verify changes.
@@ -82,13 +88,21 @@ Help the user understand programming, not just obtain solutions.
   the only text an agent sees when deciding whether to load it.
 - Reference paths must be relative to the `SKILL.md` and must not escape the skill directory.
   No `../../` into the repository root.
-- Skills must not overlap: when two could apply, each names the other and the handover rule.
+- Skills must not overlap: when two could apply, each points to the other and states the handover rule.
+- **Refer to other skills by role tag, never by name.** Every repository skill declares its stable
+  role at the start of its `description` as `[role: <domain>.<function>]`. Handovers say
+  "use `[role: research.find]`", so renaming a skill touches only its folder and its frontmatter
+  `name`. Shared data is referenced through the stable `~/.claude/kb-memory/` symlink, never by the
+  repository path.
+- Each description states its mode: **learn** (coach the user, who does the work) or **do**
+  (produce the output). Two skills in the same domain must differ in mode or function.
+- Before committing a skill change, check by hand that every role tag resolves to a declared role,
+  every `name` matches its folder, and no `SKILL.md` exceeds 500 lines.
 - A skill that reads large external material must define a retrieval protocol that reads
   fragments, not whole documents, and must state the cost rules that enforce it.
-- Every skill active on a machine is declared in `skills.json`; `./install.sh` applies it.
-  Never hand-edit `~/.claude/skills`.
-- Third-party skills are never copied into this repository. Declare them in `skills.json` as
-  external so they keep receiving upstream updates.
-- Resolve a trigger collision with a third-party skill by disabling it in `skills.json` with a
-  reason, or by narrowing the owned skill's own `description`. Never by editing the third-party
-  `SKILL.md`: the next upstream update overwrites the edit.
+- A third-party skill is either **external** (left in `~/.agents/skills`, receives upstream updates,
+  cannot carry a role tag) or **copied** into `skills/` and owned here: it gets a role tag and
+  follows every rule above. Re-syncing it from upstream is a merge, not an overwrite.
+- Resolve a trigger collision by narrowing a repository skill's `description`, or by moving one of
+  the colliding skills out of `skills/`. Never edit an external skill's `SKILL.md`: the next
+  upstream update overwrites the edit.

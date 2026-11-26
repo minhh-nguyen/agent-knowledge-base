@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L01 Storage · cheat sheet</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<main>
+<nav class="crumbs">FOMO · Reference · <a href="../lessons/0001-storage-latency-math.html">Lesson 0001</a></nav>
+<h1>Lecture 01 · Storage</h1>
+<p class="subtitle">The whole deck on two pages. Page numbers refer to <code>lectures/Lecture_01_Storage.pdf</code>.</p>
+
+<h2>Hierarchy</h2>
+<ul>
+<li>Registers 1 cy · L1 ~4 · L2 ~10 · L3 ~30–60 · DRAM ~100–200 cy (~60 ns) · disk µs–ms <span class="cite">p.6</span></li>
+<li>Units: word 4–8 B → cache line 64 B → page 4 KB → file <span class="cite">p.10</span></li>
+<li>Caches are hardware-managed; memory ↔ storage is software-managed <span class="cite">p.8</span></li>
+<li>Multi-socket: local memory faster than remote (NUMA, L03) <span class="cite">p.15</span></li>
+<li>Purposes of storage: durability (sequential writes), memory extension (swap, LSM), data exchange between steps (S3, Kafka) <span class="cite">p.16</span></li>
+<li>Storage matters when its latency is a big share of response time or its access rate caps throughput; test with a RamFS <span class="cite">p.17</span></li>
+</ul>
+
+<h2>HDD vs SSD</h2>
+<div class="table-wrap"><table>
+<tr><th></th><th>HDD</th><th>SSD (NVMe)</th></tr>
+<tr><td>Latency</td><td>2–10 ms</td><td>10–100s µs (NVMe &lt;10 µs)</td></tr>
+<tr><td>Bandwidth</td><td>100s MB/s</td><td>several GB/s; PCIe4 ×4 ≈ 7, PCIe5 ×4 ≈ 14, PCIe6 ×4 ≈ 32 GB/s</td></tr>
+<tr><td>Cost of access</td><td>seek + rotation + transfer</td><td>needs many outstanding requests (channels)</td></tr>
+<tr><td>Quirks</td><td>placement on disk matters</td><td>erase-before-write, GC, write amplification ≥ 1, wear leveling, latency spikes</td></tr>
+<tr><td>Price</td><td>$</td><td>$$$ (gap closing)</td></tr>
+</table></div>
+<p class="cite">pp.19–25, 30</p>
+<span class="math">random n blocks = n(a + t)      sequential n blocks = a + n·t      a = seek + rotation</span>
+<span class="math">Little's Law: queue depth = IOPS × latency   (1 M IOPS × 10 µs = 10)</span>
+
+<h2>Interfaces & software path</h2>
+<ul>
+<li>AHCI/SATA: 1 queue × 32 commands, heavy OS involvement; fine for 100–200 IOPS HDDs <span class="cite">p.27</span></li>
+<li>NVMe over PCIe: 64 K queues × 64 K commands; submission + completion queue pair in host memory; doorbell registers (MMIO); MSI-X interrupt per queue; one queue pair per core → lock-free <span class="cite">p.29</span></li>
+<li>With µs devices, the <em>kernel path</em> (syscall, copies, interrupts, context switches) becomes the bottleneck → (1) async APIs, (2) kernel bypass <span class="cite">p.31</span></li>
+<li>POSIX sync I/O (HDD) · libaio (async, buffers pinned per I/O) · io_uring (async, <strong>user-space</strong> buffers) · SPDK (user-space driver, no file system) <span class="cite">p.32</span></li>
+<li>Apps can avoid FS overhead: own layout inside few big files (DBMS) or own the device (SPDK) — but then they duplicate OS features <span class="cite">p.33</span></li>
+</ul>
+
+<h2>Beyond the local disk</h2>
+<ul>
+<li><strong>NVMe-oF</strong>: NVMe over RDMA/TCP → disaggregated flash pools (JBOF) <span class="cite">p.35</span></li>
+<li><strong>CXL</strong>: cache-coherent interconnect over PCIe PHY; Type-3 = memory expanders <span class="cite">p.37</span></li>
+<li><strong>ZNS</strong>: zones written sequentially, reset before rewrite → no in-zone GC, ~1× write amplification, predictable latency; FTL work moves to host <span class="cite">p.38</span></li>
+<li><strong>Computational storage</strong>: filter/scan/decompress in the device; KV-SSDs; pairs with Parquet predicate pushdown; caveat: lock-in, programmability <span class="cite">p.39</span></li>
+</ul>
+
+<h2>File systems (OS view)</h2>
+<ul>
+<li>Stack: syscall → VFS → EXT*/ZFS/NFS → buffer cache → drivers → disk <span class="cite">p.43</span></li>
+<li>Why FS: disk management, naming, security, durability <span class="cite">p.45</span></li>
+<li>Layout: boot block | superblock | free-block bitmap | inode table | file blocks <span class="cite">pp.47–52</span></li>
+<li>Block size trade-off: big → wasted space on small files; small → too much metadata; 4 KB typical, 512 B min <span class="cite">p.48</span></li>
+<li>Reads don’t always hit disk — the buffer cache in DRAM serves them <span class="cite">p.53</span></li>
+</ul>
+
+<h2>Data formats</h2>
+<div class="table-wrap"><table>
+<tr><th></th><th>CSV</th><th>Parquet</th><th>Arrow</th></tr>
+<tr><td>Kind</td><td>text, row lines</td><td>binary, columnar, pages</td><td>in-memory columnar</td></tr>
+<tr><td>Metadata</td><td>none</td><td>rich</td><td>schema</td></tr>
+<tr><td>Parse speed</td><td>10s MB/s, hard to parallelise</td><td>&gt;100s MB/s/core</td><td>no parsing</td></tr>
+<tr><td>Focus</td><td>simplicity</td><td>compression, column access</td><td>access speed</td></tr>
+</table></div>
+<p>Parquet row group → column chunk → page; decode/decompress to Arrow. High-rate systems still burn much compute on Parquet parsing → Vortex, BtrBlocks <span class="cite">pp.56–59</span></p>
+
+<h2>Exam-style questions from the deck <span class="cite">p.61</span></h2>
+<ol>
+<li>T/F: with flash, Linux retired the block device interface.</li>
+<li>100 MB in 4 KB sequential pages: SATA-II HDD vs PCIe 5 ×4 SSD — how long? (worked in <a href="../lessons/0001-storage-latency-math.html">lesson 0001</a>)</li>
+<li>T/F: io_uring allows async disk access with buffers in kernel space.</li>
+<li>Do apps need fundamentally different interfaces for local vs remote storage? Why / why not?</li>
+</ol>
+</main>
+</body>
+</html>

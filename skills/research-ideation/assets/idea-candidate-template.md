@@ -34,7 +34,7 @@
 - **Matches Played**: [0-2]
 - **Wins / Draws / Losses**: [W / D / L]
 
-## evo-memory Check
+## [role: research.memory] Check
 
 - **M_I Feasible Match**: [ ] None / [ ] Related: [direction name]
 - **M_I Unsuccessful Match**: [ ] None / [ ] Related: [direction name] — [fundamental | implementation failure]

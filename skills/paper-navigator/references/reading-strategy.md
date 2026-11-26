@@ -1,6 +1,6 @@
 # Paper Reading Strategy
 
-Extracted from the research-ideation methodology. Use this to guide structured paper analysis.
+Extracted from the [role: research.ideate] methodology. Use this to guide structured paper analysis.
 
 ## 3-Level Reading Framework
 

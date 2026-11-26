@@ -92,7 +92,7 @@ For each identified pattern, classify its generality:
 
 ### Step 5: Check for Existing Entries
 
-Read `/memory/experiment-memory.md` and check:
+Read `~/.claude/kb-memory/experiment-memory.md` and check:
 
 - **Exact match**: Same strategy already stored → update evidence with new cycle data and date
 - **Contradicting entry**: New evidence contradicts existing strategy → add the new evidence as a note. Do NOT delete the old entry yet — wait for a third data point to resolve the contradiction
@@ -119,7 +119,7 @@ For each new or updated strategy:
 
 ### Step 7: Write Evolution Report
 
-Generate a report at `/memory/evolution-reports/cycle_N_ese.md`:
+Generate a report at `~/.claude/kb-memory/evolution-reports/cycle_N_ese.md`:
 - How many strategies were extracted
 - Which categories they fall into
 - Which are broadly applicable (highest value)

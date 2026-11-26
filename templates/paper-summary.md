@@ -1,1 +1,1 @@
-../skills/personal-ta/references/paper-summary.md
+../skills/tutor-research/references/paper-summary.md

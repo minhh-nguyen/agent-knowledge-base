@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0001 · Storage in keywords</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<main>
+<nav class="crumbs">FOMO · Lecture 01 Storage · Lesson 0001 · <a href="../cheat-sheets/l01-storage.html">L01 cheat sheet</a></nav>
+<h1>Storage, in 16 keywords</h1>
+<p class="subtitle">Learn the keywords, then use them to estimate how long it takes to read data from an HDD or an SSD.</p>
+
+<div class="win"><strong>Your win today</strong>
+You can explain all 16 keywords in one sentence each, and use them to answer the exam question on Storage p.61:
+<em>“reading 100 MB in 4 KB sequential pages on a SATA-II HDD vs. a PCIe 5 ×4 SSD: how long, and why?”</em> About 30 minutes.</div>
+
+<ul class="kw-strip">
+<li><a href="#k-hier">memory hierarchy</a></li><li><a href="#k-sw">software-managed</a></li>
+<li><a href="#k-seek">seek time</a></li><li><a href="#k-rot">rotational delay</a></li><li><a href="#k-xfer">transfer time</a></li>
+<li><a href="#k-seq">sequential vs random</a></li><li><a href="#k-chan">channels</a></li><li><a href="#k-ebw">erase-before-write</a></li>
+<li><a href="#k-gc">garbage collection</a></li><li><a href="#k-wa">write amplification</a></li><li><a href="#k-ftl">FTL</a></li>
+<li><a href="#k-zns">ZNS</a></li><li><a href="#k-nvme">NVMe queue pair</a></li><li><a href="#k-little">Little’s Law</a></li>
+<li><a href="#k-async">io_uring / SPDK</a></li><li><a href="#k-iops">IOPS</a></li>
+</ul>
+
+<h2>1 · Hierarchy</h2>
+<dl class="kw">
+<div id="k-hier"><dt>memory hierarchy</dt>
+<dd>Registers → L1/L2/L3 → DRAM → SSD/HDD. Each level down is bigger, slower and cheaper: 1 cycle, ~4, ~10, ~30–60, then DRAM ~60 ns, then storage at µs–ms <span class="cite">Storage p.6</span>.
+<span class="so">The step from DRAM to storage is about 1000× slower. That step is what this lecture is about.</span></dd></div>
+<div id="k-sw"><dt>software-managed</dt>
+<dd>Hardware moves data into the caches for you. Moving data between DRAM and storage is done by software: the OS or your program <span class="cite">Storage p.8</span>.
+<span class="so">Because software does this step, a data system can be designed to do it well or badly.</span></dd></div>
+</dl>
+<div class="table-wrap"><table>
+<tr><th>Level</th><th>Latency</th><th>Capacity</th><th>Unit moved</th></tr>
+<tr><td>Registers</td><td>1 cycle</td><td>16 × 8 B</td><td>4–8 B word</td></tr>
+<tr><td>L1 / L2 / L3</td><td>~4 / ~10 / ~30–60 cy</td><td>32 KB / 256 KB / 10s MB</td><td>64 B cache line</td></tr>
+<tr><td>DRAM</td><td>~100–200 cy (~60 ns)</td><td>GB–TB</td><td>4 KB page</td></tr>
+<tr><td>SSD / HDD</td><td>µs – ms</td><td>TBs</td><td>disk block(s)</td></tr>
+</table></div>
+<p class="cite">Storage pp.6, 7, 10</p>
+
+<div class="quiz" data-answer="1">
+<p class="q">Which data movement is managed by software rather than hardware?</p>
+<button class="opt">Moving lines between the L1, L2 and L3 caches</button>
+<button class="opt">Moving pages between DRAM and the disk</button>
+<button class="opt">Moving words between registers and the L1</button>
+<p class="why">Caches are hardware-managed; DRAM ↔ storage is done by the OS or the application <span class="cite">Storage p.8</span>.</p>
+</div>
+
+<div class="quiz" data-answer="2">
+<p class="q">Roughly how much slower is a DRAM access than an L1 hit?</p>
+<button class="opt">About 2–3 times slower</button>
+<button class="opt">About 1000 times slower</button>
+<button class="opt">About 25–50 times slower</button>
+<p class="why">L1 ≈ 4 cycles, DRAM ≈ 100–200 cycles ⇒ 25–50× <span class="cite">Storage p.6</span>.</p>
+</div>
+
+<h2>2 · HDD: you pay for moving parts</h2>
+<span class="math">I/O time = seek + rotational delay + transfer</span>
+<dl class="kw">
+<div id="k-seek"><dt>seek time <span class="alt">1–20 ms</span></dt>
+<dd>Time for the arm to move the head to the right track <span class="cite">Storage p.20</span>.<span class="so">This is the biggest cost, and it is mechanical.</span></dd></div>
+<div id="k-rot"><dt>rotational delay <span class="alt">0–10 ms</span></dt>
+<dd>Waiting for the block you want to spin under the head <span class="cite">Storage p.20</span>.<span class="so">Seek plus rotational delay together are called <code>a</code>, the cost of reaching a block.</span></dd></div>
+<div id="k-xfer"><dt>transfer time <span class="alt">&lt;1 ms / 4 KB</span></dt>
+<dd>The time to actually read or write the block's bytes <span class="cite">Storage p.20</span>.<span class="so">It is tiny compared with <code>a</code>.</span></dd></div>
+<div id="k-seq"><dt>sequential vs random access</dt>
+<dd><code>n random = n·(a + t)</code>, but <code>n sequential = a + n·t</code> <span class="cite">Storage p.21</span>.
+<span class="so">Random access pays <code>a</code> for every block; sequential pays it once. The same idea comes back with cache lines, prefetching and SIMD.</span></dd></div>
+</dl>
+
+<div class="quiz" data-answer="0">
+<p class="q">Why is sequential access so much faster than random access on an HDD?</p>
+<button class="opt">Seek and rotation are paid once, not for every block.</button>
+<button class="opt">The controller compresses runs of adjacent disk blocks.</button>
+<button class="opt">Sequential blocks are kept in the CPU’s last-level cache.</button>
+<p class="why">After the first block, the head is already on the right track and the next block spins under it. Only the transfer time repeats <span class="cite">Storage p.21</span>.</p>
+</div>
+
+<div class="quiz" data-answer="0">
+<p class="q">For one random 4 KB read on an HDD, which cost dominates?</p>
+<button class="opt">Seek time plus rotational delay</button>
+<button class="opt">Transfer time of the 4 KB block</button>
+<button class="opt">Copying the block into the cache</button>
+<p class="why">a = seek (1–20 ms) + rotation (0–10 ms) dwarfs the &lt;1 ms transfer <span class="cite">Storage p.20</span>.</p>
+</div>
+
+<h2>3 · SSD: no moving parts, but new rules</h2>
+<dl class="kw">
+<div id="k-chan"><dt>channels <span class="alt">internal parallelism</span></dt>
+<dd>An SSD is many flash chips behind a controller, connected in parallel channels. Latency is 10–100s of µs, bandwidth several GB/s <span class="cite">Storage p.22</span>.
+<span class="so">A single request keeps only one channel busy. Full bandwidth needs “10s or more” requests outstanding at once.</span></dd></div>
+<div id="k-ebw"><dt>erase-before-write</dt>
+<dd>Flash cannot be overwritten in place. The erase unit is bigger than the write unit <span class="cite">Storage p.23</span>.<span class="so">Garbage collection and write amplification both come from this rule.</span></dd></div>
+<div id="k-gc"><dt>garbage collection (GC)</dt>
+<dd>To free a block, the SSD copies the pages that are still valid somewhere else, then erases the block <span class="cite">Storage p.23</span>.<span class="so">GC causes extra writes and sudden latency spikes.</span></dd></div>
+<div id="k-wa"><dt>write amplification</dt>
+<dd>= data physically written ÷ data logically written, always ≥ 1 <span class="cite">Storage p.23</span>.<span class="so">A higher value means the SSD wears out faster: “not to burn money”.</span></dd></div>
+<div id="k-ftl"><dt>FTL <span class="alt">flash translation layer</span></dt>
+<dd>Firmware in the SSD that maps logical addresses to physical ones. It hides GC and wear leveling from the host <span class="cite">Storage p.24</span>.<span class="so">To the host, the SSD looks just like an HDD, but the host also can't see or control what it does.</span></dd></div>
+<div id="k-zns"><dt>ZNS <span class="alt">zoned namespaces</span></dt>
+<dd>The device is split into zones. Each zone is written sequentially and reset (erased) before it is rewritten <span class="cite">Storage p.38</span>.<span class="so">There is no GC inside a zone, so write amplification is close to 1 and latency is predictable. The host (DBMS or file system) takes over the FTL's work.</span></dd></div>
+</dl>
+
+<div class="quiz" data-answer="2">
+<p class="q">An application logically writes 1 GB; the SSD physically writes 3 GB. What happened?</p>
+<button class="opt">The OS buffer cache wrote each page three separate times.</button>
+<button class="opt">NVMe split each write into three queue-pair submissions.</button>
+<button class="opt">Garbage collection relocated live data so blocks could be erased.</button>
+<p class="why">Write amplification = 3 GB ÷ 1 GB = 3. The extra writes came from GC copying still-valid pages before an erase <span class="cite">Storage p.23</span>.</p>
+</div>
+
+<div class="quiz" data-answer="1">
+<p class="q">Why can an SSD’s latency spike unpredictably?</p>
+<button class="opt">The disk arm has to seek to a new track</button>
+<button class="opt">A write triggered garbage collection</button>
+<button class="opt">The OS buffer cache was flushed early</button>
+<p class="why">A request stuck behind GC sees a latency spike <span class="cite">Storage p.23</span>.</p>
+</div>
+
+<div class="quiz" data-answer="2">
+<p class="q">What does a ZNS SSD move from the device to the host?</p>
+<button class="opt">The PCIe link and its doorbells</button>
+<button class="opt">The error correction of each cell</button>
+<button class="opt">Part of the FTL’s management work</button>
+<p class="why">With ZNS, FTL logic moves partly into the host (DBMS or file system) <span class="cite">Storage p.38</span>.</p>
+</div>
+
+<h2>4 · Interface and software</h2>
+<dl class="kw">
+<div id="k-iops"><dt>IOPS</dt>
+<dd>I/O operations per second. An HDD manages ~100–200; an NVMe SSD hundreds of thousands to millions <span class="cite">Storage p.27</span>.<span class="so">With an SSD, the bottleneck moves from the device to the software stack.</span></dd></div>
+<div id="k-nvme"><dt>NVMe queue pair</dt>
+<dd>A submission queue (SQ) plus a completion queue (CQ) in host memory, rung with a doorbell register. NVMe allows 64 K queues × 64 K commands, typically one queue pair per core, so no locks are needed. The old AHCI/SATA interface had 1 queue × 32 <span class="cite">Storage pp.27, 29</span>.
+<span class="so">Deep queues are what let NVMe keep all the SSD's channels busy.</span></dd></div>
+<div id="k-little"><dt>Little’s Law</dt>
+<dd><code>L = λ · W</code>, i.e. queue depth = IOPS × latency. Slide example: 1 M IOPS × 10 µs = 10 <span class="cite">Storage p.30</span>.
+<span class="so">It tells you how many requests must be in flight to reach a target throughput.</span></dd></div>
+<div id="k-async"><dt>io_uring / libaio / SPDK</dt>
+<dd>A syscall and an interrupt cost about as much as a ~10 µs device access. Two ways out: an asynchronous kernel API (io_uring with <em>user-space</em> buffers, or libaio), or bypassing the kernel entirely (SPDK: user-space driver, no file system) <span class="cite">Storage pp.31–32</span>.
+<span class="so">Plain synchronous POSIX <code>read()</code> is fine for an HDD, because the HDD has no internal parallelism to use anyway.</span></dd></div>
+</dl>
+
+<div class="quiz" data-answer="1">
+<p class="q">You want 2 M IOPS from an SSD with 10 µs latency. Minimum queue depth?</p>
+<button class="opt">2 requests</button>
+<button class="opt">20 requests</button>
+<button class="opt">200 requests</button>
+<p class="why">2·10⁶ /s × 10·10⁻⁶ s = 20. In practice you need more, because the IOPS are spread over several channels <span class="cite">Storage p.30</span>.</p>
+</div>
+
+<div class="quiz" data-answer="0">
+<p class="q">Why does NVMe typically use one queue pair per core?</p>
+<button class="opt">Cores submit I/O without taking locks</button>
+<button class="opt">Each core gets its own flash channel</button>
+<button class="opt">Interrupts are avoided completely</button>
+<p class="why">Per-core SQ/CQ pairs mean cores submit and complete without locks <span class="cite">Storage p.29</span>.</p>
+</div>
+
+<div class="quiz" data-answer="1">
+<p class="q">An app issues one synchronous 4 KB <code>read()</code> at a time to a fast NVMe SSD. What limits it?</p>
+<button class="opt">The PCIe 5 ×4 link bandwidth</button>
+<button class="opt">Queue depth 1 and per-request latency</button>
+<button class="opt">The SSD’s erase-before-write rule</button>
+<p class="why">At QD 1 you get 1/latency IOPS; the channels sit idle. Little’s Law says you need more requests in flight <span class="cite">Storage pp.22, 30</span>.</p>
+</div>
+
+<h2>5 · Use the keywords: the exam question</h2>
+<p><em>Read 100 MB in 4 KB sequential pages: SATA-II HDD vs. PCIe 5 ×4 SSD</em> <span class="cite">Storage p.61</span>. Try it on paper first, then open each step to check.</p>
+<details><summary>Step 1: number of pages</summary><p>100 MB ÷ 4 KB = <strong>25 600 pages</strong>.</p></details>
+<details><summary>Step 2: HDD, sequential access</summary>
+<p>You pay <code>a</code> ≈ 10 ms once. After that the disk streams at the platter's rate (“100s of MB/s”, <span class="cite">Storage p.19</span>). SATA-II's link (~300 MB/s) is not the bottleneck; the platter is. At ~150 MB/s: ≈ 0.67 s + 10 ms ⇒ <strong>≈ 0.7 s</strong>.
+If the same pages were read in random order instead: 25 600 × ~10 ms ≈ <strong>256 s</strong>.</p></details>
+<details><summary>Step 3: SSD, best case</summary><p>PCIe 5 ×4 ≈ 14 GB/s <span class="cite">Storage p.30</span>, so ≈ <strong>7 ms</strong>.</p></details>
+<details><summary>Step 4: catch: the best case needs a deep queue</summary>
+<p>With one synchronous <code>read()</code> at a time (queue depth 1): 25 600 × 10 µs ≈ <strong>256 ms</strong>.
+To reach 14 GB/s you need 14·10⁹ ÷ 4096 ≈ 3.4 M IOPS. Little's Law then gives 3.4·10⁶ × 10·10⁻⁶ ≈ <strong>34 requests in flight</strong>. That is why io_uring or SPDK matter here.</p></details>
+
+<div class="key"><strong>Exam answer pattern</strong>
+Formula → plug in the numbers with units → result → name the <em>bottleneck</em> (platter, PCIe link, queue depth, or software stack) → one sentence on what would change it.</div>
+
+<h2>6 · Keyword recall drill</h2>
+<p>Cover the page. For each keyword, say a one-sentence definition <em>and</em> why it matters, then open it to check. Do this again tomorrow and in three days.</p>
+<div class="recall">
+<details><summary>memory hierarchy</summary>Each level down is bigger, slower and cheaper; the DRAM-to-storage step is about 1000× slower.</details>
+<details><summary>software-managed</summary>DRAM ↔ storage transfers are done by the OS or the app, not by hardware.</details>
+<details><summary>seek time</summary>Moving the arm to the right track, 1–20 ms.</details>
+<details><summary>rotational delay</summary>Waiting for the block to spin under the head, 0–10 ms.</details>
+<details><summary>transfer time</summary>Reading the block's bytes, &lt;1 ms per 4 KB.</details>
+<details><summary>sequential vs random</summary>Sequential: a + n·t. Random: n·(a + t).</details>
+<details><summary>channels</summary>The SSD's parallel flash chips; you need many outstanding requests to use them all.</details>
+<details><summary>erase-before-write</summary>Flash can't be overwritten in place, and the erase unit is bigger than the write unit.</details>
+<details><summary>garbage collection</summary>Copy the still-valid pages out, then erase the block. Causes latency spikes.</details>
+<details><summary>write amplification</summary>Physical ÷ logical bytes written, ≥ 1.</details>
+<details><summary>FTL</summary>Maps logical to physical addresses and hides GC and wear leveling from the host.</details>
+<details><summary>ZNS</summary>Zones written sequentially and reset before reuse: no GC, WA ≈ 1, and the host does the FTL's work.</details>
+<details><summary>IOPS</summary>HDD ~100–200, NVMe ~1 M. With an SSD the software becomes the bottleneck.</details>
+<details><summary>NVMe queue pair</summary>SQ + CQ with a doorbell; 64 K × 64 K; one pair per core, no locks.</details>
+<details><summary>Little’s Law</summary>Queue depth = IOPS × latency.</details>
+<details><summary>io_uring / SPDK</summary>Async kernel API with user-space buffers / kernel bypass.</details>
+</div>
+
+<h2>7 · True / False</h2>
+<p>Click True or False. The explanation appears after you answer.</p>
+<div class="qbank">
+<div class="item quiz" data-answer="1"><p class="q"><span class="qtype tf">T / F</span>With the arrival of flash, Linux retired the block device interface.</p>
+<button class="opt">True</button><button class="opt">False</button>
+<p class="why">False. SSDs still offer an HDD-compatible block API through the FTL, so the two are interchangeable as generic block I/O <span class="cite">Storage pp.22, 25, 61</span>.</p></div>
+<div class="item quiz" data-answer="1"><p class="q"><span class="qtype tf">T / F</span>io_uring allows async disk access with buffers located in kernel space.</p>
+<button class="opt">True</button><button class="opt">False</button>
+<p class="why">False. io_uring is async with <em>user-space</em> buffers <span class="cite">Storage pp.32, 61</span>.</p></div>
+<div class="item quiz" data-answer="1"><p class="q"><span class="qtype tf">T / F</span>AHCI/SATA supports thousands of queues, just like NVMe.</p>
+<button class="opt">True</button><button class="opt">False</button>
+<p class="why">False. AHCI has 1 queue of 32 commands; NVMe has 64 K queues of 64 K commands each <span class="cite">Storage pp.27, 29</span>.</p></div>
+<div class="item quiz" data-answer="0"><p class="q"><span class="qtype tf">T / F</span>For an HDD, synchronous POSIX I/O is acceptable because the disk has no real internal parallelism.</p>
+<button class="opt">True</button><button class="opt">False</button>
+<p class="why">True <span class="cite">Storage p.32</span>.</p></div>
+<div class="item quiz" data-answer="1"><p class="q"><span class="qtype tf">T / F</span>Every <code>read()</code> of a file goes to the disk.</p>
+<button class="opt">True</button><button class="opt">False</button>
+<p class="why">False. The buffer cache in DRAM serves repeated reads <span class="cite">Storage p.53</span>.</p></div>
+<div class="item quiz" data-answer="0"><p class="q"><span class="qtype tf">T / F</span>In a ZNS SSD, a zone must be written sequentially and reset before it can be rewritten.</p>
+<button class="opt">True</button><button class="opt">False</button>
+<p class="why">True <span class="cite">Storage p.38</span>.</p></div>
+<div class="item quiz" data-answer="1"><p class="q"><span class="qtype tf">T / F</span>Parquet is a text-based, row-oriented format like CSV.</p>
+<button class="opt">True</button><button class="opt">False</button>
+<p class="why">False. Parquet is binary, columnar and page-based, with rich metadata <span class="cite">Storage p.57</span>.</p></div>
+<div class="item quiz" data-answer="0"><p class="q"><span class="qtype tf">T / F</span>With NVMe SSDs, the OS software stack can become the bottleneck instead of the device.</p>
+<button class="opt">True</button><button class="opt">False</button>
+<p class="why">True. The device takes ~10 µs, and a syscall plus interrupt path can cost as much or more <span class="cite">Storage pp.27, 31</span>.</p></div>
+<div class="item quiz" data-answer="1"><p class="q"><span class="qtype tf">T / F</span>A bigger file-system block size is always better.</p>
+<button class="opt">True</button><button class="opt">False</button>
+<p class="why">False. Too big wastes space on small files; too small means too many blocks to track. 4 KB is typical <span class="cite">Storage p.48</span>.</p></div>
+</div>
+
+<h2>8 · What is …? <span class="cite">no options: answer aloud, then reveal</span></h2>
+<div class="qbank">
+<div class="item"><p><span class="qtype">What is</span>an inode, and what does the inode table do?</p>
+<details><summary>Show answer</summary><p>An index node holding a file's metadata. The inode table maps an inode number to its inode <span class="cite">Storage p.49</span>.</p></details></div>
+<div class="item"><p><span class="qtype">What is</span>the superblock?</p>
+<details><summary>Show answer</summary><p>Metadata about the file-system instance: bitmap size, number of inodes and file blocks, offsets of the components, file-system type <span class="cite">Storage p.51</span>.</p></details></div>
+<div class="item"><p><span class="qtype">What is</span>the free-block bitmap?</p>
+<details><summary>Show answer</summary><p>One bit per block, 1 = occupied and 0 = free. Some file systems use a B-tree instead <span class="cite">Storage p.50</span>.</p></details></div>
+<div class="item"><p><span class="qtype">What is</span>the virtual file system (VFS)?</p>
+<details><summary>Show answer</summary><p>The OS layer that gives one common interface over different file systems (EXT*, ZFS, NFS…) <span class="cite">Storage p.43</span>.</p></details></div>
+<div class="item"><p><span class="qtype">What is</span>a doorbell register in NVMe?</p>
+<details><summary>Show answer</summary><p>A memory-mapped register that is written to signal new entries in a submission or completion queue <span class="cite">Storage p.29</span>.</p></details></div>
+<div class="item"><p><span class="qtype">What is</span>NVMe-oF?</p>
+<details><summary>Show answer</summary><p>The NVMe protocol carried over a network (RDMA, TCP) instead of PCIe. It enables disaggregated flash pools (JBOF) <span class="cite">Storage p.35</span>.</p></details></div>
+<div class="item"><p><span class="qtype">What is</span>CXL, and what is a Type-3 device?</p>
+<details><summary>Show answer</summary><p>Compute Express Link, a cache-coherent interconnect over the PCIe physical layer. Type-3 devices are memory expanders <span class="cite">Storage p.37</span>.</p></details></div>
+<div class="item"><p><span class="qtype">What is</span>computational storage?</p>
+<details><summary>Show answer</summary><p>Running filters, scans or decompression inside the storage device, so less data crosses PCIe. Example: KV-SSDs. Caveats: programmability, vendor lock-in <span class="cite">Storage p.39</span>.</p></details></div>
+<div class="item"><p><span class="qtype">What is</span>wear leveling?</p>
+<details><summary>Show answer</summary><p>Spreading writes over the flash cells, because cells and blocks wear out and become faulty over time <span class="cite">Storage p.23</span>.</p></details></div>
+<div class="item"><p><span class="qtype">What is</span>the difference between Parquet and Arrow?</p>
+<details><summary>Show answer</summary><p>Both are columnar. Parquet is a storage format focused on compression; Arrow is an in-memory format focused on access speed. Loading means decoding and decompressing Parquet into Arrow <span class="cite">Storage p.58</span>.</p></details></div>
+</div>
+
+<h2>9 · Calculations</h2>
+<div class="qbank">
+<div class="item"><p><span class="qtype calc">Compute</span>An HDD has 6 ms seek, 4 ms rotation and 0.1 ms transfer per 4 KB block. How long do 50 random reads take, and 50 sequential reads? What is the speedup?</p>
+<details><summary>Show solution</summary><p>Random: 50 × (10 + 0.1) = <strong>505 ms</strong>. Sequential: 10 + 50 × 0.1 = <strong>15 ms</strong>. Speedup ≈ <strong>34×</strong> <span class="cite">Storage p.21</span>.</p></details></div>
+<div class="item"><p><span class="qtype calc">Compute</span>An SSD has 20 µs latency, and you want 500 K IOPS. What queue depth do you need?</p>
+<details><summary>Show solution</summary><p>Little's Law: 5·10⁵ × 2·10⁻⁵ = <strong>10</strong> requests in flight <span class="cite">Storage p.30</span>.</p></details></div>
+<div class="item"><p><span class="qtype calc">Compute</span>An SSD is rated for 600 TB written. The application writes 2 TB/day logically, and the write amplification is 2.5. How many days until the SSD is worn out?</p>
+<details><summary>Show solution</summary><p>Physical = 2 × 2.5 = 5 TB/day ⇒ 600 / 5 = <strong>120 days</strong>. With WA = 1 (e.g. ZNS) it would be 300 days <span class="cite">Storage pp.23, 38</span>.</p></details></div>
+<div class="item"><p><span class="qtype calc">Compute</span>10 GB of data is stored on an HDD (150 MB/s). Parsing CSV runs at 50 MB/s; Parquet at 500 MB/s per core. Ignoring compression, where is the bottleneck in each case?</p>
+<details><summary>Show solution</summary><p>Reading: 10 000 / 150 ≈ 67 s. CSV parsing: 10 000 / 50 = <strong>200 s</strong> ⇒ CPU-bound on parsing. Parquet: 20 s ⇒ the <strong>disk</strong> (67 s) is the bottleneck. (In reality Parquet is also smaller on disk because it is binary and compressed.) <span class="cite">Storage pp.56–57</span></p></details></div>
+<div class="item"><p><span class="qtype calc">Compute</span>On an SSD with 10 µs latency, at queue depth 1, what bandwidth do you get with 4 KB requests?</p>
+<details><summary>Show solution</summary><p>1 / 10 µs = 100 K IOPS × 4 KB ≈ <strong>400 MB/s</strong>, which is a small fraction of the 14 GB/s PCIe 5 ×4 link <span class="cite">Storage p.30</span>.</p></details></div>
+</div>
+
+<h2>10 · Exam-style questions (written)</h2>
+<ol class="examq">
+<li><strong>Explain why.</strong> Why can an NVMe SSD at queue depth 1 deliver only a fraction of its rated bandwidth?</li>
+<li><strong>Compare.</strong> FTL-managed SSD vs ZNS SSD: who does garbage collection, and what happens to write amplification and to latency?</li>
+<li><strong>Argue.</strong> Do applications require fundamentally different interfaces for accessing local and remote storage? Why or why not <span class="cite">Storage p.61</span>?</li>
+<li><strong>Explain.</strong> Give two reasons a DBMS might bypass the OS file system, and one cost of doing so <span class="cite">Storage p.33</span>.</li>
+</ol>
+<p>Bring your answers to the chat and I'll grade them the way an examiner would.</p>
+
+<h2>Read next</h2>
+<p><a href="https://pages.cs.wisc.edu/~remzi/OSTEP/file-disks.pdf">OSTEP ch. 37, Hard Disk Drives</a> · <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/file-ssd.pdf">OSTEP ch. 44, Flash-based SSDs</a> · the <a href="../cheat-sheets/l01-storage.html">L01 cheat sheet</a> (also covers file systems and CSV vs Parquet).</p>
+
+<footer>Something unclear? Ask me in chat. Say “I don’t get X” and I’ll explain it again, starting from what X builds on.</footer>
+</main>
+<script src="../assets/quiz.js"></script>
+</body>
+</html>

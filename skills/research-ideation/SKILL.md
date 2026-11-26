@@ -1,6 +1,6 @@
 ---
 name: research-ideation
-description: "End-to-end research ideation pipeline: literature grounding → multi-track idea generation (3 personas: innovator/pragmatist/critic) → iterative refinement → ELO tournament ranking → update evo-memory (IDE) → user selects direction → expand into manuscript-quality proposal. Use when: user wants to find a research direction, brainstorm ideas, evaluate idea novelty, design a novel solution, rank/compare research ideas, or generate a research proposal. Do NOT use for finding/searching/reading papers (use paper-navigator), literature survey reports (use research-survey), or planning a paper (use paper-planning)."
+description: "[role: research.ideate] End-to-end research ideation pipeline: literature grounding → multi-track idea generation (3 personas: innovator/pragmatist/critic) → iterative refinement → ELO tournament ranking → update [role: research.memory] (IDE) → user selects direction → expand into manuscript-quality proposal. Use when: user wants to find a research direction, brainstorm ideas, evaluate idea novelty, design a novel solution, rank/compare research ideas, or generate a research proposal. Do NOT use for finding/searching/reading papers (use [role: research.find]), literature survey reports (use [role: research.survey]), or planning a paper (use paper-planning)."
 allowed-tools: "write_file edit_file read_file think_tool execute"
 metadata:
   author: EvoScientist
@@ -13,11 +13,11 @@ metadata:
 From research goal to ranked ideas and a detailed proposal.
 
 ```
-Step 0: Load evo-memory (M_I)
+Step 0: Load [role: research.memory] (M_I)
     ↓
 Step 1: Define Goal
     ↓
-Step 2: Literature Grounding (MUST use paper-navigator scripts)
+Step 2: Literature Grounding (MUST use [role: research.find] scripts)
     ↓
 Step 3: Generate Ideas (3 directions × 3 personas)
     ↓
@@ -25,7 +25,7 @@ Step 4: Refine Ideas (3 tracks × N iterations)
     ↓
 Step 5: ELO Tournament → Present Top-3 to User
     ↓
-Step 6: Update evo-memory (IDE)
+Step 6: Update [role: research.memory] (IDE)
     ↓
 User Selects
     ↓
@@ -43,17 +43,17 @@ Step 8: Validate and Iterate
 
 ## When NOT to Use
 
-- **Finding/reading papers** → use `paper-navigator`
-- **Literature survey report** → use `research-survey`
+- **Finding/reading papers** → use `[role: research.find]`
+- **Literature survey report** → use `[role: research.survey]`
 - **Planning a paper (story design, experiment plan)** → use `paper-planning`
 
 ---
 
-## Step 0: Load Prior Knowledge from evo-memory
+## Step 0: Load Prior Knowledge from [role: research.memory]
 
 **Before any ideation begins**, load Ideation Memory (M_I) from prior research cycles:
 
-1. Read M_I at `/memory/ideation-memory.md` (refer to `evo-memory` skill)
+1. Read M_I at `~/.claude/kb-memory/ideation-memory.md` (refer to `[role: research.memory]` skill)
 2. Select the **top-2 entries** (k_I=2) most relevant to the user's current goal by comparing each entry's Summary and Retrieval Tags against the goal
 3. **Feasible directions** from prior cycles → use as seeds in Step 3 (incorporate as candidate research directions alongside new ones; Step 3 still selects exactly 3 directions)
 4. **Unsuccessful directions** marked as fundamental failures → use during idea pruning in Step 4 (prune any idea that matches a fundamental failure pattern)
@@ -67,11 +67,11 @@ Start with a goal that has both scientific and practical value. Ambitious enough
 
 Ask: "What is the ultimate form of this research direction? What would the world look like if this problem were fully solved?"
 
-## Step 2: Literature Grounding (via paper-navigator)
+## Step 2: Literature Grounding (via [role: research.find])
 
-**Invoke `paper-navigator`** (Workflow 9: Ideation Support) to collect 30-50 relevant papers. Do NOT skip this step or substitute with general knowledge — ideas must be grounded in real papers.
+**Invoke `[role: research.find]`** (Workflow 9: Ideation Support) to collect 30-50 relevant papers. Do NOT skip this step or substitute with general knowledge — ideas must be grounded in real papers.
 
-**CRITICAL: All paper discovery in this step MUST use the `paper-navigator` skill and its scripts (scholar_search, citation_traverse, arxiv_monitor, recommend, etc.). Using WebSearch, WebFetch, or any generic web search tool for finding papers is PROHIBITED.** Generic web search returns blog posts, news articles, and low-quality results — only paper-navigator provides access to Semantic Scholar, arXiv, citation graph traversal, and academic recommendations needed for rigorous literature grounding.
+**CRITICAL: All paper discovery in this step MUST use the `[role: research.find]` skill and its scripts (scholar_search, citation_traverse, arxiv_monitor, recommend, etc.). Using WebSearch, WebFetch, or any generic web search tool for finding papers is PROHIBITED.** Generic web search returns blog posts, news articles, and low-quality results — only [role: research.find] provides access to Semantic Scholar, arXiv, citation graph traversal, and academic recommendations needed for rigorous literature grounding.
 
 ### Build Challenge-Insight Tree
 
@@ -86,11 +86,11 @@ From the collected papers, construct a **challenge-insight tree** — a many-to-
 - Insights not yet applied to a challenge → **cross-domain transfer opportunity** (candidate for Step 4)
 - Challenges with many insights → well-studied, avoid unless you have a fundamentally new angle
 
-Also generate a condensed **literature review synthesis** as context for idea generation (for full surveys use `research-survey`).
+Also generate a condensed **literature review synthesis** as context for idea generation (for full surveys use `[role: research.survey]`).
 
 See `references/literature-tree.md` for construction methodology.
 
-**Execution rule**: Do NOT generate ideas without real paper grounding. The tree must reference actual papers with titles, authors, and findings. Paper search MUST go through `paper-navigator` — never use WebSearch/WebFetch as a shortcut.
+**Execution rule**: Do NOT generate ideas without real paper grounding. The tree must reference actual papers with titles, authors, and findings. Paper search MUST go through `[role: research.find]` — never use WebSearch/WebFetch as a shortcut.
 
 ## Step 3: Generate Ideas
 
@@ -222,18 +222,18 @@ key ablations identified during refinement]
 Which idea would you like to develop into a full proposal? (1/2/3, or combine elements)
 ```
 
-**After presenting top-3, trigger Step 6 (evo-memory IDE) before finalizing user selection.** The user may:
+**After presenting top-3, trigger Step 6 ([role: research.memory] IDE) before finalizing user selection.** The user may:
 - Pick one of the top-3
 - Ask to combine elements from multiple ideas
 - Request modifications before expanding
 - Ask to regenerate with different constraints
 
-## Step 6: Update evo-memory
+## Step 6: Update [role: research.memory]
 
-After the tournament and before the user selects, trigger `evo-memory` IDE (Idea Direction Evolution):
+After the tournament and before the user selects, trigger `[role: research.memory]` IDE (Idea Direction Evolution):
 
 1. Save the top-3 directions to `/direction-summary.md`
-2. Trigger IDE protocol via `evo-memory` skill with the direction summary
+2. Trigger IDE protocol via `[role: research.memory]` skill with the direction summary
 3. Each top direction is added to M_I as a feasible direction with its ELO score
 4. Any ideas that were clearly unworkable during refinement (Step 4) are recorded as unsuccessful directions with failure classification (fundamental vs implementation)
 
@@ -282,21 +282,21 @@ Run experiments on representative data. If the approach fails, return to Step 3 
 
 ---
 
-## Dependency: paper-navigator
+## Dependency: [role: research.find]
 
-All paper discovery goes through `paper-navigator`. This skill does not search for papers itself. **Using WebSearch, WebFetch, or any generic search tool to find papers is PROHIBITED** — these tools cannot access Semantic Scholar, citation graphs, or academic recommendation systems. Always use `paper-navigator` and its scripts (scholar_search, citation_traverse, arxiv_monitor, recommend, trending, etc.) for all paper discovery needs in Steps 2, 3, and 4.
+All paper discovery goes through `[role: research.find]`. This skill does not search for papers itself. **Using WebSearch, WebFetch, or any generic search tool to find papers is PROHIBITED** — these tools cannot access Semantic Scholar, citation graphs, or academic recommendation systems. Always use `[role: research.find]` and its scripts (scholar_search, citation_traverse, arxiv_monitor, recommend, trending, etc.) for all paper discovery needs in Steps 2, 3, and 4.
 
-| Step | Requires paper-navigator for |
+| Step | Requires [role: research.find] for |
 |------|------------------------------|
 | Step 2 | Collect 30-50 relevant papers for literature tree construction |
 | Step 3 | Verify no well-established solution exists for selected problems |
 | Step 4 | Cross-domain search for transferable techniques during refinement |
 
-## evo-memory Integration
+## [role: research.memory] Integration
 
 | When | Action | Details |
 |------|--------|---------|
-| **Step 0** (before ideation) | **Read M_I** | Load `/memory/ideation-memory.md`, select top-2 relevant entries, use feasible directions as seeds, avoid fundamental failures |
+| **Step 0** (before ideation) | **Read M_I** | Load `~/.claude/kb-memory/ideation-memory.md`, select top-2 relevant entries, use feasible directions as seeds, avoid fundamental failures |
 | **Step 6** (after tournament) | **Write M_I via IDE** | Save top-3 directions with ELO scores as feasible; save dead-end ideas as unsuccessful with failure classification |
 
 ## Handoff
@@ -305,7 +305,7 @@ All paper discovery goes through `paper-navigator`. This skill does not search f
 |----|------|---------------|
 | `paper-planning` | Proposal complete (Step 7) → plan paper structure | `/research-proposal.md`, `/direction-summary.md` |
 | `experiment-pipeline` | Proposal complete (Step 7) → start experiments | `/research-proposal.md`, `/direction-summary.md` |
-| `evo-memory` | After tournament (Step 6) → update Ideation Memory via IDE protocol | `/direction-summary.md` |
+| `[role: research.memory]` | After tournament (Step 6) → update Ideation Memory via IDE protocol | `/direction-summary.md` |
 
 ---
 

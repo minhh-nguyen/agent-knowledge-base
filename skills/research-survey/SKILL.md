@@ -1,6 +1,6 @@
 ---
 name: research-survey
-description: "Generates structured literature survey reports from collected papers using a multi-stage pipeline: outline generation (query-type adaptive) → draft survey → section-by-section expansion → summary section refinement → final assembly. Produces survey-grade output with taxonomy-based method analysis, LaTeX formalizations, comparative tables, and dense citations. Use when: user wants a literature review, research survey, field overview, or systematic synthesis of multiple papers. Do NOT use for finding/searching papers (use paper-navigator), generating research ideas (use research-ideation), or writing a paper's Related Work section (use paper-writing)."
+description: "[role: research.survey] Generates structured literature survey reports from collected papers using a multi-stage pipeline: outline generation (query-type adaptive) → draft survey → section-by-section expansion → summary section refinement → final assembly. Produces survey-grade output with taxonomy-based method analysis, LaTeX formalizations, comparative tables, and dense citations. Use when: user wants a literature review, research survey, field overview, or systematic synthesis of multiple papers. Do NOT use for finding/searching papers (use [role: research.find]), generating research ideas (use [role: research.ideate]), or writing a paper's Related Work section (use paper-writing)."
 allowed-tools: "write_file edit_file read_file think_tool"
 metadata:
   author: EvoScientist
@@ -10,10 +10,10 @@ metadata:
 
 # Research Survey
 
-Generates high-quality, survey-grade literature reviews from papers collected by `paper-navigator`.
+Generates high-quality, survey-grade literature reviews from papers collected by `[role: research.find]`.
 
 ```
-paper-navigator (collect 30-120 papers)
+[role: research.find] (collect 30-120 papers)
     ↓
 Stage 1: Generate Outline (query-type adaptive structure)
     ↓
@@ -36,15 +36,15 @@ Stage 6: Assemble + References
 
 ## When NOT to Use
 
-- **Finding papers** → use `paper-navigator` first, then come here
-- **Generating research ideas** → use `research-ideation`
+- **Finding papers** → use `[role: research.find]` first, then come here
+- **Generating research ideas** → use `[role: research.ideate]`
 - **Writing a Related Work section for a paper** → use `paper-writing`
 
-## Dependency: paper-navigator
+## Dependency: [role: research.find]
 
-This skill requires papers as input. If the user hasn't provided papers, **first invoke `paper-navigator`** (Workflow 1, target 30-120 papers) to collect them.
+This skill requires papers as input. If the user hasn't provided papers, **first invoke `[role: research.find]`** (Workflow 1, target 30-120 papers) to collect them.
 
-**CRITICAL: All paper discovery MUST use the `paper-navigator` skill and its scripts (scholar_search, citation_traverse, arxiv_monitor, recommend, etc.). Using WebSearch, WebFetch, or any generic web search tool for finding papers is PROHIBITED.** Generic web search cannot access Semantic Scholar, citation graphs, or academic recommendation systems. Only `paper-navigator` provides the academic search infrastructure needed for survey-quality literature collection.
+**CRITICAL: All paper discovery MUST use the `[role: research.find]` skill and its scripts (scholar_search, citation_traverse, arxiv_monitor, recommend, etc.). Using WebSearch, WebFetch, or any generic web search tool for finding papers is PROHIBITED.** Generic web search cannot access Semantic Scholar, citation graphs, or academic recommendation systems. Only `[role: research.find]` provides the academic search infrastructure needed for survey-quality literature collection.
 
 ---
 
@@ -204,7 +204,7 @@ Save to `/artifacts/survey-{topic}-{date}.md`.
 
 | From → To | When |
 |-----------|------|
-| `paper-navigator` → here | Papers collected, user wants synthesis |
-| Here → `research-ideation` | Survey reveals research gaps worth pursuing |
+| `[role: research.find]` → here | Papers collected, user wants synthesis |
+| Here → `[role: research.ideate]` | Survey reveals research gaps worth pursuing |
 | Here → `paper-writing` | Survey informs Related Work section of a paper |
 | Here → `paper-planning` | Survey provides literature context for story design |

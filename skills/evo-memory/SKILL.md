@@ -1,6 +1,6 @@
 ---
 name: evo-memory
-description: "Manages persistent research memory across ideation and experimentation cycles. Maintains two stores: Ideation Memory M_I (feasible/unsuccessful directions) and Experimentation Memory M_E (reusable strategies for data processing, model training, architecture, debugging). Three evolution mechanisms: IDE (after research-ideation), IVE (after experiment failure — classifies failures as implementation vs fundamental), ESE (after experiment success — extracts reusable strategies). Use when: updating memory after completing research-ideation cycles or experiment pipelines, classifying why a method failed (implementation vs fundamental failure), starting a new research cycle needing prior knowledge, user mentions 'update memory', 'classify failure', 'what worked before', 'research history', 'evolution'. Do NOT use for running experiments (use experiment-pipeline), debugging experiment code (use experiment-craft), or generating ideas (use research-ideation)."
+description: "[role: research.memory] Manages persistent research memory across ideation and experimentation cycles. Maintains two stores: Ideation Memory M_I (feasible/unsuccessful directions) and Experimentation Memory M_E (reusable strategies for data processing, model training, architecture, debugging). Three evolution mechanisms: IDE (after [role: research.ideate]), IVE (after experiment failure — classifies failures as implementation vs fundamental), ESE (after experiment success — extracts reusable strategies). Use when: updating memory after completing [role: research.ideate] cycles or experiment pipelines, classifying why a method failed (implementation vs fundamental failure), starting a new research cycle needing prior knowledge, user mentions 'update memory', 'classify failure', 'what worked before', 'research history', 'evolution'. Do NOT use for running experiments (use experiment-pipeline), debugging experiment code (use experiment-craft), or generating ideas (use [role: research.ideate])."
 allowed-tools: "write_file edit_file read_file think_tool"
 metadata:
   author: EvoScientist
@@ -14,7 +14,7 @@ A persistent learning layer that accumulates research knowledge across ideation 
 
 ## When to Use This Skill
 
-- User has completed an `research-ideation` and needs to update Ideation Memory
+- User has completed an `[role: research.ideate]` and needs to update Ideation Memory
 - User has completed (or failed) an `experiment-pipeline` and needs to update memory
 - User is starting a new research cycle and wants to load prior knowledge
 - User asks about research memory, learned patterns, or cross-cycle knowledge
@@ -30,7 +30,7 @@ Evo-memory solves this by maintaining two structured memory stores and three evo
 
 ### Ideation Memory (M_I)
 
-**Location**: `/memory/ideation-memory.md`
+**Location**: `~/.claude/kb-memory/ideation-memory.md`
 
 Records what you've learned about research DIRECTIONS — which areas are promising and which are dead ends.
 
@@ -43,13 +43,13 @@ Records what you've learned about research DIRECTIONS — which areas are promis
 
 **Each entry records**: Direction name, one-sentence summary, evidence (which cycle, what results), classification (feasible / implementation failure / fundamental failure), date.
 
-**How it's used**: `research-ideation` reads M_I at the start of Step 0. The paper uses embedding-based retrieval with cosine similarity, selecting the top-k_I most similar items (k_I=2 in experiments). Feasible directions from prior cycles are offered as candidate research directions in Step 3. Unsuccessful directions are used during refinement in Step 4 — ideas matching a fundamental failure are pruned; implementation failures may be retried.
+**How it's used**: `[role: research.ideate]` reads M_I at the start of Step 0. The paper uses embedding-based retrieval with cosine similarity, selecting the top-k_I most similar items (k_I=2 in experiments). Feasible directions from prior cycles are offered as candidate research directions in Step 3. Unsuccessful directions are used during refinement in Step 4 — ideas matching a fundamental failure are pruned; implementation failures may be retried.
 
 See [assets/ideation-memory-template.md](assets/ideation-memory-template.md) for the template.
 
 ### Experimentation Memory (M_E)
 
-**Location**: `/memory/experiment-memory.md`
+**Location**: `~/.claude/kb-memory/experiment-memory.md`
 
 Records what you've learned about research STRATEGIES — which technical approaches and configurations work in practice.
 
@@ -74,14 +74,14 @@ See [assets/experiment-memory-template.md](assets/experiment-memory-template.md)
 
 ### IDE — Idea Direction Evolution
 
-**Trigger**: After `research-ideation` completes Step 5 and saves `/direction-summary.md` for Step 6.
+**Trigger**: After `[role: research.ideate]` completes Step 5 and saves `/direction-summary.md` for Step 6.
 
 **Purpose**: Extract promising research directions from the tournament results and store them in M_I for future cycles.
 
 **Paper Prompt**: Use the IDE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary extraction mechanism. Fill in `{user_goal}` from the original research direction and `{top_ranked_ideas}` from `/direction-summary.md`, then reason through the prompt step by step. The output (DIRECTION SUMMARY with Title, Core idea, Why promising, Requirements, Validation plan) feeds directly into the steps below.
 
 **Process**:
-1. Read current M_I from `/memory/ideation-memory.md`
+1. Read current M_I from `~/.claude/kb-memory/ideation-memory.md`
 2. Run the paper's IDE prompt (see above), reasoning through it step by step
 3. For each direction in the prompt output, abstract it to a reusable level. "Attention-based feature selection for 3D point clouds" becomes "Cross-domain attention mechanisms for sparse data" — specific enough to be useful, abstract enough to transfer.
 4. Check M_I for existing entries on similar directions. Update if exists, append if new.
@@ -147,27 +147,27 @@ See [references/ese-protocol.md](references/ese-protocol.md) for the full proces
 
 ## Reading Memory at Cycle Start
 
-When starting a new research cycle (loading `research-ideation` or `experiment-pipeline`):
+When starting a new research cycle (loading `[role: research.ideate]` or `experiment-pipeline`):
 
-1. Read `/memory/ideation-memory.md` and `/memory/experiment-memory.md`
+1. Read `~/.claude/kb-memory/ideation-memory.md` and `~/.claude/kb-memory/experiment-memory.md`
 2. Summarize relevant entries to inject into the current context
-3. For `research-ideation`: Offer M_I feasible directions as candidate research directions in Step 3. Use M_I unsuccessful directions (fundamental failures only) to prune ideas during Step 4 refinement.
+3. For `[role: research.ideate]`: Offer M_I feasible directions as candidate research directions in Step 3. Use M_I unsuccessful directions (fundamental failures only) to prune ideas during Step 4 refinement.
 4. For `experiment-pipeline`: Use M_E strategies to inform hyperparameter ranges, training schedules, and debugging approaches.
 
 **Don't blindly apply old strategies.** Context matters. A strategy that worked for image classification may not work for text generation. Always check the recorded context against the current problem.
 
 **Retrieval method**: The paper uses embedding-based cosine similarity for retrieval. In practice, perform this semantic comparison by reading each entry's Summary/Context and Retrieval Tags, then judging relevance to the current goal. If automated embedding tools are available in your environment, use those instead for larger memory stores.
 
-### For research-ideation (inject M_I)
+### For [role: research.ideate] (inject M_I)
 
-1. Read `/memory/ideation-memory.md`
+1. Read `~/.claude/kb-memory/ideation-memory.md`
 2. Select the top-k_I=2 entries most relevant to the user's current goal. Compare the user's goal statement against each entry's Summary and Retrieval Tags for semantic similarity.
 3. For each selected feasible direction: offer it as a candidate when Step 3 chooses its 3 research directions (the total stays at 3). Example injection: *"Prior cycle found 'Modality-aware model compression' promising (Elo 1500, cycle 3). Consider it as one of the 3 research directions alongside new ones."*
 4. For each unsuccessful direction with `Failure Classification: Fundamental`: flag for pruning. Example injection: *"Prior cycle confirmed 'Autoregressive real-time video generation' is a fundamental failure (O(n) latency). Prune any idea matching this pattern."*
 
 ### For experiment-pipeline (inject M_E)
 
-1. Read `/memory/experiment-memory.md`
+1. Read `~/.claude/kb-memory/experiment-memory.md`
 2. Select the top-k_E=1 entry most relevant to the current experiment domain. Compare the experiment's problem description against each entry's Context and Category.
 3. Inject the selected strategy as context for all stages. Example injection: *"Prior cycle found 'Cosine annealing with warm restarts (T_0=10, T_mult=2)' effective for transformer fine-tuning on small datasets (confirmed, 2 cycles). Apply in Stage 2 tuning as the default schedule."*
 4. Also scan the Debugging Strategies section for any entries matching the current domain — these can save significant time when diagnosing failures.
@@ -188,7 +188,7 @@ Each memory file maintains a `Last Updated` field and a cycle counter. When entr
 
 ### Evolution Reports
 
-After each evolution mechanism triggers, generate a report saved to `/memory/evolution-reports/cycle_N_type.md`:
+After each evolution mechanism triggers, generate a report saved to `~/.claude/kb-memory/evolution-reports/cycle_N_type.md`:
 - What changed (added, updated, or removed entries)
 - Why (evidence from the triggering cycle)
 - Expected impact on future cycles
@@ -217,17 +217,17 @@ How evo-memory connects to other skills in the pipeline:
 
 | Trigger | Source Skill | Mechanism | Memory Updated |
 |---------|-------------|-----------|----------------|
-| Tournament completed | `research-ideation` | IDE | M_I (feasible directions) |
+| Tournament completed | `[role: research.ideate]` | IDE | M_I (feasible directions) |
 | No executable code within budget, or method underperforms baseline | `experiment-pipeline` | IVE | M_I (unsuccessful directions) |
 | Pipeline succeeded | `experiment-pipeline` | ESE | M_E (data processing + model training; optionally architecture + debugging) |
-| New cycle starts | `research-ideation` | Read (top-k_I=2) | M_I read for seeding/pruning |
+| New cycle starts | `[role: research.ideate]` | Read (top-k_I=2) | M_I read for seeding/pruning |
 | New cycle starts | `experiment-pipeline` | Read (top-k_E=1) | M_E read for strategy guidance |
 
 ## Reference Navigation
 
 | Topic | Reference File | When to Use |
 |-------|---------------|-------------|
-| IDE process details | [ide-protocol.md](references/ide-protocol.md) | After completing research-ideation |
+| IDE process details | [ide-protocol.md](references/ide-protocol.md) | After completing [role: research.ideate] |
 | IVE process details | [ive-protocol.md](references/ive-protocol.md) | After experiment-pipeline failure (no executable code or method underperforms) |
 | ESE process details | [ese-protocol.md](references/ese-protocol.md) | After experiment-pipeline succeeds |
 | Paper's actual prompts | [paper-prompts.md](references/paper-prompts.md) | Reference for exact IDE/IVE/ESE prompt design |

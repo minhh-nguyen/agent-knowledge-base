@@ -6,11 +6,11 @@ Complete data structure definitions for Ideation Memory (M_I), Experimentation M
 
 | Memory Store | File Path | Created By |
 |-------------|-----------|------------|
-| Ideation Memory (M_I) | `/memory/ideation-memory.md` | First IDE or IVE trigger |
-| Experimentation Memory (M_E) | `/memory/experiment-memory.md` | First ESE trigger |
-| Evolution Reports | `/memory/evolution-reports/cycle_N_type.md` | Each evolution trigger |
+| Ideation Memory (M_I) | `~/.claude/kb-memory/ideation-memory.md` | First IDE or IVE trigger |
+| Experimentation Memory (M_E) | `~/.claude/kb-memory/experiment-memory.md` | First ESE trigger |
+| Evolution Reports | `~/.claude/kb-memory/evolution-reports/cycle_N_type.md` | Each evolution trigger |
 
-All paths are relative to the workspace root. Memory files persist across sessions because `/memory/` maps to the shared memory directory.
+All paths are relative to the workspace root. Memory files persist across sessions because `~/.claude/kb-memory/` maps to the shared memory directory.
 
 ## Ideation Memory (M_I) Schema
 
@@ -262,7 +262,7 @@ Total Cycles: [N]
 
 ### File Structure
 
-Reports are saved to `/memory/evolution-reports/cycle_N_type.md` where `type` is `ide`, `ive`, or `ese`.
+Reports are saved to `~/.claude/kb-memory/evolution-reports/cycle_N_type.md` where `type` is `ide`, `ive`, or `ese`.
 
 ```markdown
 # Evolution Report: Cycle [N] — [IDE|IVE|ESE]
@@ -289,7 +289,7 @@ extracted? Why at this level of abstraction? Any judgment calls made.]
 
 ## Impact on Future Cycles
 
-- **For research-ideation**: [How will M_I changes affect future ideation?]
+- **For [role: research.ideate]**: [How will M_I changes affect future ideation?]
 - **For experiment-pipeline**: [How will M_E changes affect future experiments?]
 - **Confidence level**: [How confident are you in these updates?]
 ```

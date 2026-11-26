@@ -1,6 +1,6 @@
 ---
 name: paper-navigator
-description: "Find and read academic papers (S2 + arXiv). Disambiguate ambiguous queries, search by keyword + citation graph + recommendations + snippets, judge relevance against an authored rubric, and read with L1/L2/L3 strategy. Trigger phrases: find papers, search papers, related work, citation analysis, recent advances, read this paper, baseline with code. Do NOT use for: survey reports (research-survey), idea generation (research-ideation), Related Work sections (paper-writing)."
+description: "[role: research.find] Find and read academic papers (S2 + arXiv). Disambiguate ambiguous queries, search by keyword + citation graph + recommendations + snippets, judge relevance against an authored rubric, and read with L1/L2/L3 strategy. Trigger phrases: find papers, search papers, related work, citation analysis, recent advances, read this paper, baseline with code. Do NOT use for: survey reports ([role: research.survey]), idea generation ([role: research.ideate]), Related Work sections (paper-writing)."
 allowed-tools: "write_file edit_file read_file think_tool execute"
 metadata:
   author: EvoScientist
@@ -62,7 +62,7 @@ Full env-var list: `references/env-vars.md`.
 |---|---|---|---|
 | **POINT** | Title quoted, URL, arXiv/DOI/PMID/S2 ID, "read this paper" | 1 call | Paper Card |
 | **LIST** (default) | "find papers about X", "is there a paper that …?", "papers satisfying A and B" | Probe + up to 3 rounds (R2/R3/R4) | Shortlist with per-criterion evidence |
-| **ITERATIVE** | "survey of X", "30+ papers on Y", called from `research-survey` / `research-ideation` | Probe + up to 3 rounds (R2/R3/R4) | Ranked table (hand off to research-survey for the report) |
+| **ITERATIVE** | "survey of X", "30+ papers on Y", called from `[role: research.survey]` / `[role: research.ideate]` | Probe + up to 3 rounds (R2/R3/R4) | Ranked table (hand off to [role: research.survey] for the report) |
 
 **Default to LIST when unsure.** Don't add `survey` / `review` to LIST queries — it down-ranks the canonical research papers the user wants.
 
@@ -265,7 +265,7 @@ K is a soft guide, not a formula. For broad "survey / categorize the field" quer
 If no All-core paper survives after the round cap, report "no fully-matching paper found", list strongest Partial candidates + their gaps, stop.
 
 **Output mode (caller inference).** Pick the format by what the request demands, not by an explicit flag:
-- **Structured** (formats below) — when the request demands machine-consumable output: a ranked list/table, per-criterion evidence, or hand-off to a downstream skill. Default for skill callers (`research-survey`, `research-ideation`, `paper-writing`, `experiment-pipeline`).
+- **Structured** (formats below) — when the request demands machine-consumable output: a ranked list/table, per-criterion evidence, or hand-off to a downstream skill. Default for skill callers (`[role: research.survey]`, `[role: research.ideate]`, `paper-writing`, `experiment-pipeline`).
 - **Narrative** (see "Narrative output" below) — the default for direct user calls: natural-language questions with no structured-output demand.
 
 **Structured output formats (skill callers):**
@@ -375,7 +375,7 @@ References are self-contained. Don't chain between them — return here to re-ro
 
 | Goal | Skill |
 |---|---|
-| Survey report | `research-survey` |
-| Idea generation | `research-ideation` |
+| Survey report | `[role: research.survey]` |
+| Idea generation | `[role: research.ideate]` |
 | Related Work section | `paper-writing` |
 | Baseline + experiment | `experiment-pipeline` |

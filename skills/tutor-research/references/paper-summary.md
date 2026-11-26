@@ -1,6 +1,6 @@
 # Paper Summary and Review
 
-Response skeleton for `personal-ta` when the user asks to summarize, review, or critique a paper.
+Response skeleton for the `[role: research.mentor]` skill when the user asks to summarize, review, or critique a paper.
 
 ## Usage
 

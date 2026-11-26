@@ -51,8 +51,8 @@ Total Cycles: 1
 
 ## Unsuccessful Directions
 
-*None yet — first cycle; no direction has reached experimental validation.*
+_None yet — first cycle; no direction has reached experimental validation._
 
 ## Archive
 
-*Nothing archived yet.*
+_Nothing archived yet._

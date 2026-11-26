@@ -15,7 +15,7 @@
 - **Key Strength**: [What makes this direction stand out — which dimension(s) scored highest]
 - **Primary Risk**: [The biggest uncertainty or challenge]
 - **Connection to Prior Work**: [How this relates to existing literature]
-- **evo-memory Status**: [ ] New direction / [ ] Builds on: [M_I entry] / [ ] Contradicts: [M_I entry]
+- **[role: research.memory] Status**: [ ] New direction / [ ] Builds on: [M_I entry] / [ ] Contradicts: [M_I entry]
 
 ### Direction 2: [Name] — Elo: [Rating]
 
@@ -23,7 +23,7 @@
 - **Key Strength**: [Standout dimension(s)]
 - **Primary Risk**: [Biggest uncertainty]
 - **Connection to Prior Work**: [Literature relationship]
-- **evo-memory Status**: [ ] New / [ ] Builds on: [entry] / [ ] Contradicts: [entry]
+- **[role: research.memory] Status**: [ ] New / [ ] Builds on: [entry] / [ ] Contradicts: [entry]
 
 ### Direction 3: [Name] — Elo: [Rating]
 
@@ -31,7 +31,7 @@
 - **Key Strength**: [Standout dimension(s)]
 - **Primary Risk**: [Biggest uncertainty]
 - **Connection to Prior Work**: [Literature relationship]
-- **evo-memory Status**: [ ] New / [ ] Builds on: [entry] / [ ] Contradicts: [entry]
+- **[role: research.memory] Status**: [ ] New / [ ] Builds on: [entry] / [ ] Contradicts: [entry]
 
 ## Cross-Direction Analysis
 
@@ -50,7 +50,7 @@
 
 **Reasoning**: [Why this direction was selected — typically the rank #1, but may differ if direction #2 or #3 has strategic advantages]
 
-## evo-memory Actions
+## [role: research.memory] Actions
 
 - [ ] Trigger IDE (Idea Direction Evolution) with top-3 directions
 - [ ] Update M_I feasible directions

@@ -1,12 +1,11 @@
 # Code Review
 
-Checklists for reviewing a change — your own or someone else's. Load before any review task.
+Checklists for judging the user's code. Load before any review.
 Related: [`principles.md`](principles.md), [`../SKILL.md`](../SKILL.md).
 
-**Scope.** This file covers reviewing a change you can already see: a diff, a file, a patch.
-A two-axis review of a whole branch or pull request against its originating spec belongs to
-the separate `code-review` skill, which drives that as a workflow. Use that one for branch
-scope, this one for the judgement applied inside it.
+**Use as a tutor.** These checklists tell you what to look for. They do not change the hard rule
+in [`../SKILL.md`](../SKILL.md): report each finding as a location, a failing input, and a
+leading question — never as corrected code.
 
 ## Order of Reporting
 

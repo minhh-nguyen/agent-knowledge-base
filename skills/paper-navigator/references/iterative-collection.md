@@ -2,7 +2,7 @@
 
 Read this only when the user wants **30+ papers** for a survey, ideation, or comprehensive corpus. For one-shot "find me papers about X", stay in SKILL.md LIST.
 
-ITERATIVE shares the same flow shape as LIST — **Probe + up to 3 paper rounds (R2 breadth / R3 deepen / R4 close)**, the same RUBRIC / TRIAGE blocks, and the same Step 5 saturation gate. The differences are scale (≥30 papers), intent (caller is usually `research-survey` / `research-ideation`), and a heavier citation-expansion step. **Round cap is 3 paper rounds; there is no R5.**
+ITERATIVE shares the same flow shape as LIST — **Probe + up to 3 paper rounds (R2 breadth / R3 deepen / R4 close)**, the same RUBRIC / TRIAGE blocks, and the same Step 5 saturation gate. The differences are scale (≥30 papers), intent (caller is usually `[role: research.survey]` / `[role: research.ideate]`), and a heavier citation-expansion step. **Round cap is 3 paper rounds; there is no R5.**
 
 ## Why a state machine
 
@@ -153,8 +153,8 @@ If a targeted search returns ≥2 new relevant papers, optionally one more `reco
 
 4. Output as a ranked Paper Table (see SKILL.md output format). K is a soft cap (≤10 for ITERATIVE) — surplus relevant papers sit in an "Also relevant (not ranked)" list, never pad the ranked list.
 5. Hand off to the next skill based on user intent:
-   - Survey report → `research-survey`
-   - Idea generation → `research-ideation`
+   - Survey report → `[role: research.survey]`
+   - Idea generation → `[role: research.ideate]`
    - User just wanted a list → done.
 
 **Exit:** Table delivered. Skill terminates.

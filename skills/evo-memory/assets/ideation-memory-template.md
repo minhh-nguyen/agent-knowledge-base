@@ -5,7 +5,7 @@ Total Cycles: 0
 
 ## Feasible Directions
 
-*No directions recorded yet. Entries will be added after the first `research-ideation` cycle triggers IDE (Idea Direction Evolution).*
+*No directions recorded yet. Entries will be added after the first `[role: research.ideate]` cycle triggers IDE (Idea Direction Evolution).*
 
 <!-- Entry format:
 ### [Direction Name]
