@@ -22,10 +22,11 @@ both jobs in one response.
 
 ## Workspace
 
-Course state and generated material live **outside this skill folder**, one folder per course:
-`~/.claude/study/<course>/` (`<course>` = the short course code, e.g. `fomo`, `pmpp`). That path is
-a symlink into the knowledge-base repository. Never write state or output into this skill folder or
-into the project you are working in. If `~/.claude/study` does not exist, tell the user and stop.
+Course state and generated material are the deliverable itself: they live **outside this skill
+folder**, in the user's public course-site repo, one folder per course:
+`~/repo/minhh-nguyen.github.io/ws26-27/<course>/` (`<course>` = the short course code, e.g.
+`fomo`, `pmpp`). Never write state or output into this skill folder or into the project you are
+working in. If that repo does not exist, tell the user and stop.
 
 Read these in the course folder before writing anything:
 
@@ -33,7 +34,7 @@ Read these in the course folder before writing anything:
 - `NOTES.md` — learner preferences, format overrides, course plan, working notes.
 - `RESOURCES.md` — trusted sources with versions and dates.
 
-A new course folder is created from `templates/` (see
+A new course folder is created by `template/new-course.sh` (see
 [`references/workspace-format.md`](references/workspace-format.md#new-course)). If any `<...>`
 placeholder remains, or a file is missing, run the setup interview before generating material.
 `examples/fomo/` in this skill holds one representative lesson and its cheat sheet. Never copy an
@@ -43,8 +44,8 @@ Generated material, relative to the course folder:
 
 ```
 lessons/NNNN-<slug>.html        one self-contained lesson per deck
-cheat-sheets/lNN-<slug>.html    one cheat sheet per deck
-assets/                         symlink to this skill's assets/: style.css, quiz.js — never fork
+cheat-sheets/lNN-<slug>.html    one cheat sheet per deck (alias for reference/)
+assets/                         owned copy of this skill's style.css, quiz.js — a course may adapt it
 ```
 
 Each course has its own folder; switching course means switching folder, nothing is archived.
@@ -52,8 +53,10 @@ Each course has its own folder; switching course means switching folder, nothing
 ## Course setup
 
 Run this once per course, or whenever a state file is still a template. First create the course
-folder if it is missing ([`references/workspace-format.md`](references/workspace-format.md#new-course)).
-Ask one question at a time, then write the answers into the course folder's three files:
+folder if it is missing: `template/new-course.sh <slug> "<Course Title>" "<Badge Label>" ["<lede>"]`
+(see [`references/workspace-format.md`](references/workspace-format.md#new-course); it prints two
+manual site-wide steps to do afterward). Ask one question at a time, then write the answers into
+the course folder's three files:
 
 1. Course name, university, term; exam date and grade target.
 2. Where the slides, exercises, and past exams live (path or URL).
@@ -66,7 +69,7 @@ Do not generate a lesson while the mission still contains placeholders.
 
 ## Workflow
 
-1. **Read the state.** Resolve the course folder `~/.claude/study/<course>/`, then read its
+1. **Read the state.** Resolve the course folder `~/repo/minhh-nguyen.github.io/ws26-27/<course>/`, then read its
    `MISSION.md`, `NOTES.md`, `RESOURCES.md`. If the folder is missing or a placeholder remains, run
    the setup interview first. If the course or deck is unclear, ask before generating.
 2. **Retrieve the deck cheaply.** Follow
@@ -127,6 +130,7 @@ The agent writes content only; the renderer adds every tag, class, and link. Kee
 | MCQ, True/False, What-is, calculation, written-question rules  | [`references/quiz-format.md`](references/quiz-format.md)               |
 | Cheat sheet structure and page-citation rules                  | [`references/cheat-sheet-format.md`](references/cheat-sheet-format.md) |
 | MISSION/NOTES/RESOURCES structure, naming, state updates       | [`references/workspace-format.md`](references/workspace-format.md)     |
+| Scaffolding a brand-new course folder                          | [`template/AGENTS.md`](template/AGENTS.md)                             |
 
 ## Finish checklist
 
@@ -138,4 +142,5 @@ The agent writes content only; the renderer adds every tag, class, and link. Kee
 - [ ] No raw HTML, SVG, icons, or emoji in the sources; sizes near the targets above.
 - [ ] `NOTES.md` has a dated entry for this session.
 - [ ] The three state files describe this course, with no leftover `<...>` placeholder.
-- [ ] Everything was written under `~/.claude/study/<course>/`; nothing in the skill folder.
+- [ ] Everything was written under `~/repo/minhh-nguyen.github.io/ws26-27/<course>/`; nothing in
+      the skill folder.

@@ -96,12 +96,15 @@ Help the user understand programming, not just obtain solutions.
   role at the start of its `description` as `[role: <domain>.<function>]`. Handovers say
   "use `[role: research.find]`", so renaming a skill touches only its folder and its frontmatter
   `name`.
-- **Only this repository stores data.** Skills write memory to `~/.claude/memory/`, reports,
-  ideas, and scratch files to `~/.claude/research-report/`, and course study material to
-  `~/.claude/study/<course>/`: symlinks named exactly like the repository's `memory/`,
-  `research-report/`, and `study/` folders. A skill folder holds method only, never state. Never write a `memory/`, report, or
-  scratch folder into the project the skill runs in, and never fall back to it when a link is
-  missing: tell the user instead.
+- **Only this repository stores internal state.** Skills write memory to `~/.claude/memory/` and
+  reports, ideas, and scratch files to `~/.claude/research-report/`: symlinks named exactly like
+  the repository's `memory/` and `research-report/` folders. A skill folder holds method only,
+  never state. Never write a `memory/`, report, or scratch folder into the project the skill runs
+  in, and never fall back to it when a link is missing: tell the user instead.
+- A skill whose deliverable is a file in another project (code the user asked for, course
+  material for the user's own course-site repo) writes it there directly — that is the
+  deliverable's home, not internal state. `[role: study.lecture]` writes course lessons to
+  `~/repo/minhh-nguyen.github.io/ws26-27/<course>/` for this reason; see its SKILL.md.
 - Mistake logs record only the skill's own mistakes, never the user's. Entries carry the language
   and a title, no date.
 - Each description states its mode: **learn** (coach the user, who does the work) or **do**

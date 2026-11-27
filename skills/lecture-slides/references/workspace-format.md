@@ -1,50 +1,60 @@
 # Workspace Format
 
-The skill folder holds only the method: `SKILL.md`, `scripts/`, `references/`, `templates/`,
-`assets/`, and `examples/`. Course state and generated material live in one folder per course under
-`~/.claude/study/`, a symlink into the knowledge-base repository's `study/` folder:
+The skill folder holds only the method: `SKILL.md`, `scripts/`, `references/`, `template/`,
+`assets/`, and `examples/`. Course state and generated material are the deliverable itself, and
+live in the user's public course-site repo, one folder per course:
 
 ```
-~/.claude/study/<course>/
-├── MISSION.md              # live state, filled per course
-├── NOTES.md                # live state, append-only
-├── RESOURCES.md            # live state, filled per course
-├── assets -> ../../skills/lecture-slides/assets   # style.css, quiz.js
-├── src/                    # NNNN-<slug>.md, lNN-<slug>.md: what the agent writes
-├── lessons/                # NNNN-<slug>.html, rendered from src/
-└── cheat-sheets/           # lNN-<slug>.html, rendered from src/
+~/repo/minhh-nguyen.github.io/ws26-27/<course>/
+├── index.html               # course hub: lesson grid, links to MISSION/NOTES/RESOURCES
+├── MISSION.md                # live state, filled per course
+├── NOTES.md                  # live state, append-only
+├── RESOURCES.md               # live state, filled per course
+├── assets/                   # course.css, components.css (site chrome) + this skill's
+│                              #   quiz.js, style.css (owned copies, not symlinks — see below)
+├── src/                      # NNNN-<slug>.md, lNN-<slug>.md: what the agent writes
+├── lessons/                  # NNNN-<slug>.html, rendered from src/
+├── reference/                # lNN-<slug>.html, rendered from src/ (the cheat sheets)
+└── cheat-sheets -> reference # alias so scripts/render.py's hardcoded output path still works
 
 <skill>/
 ├── SKILL.md
-├── scripts/render.py      # source → lesson / cheat-sheet HTML
-├── templates/              # pristine MISSION/NOTES/RESOURCES, copied into each new course
-├── assets/                 # style.css, quiz.js: shared by every course
-├── examples/fomo/          # one reference lesson and cheat sheet (read-only)
-└── references/             # format documentation
+├── scripts/render.py        # source → lesson / cheat-sheet HTML
+├── template/                 # new-course.sh + skeleton/, scaffolds a new course folder above
+├── assets/                   # style.css, quiz.js: copied (not symlinked) into each new course
+├── examples/fomo/            # one reference lesson and cheat sheet (read-only)
+└── references/               # format documentation
 ```
 
 Rules:
 
-- Never write state or generated material into the skill folder or into the working project.
+- Never write state or generated material into the skill folder.
 - `<course>` is the short course code used by the lecture folders (`fomo`, `pmpp`, …), lowercase.
-- `templates/` holds the pristine skeletons. Never edit a template while working on a course.
+- `assets/quiz.js` and `assets/style.css` are **owned copies**, not symlinks: a course may adapt
+  its stylesheet (FOMO widened `main` and wired the site's light/dark toggle). Re-copy from the
+  skill only when you want to reset a course back to the shared default.
 - One deck per lesson, one cheat sheet per deck.
 - A file still containing `<...>` is a template, not state: run the setup interview in `SKILL.md`
   before generating anything.
 
 ## New course
 
-If `~/.claude/study` is missing, tell the user and stop; never fall back to another location.
-Otherwise create the course folder once, from the skill folder:
+Run `template/new-course.sh <slug> "<Course Title>" "<Badge Label>" ["<lede>"]` (see
+[`../template/AGENTS.md`](../template/AGENTS.md)). It creates
+`~/repo/minhh-nguyen.github.io/ws26-27/<slug>/` from `template/skeleton/`, adds `src/`, the
+`cheat-sheets -> reference` alias, and copies in `assets/quiz.js`/`assets/style.css`. It refuses
+to run if the course-site repo is missing or the destination already exists — never fall back
+to another location, and never overwrite an existing course folder.
 
-```sh
-c=~/.claude/study/<course>
-mkdir -p "$c"/{src,lessons,cheat-sheets}
-cp templates/MISSION.md templates/NOTES.md templates/RESOURCES.md "$c"/
-ln -s ../../skills/lecture-slides/assets "$c/assets"   # relative: resolves inside the repository
-```
+Three manual steps the script prints afterward — plain static HTML edits, since the site has no
+shared nav script (do them before the course is reachable from the rest of the site):
 
-Never overwrite an existing course folder. Then run the setup interview and fill the three files.
+1. In the new course's own `<header>`, list the other current courses too.
+2. In every *existing* course's `<header>`, plus `index.html`/`blog/index.html`/
+   `ws26-27/index.html`, add an `<a href="/ws26-27/<slug>/">` link for the new one.
+3. Add a `.card` link to the new course inside the site repo's `ws26-27/index.html`'s `.grid`.
+
+Then run the setup interview in `SKILL.md` and fill `MISSION.md`/`NOTES.md`/`RESOURCES.md`.
 
 ## MISSION.md
 
@@ -119,11 +129,12 @@ Add a source only after checking it; record the version or date checked. Lesson 
 ## Switching course
 
 Switching course means switching folder: each course keeps its own state and output under
-`~/.claude/study/<course>/`. Nothing is archived or moved. Never delete a course folder without
-asking.
+`~/repo/minhh-nguyen.github.io/ws26-27/<course>/`. Nothing is archived or moved. Never delete a
+course folder without asking.
 
 ## Output naming
 
 - Lesson: `src/NNNN-<slug>.md` → `lessons/NNNN-<slug>.html`, numbered continuously within the course.
-- Cheat sheet: `src/lNN-<slug>.md` → `cheat-sheets/lNN-<slug>.html`, where `NN` is the lecture number.
+- Cheat sheet: `src/lNN-<slug>.md` → `cheat-sheets/lNN-<slug>.html` (physically `reference/`),
+  where `NN` is the lecture number.
 - Do not reuse a number after a lesson is written; if the deck splits, use the next two numbers.

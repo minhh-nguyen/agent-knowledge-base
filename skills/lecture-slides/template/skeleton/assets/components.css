@@ -1,0 +1,411 @@
+/* components.css — shared components for the lecture and reference pages.
+   Load it AFTER course.css so it can inherit the colour and type variables. */
+
+/* ---------- Hero and card grid ---------- */
+.hero {
+	margin: 0 0 2.4rem;
+	padding: 1.4rem 1.6rem;
+	background: linear-gradient(180deg, var(--accent-soft), var(--card));
+	border: 1px solid var(--rule);
+	border-radius: 6px;
+}
+.hero p:last-child { margin-bottom: 0; }
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
+	gap: 1rem;
+	margin: 1.2rem 0 2rem;
+}
+
+.card {
+	display: block;
+	background: var(--card);
+	border: 1px solid var(--rule);
+	border-radius: 6px;
+	padding: 1rem 1.1rem;
+	color: var(--ink);
+	border-bottom-width: 1px;
+	transition: border-color 120ms ease, transform 120ms ease;
+}
+.card:hover {
+	border-color: var(--accent);
+	transform: translateY(-1px);
+}
+.card h3 { margin: 0.35rem 0 0.4rem; font-size: 1rem; }
+.card p { font-size: 0.9rem; color: var(--muted); margin: 0 0 0.5rem; }
+.card .meta { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.7rem; color: var(--muted); }
+
+/* ---------- Badges ---------- */
+.badge {
+	display: inline-block;
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.66rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	padding: 0.14rem 0.5rem;
+	border-radius: 4px;
+	background: var(--accent-soft);
+	color: var(--accent);
+	border: 1px solid rgba(122, 59, 46, 0.25);
+}
+.badge.ok { background: var(--ok-soft); color: var(--ok); border-color: rgba(47, 107, 79, 0.25); }
+.badge.warn { background: var(--warn-soft); color: var(--warn); border-color: rgba(138, 100, 16, 0.25); }
+.badge.mono { background: var(--code-bg); color: var(--muted); border-color: var(--rule); }
+
+/* ---------- In-page table of contents ---------- */
+.toc {
+	margin: 0 0 2.2rem;
+	padding: 0.9rem 1.2rem;
+	background: var(--card);
+	border: 1px solid var(--rule);
+	border-radius: 6px;
+	font-size: 0.9rem;
+}
+.toc .label {
+	display: block;
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.66rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--muted);
+	margin-bottom: 0.4rem;
+}
+.toc ol { margin: 0; padding-left: 1.3rem; }
+.toc li { margin-bottom: 0.15rem; }
+
+/* ---------- Exercise blocks ---------- */
+.exercise {
+	margin: 1.4rem 0;
+	padding: 1rem 1.2rem;
+	background: var(--card);
+	border: 1px solid var(--rule);
+	border-left: 4px solid var(--accent);
+	border-radius: 0 6px 6px 0;
+}
+.exercise > .label {
+	display: block;
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.66rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--accent);
+	margin-bottom: 0.35rem;
+}
+.exercise p:last-child { margin-bottom: 0; }
+.exercise .where {
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.78rem;
+	color: var(--muted);
+}
+
+/* ---------- Numbered steps ---------- */
+.steps { counter-reset: step; list-style: none; padding-left: 0; }
+.steps > li {
+	counter-increment: step;
+	position: relative;
+	padding-left: 2.1rem;
+	margin-bottom: 0.9rem;
+}
+.steps > li::before {
+	content: counter(step);
+	position: absolute;
+	left: 0;
+	top: 0.05rem;
+	width: 1.5rem;
+	height: 1.5rem;
+	display: grid;
+	place-items: center;
+	border-radius: 50%;
+	background: var(--accent-soft);
+	color: var(--accent);
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+/* ---------- Small matrices and diagrams ---------- */
+.matrix {
+	display: inline-grid;
+	gap: 0.3rem;
+	margin: 0.4rem 0;
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.82rem;
+	vertical-align: middle;
+}
+.matrix span {
+	display: grid;
+	place-items: center;
+	min-width: 2.2rem;
+	padding: 0.25rem 0.35rem;
+	background: var(--code-bg);
+	border-radius: 3px;
+}
+.matrix span.hl { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* ---------- Two-column comparison ---------- */
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 34rem) { .cols { grid-template-columns: 1fr; } }
+
+/* ---------- Interactive quiz ---------- */
+.quiz .options { margin: 0.5rem 0 0.8rem; }
+.quiz .options label {
+	display: block;
+	padding: 0.4rem 0.6rem;
+	border: 1px solid var(--rule);
+	border-radius: 4px;
+	margin-bottom: 0.35rem;
+	cursor: pointer;
+	font-size: 0.93rem;
+	background: var(--card);
+}
+.quiz .options label:hover { border-color: var(--accent); }
+.quiz .options input { margin-right: 0.5rem; accent-color: var(--accent); }
+.quiz .options label.picked { border-color: var(--accent); background: var(--accent-soft); }
+
+.quiz button {
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.75rem;
+	letter-spacing: 0.04em;
+	padding: 0.4rem 0.9rem;
+	border: 1px solid var(--accent);
+	border-radius: 4px;
+	background: var(--accent);
+	color: #fff;
+	cursor: pointer;
+}
+.quiz button:hover { filter: brightness(1.08); }
+
+.feedback { font-size: 0.9rem; margin: 0.6rem 0 0; min-height: 1.3em; }
+.feedback.ok-text { color: var(--ok); font-weight: 600; }
+.feedback.bad-text { color: var(--accent); font-weight: 600; }
+
+.quiz .explain {
+	margin-top: 0.7rem;
+	padding: 0.7rem 0.9rem;
+	background: var(--ok-soft);
+	border-left: 3px solid var(--ok);
+	font-size: 0.9rem;
+}
+
+/* ---------- Progress bar ---------- */
+.progress-wrap {
+	display: flex;
+	align-items: center;
+	gap: 0.8rem;
+	margin: 0.6rem 0 2rem;
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.75rem;
+	color: var(--muted);
+}
+.progress-track {
+	flex: 1;
+	height: 0.45rem;
+	background: var(--code-bg);
+	border-radius: 999px;
+	overflow: hidden;
+}
+.progress-fill {
+	height: 100%;
+	width: 0;
+	background: var(--ok);
+	transition: width 200ms ease;
+}
+.progress-item {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.72rem;
+	color: var(--muted);
+	margin-top: 0.6rem;
+}
+.progress-item input { accent-color: var(--ok); }
+
+/* ---------- Wide tables ---------- */
+.table-scroll { overflow-x: auto; }
+.table-scroll table { min-width: 32rem; }
+
+/* ---------- Print ---------- */
+@media print {
+	.card, .exercise, .toc, .hero { break-inside: avoid; }
+	.quiz button, .progress-item, .progress-wrap { display: none; }
+	.quiz .explain { display: block !important; }
+}
+
+/* ---------- Retrieval practice (assets/drills.js) ---------- */
+.drill, .recall {
+	margin: 1.4rem 0 2rem;
+	padding: 1.1rem 1.2rem;
+	background: var(--card);
+	border: 1px solid var(--rule);
+	border-radius: 4px;
+}
+.drill .q, .recall .q { font-weight: 600; margin-bottom: 0.7rem; }
+.drill input {
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.9rem;
+	width: 9rem;
+	padding: 0.35rem 0.5rem;
+	border: 1px solid var(--rule);
+	border-radius: 4px;
+	margin-right: 0.5rem;
+	background: var(--paper);
+	color: var(--ink);
+}
+.drill input:focus, .recall textarea:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+.drill .unit { font-size: 0.85rem; color: var(--muted); margin-right: 0.6rem; }
+.drill .explain {
+	margin-top: 0.7rem;
+	padding: 0.7rem 0.9rem;
+	background: var(--ok-soft);
+	border-left: 3px solid var(--ok);
+	font-size: 0.9rem;
+}
+
+.recall textarea {
+	display: block;
+	width: 100%;
+	font-family: inherit;
+	font-size: 0.93rem;
+	line-height: 1.5;
+	padding: 0.5rem 0.6rem;
+	border: 1px solid var(--rule);
+	border-radius: 4px;
+	background: var(--paper);
+	color: var(--ink);
+	margin-bottom: 0.6rem;
+	resize: vertical;
+}
+.drill button, .recall button, .deck-bar button {
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.75rem;
+	letter-spacing: 0.04em;
+	padding: 0.4rem 0.9rem;
+	border: 1px solid var(--accent);
+	border-radius: 4px;
+	background: var(--accent);
+	color: #fff;
+	cursor: pointer;
+}
+.recall .model {
+	margin-top: 0.4rem;
+	padding: 0.7rem 0.9rem;
+	background: var(--ok-soft);
+	border-left: 3px solid var(--ok);
+	font-size: 0.92rem;
+}
+.recall .model > :last-child { margin-bottom: 0; }
+.recall .grades {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.45rem;
+	margin-top: 0.7rem;
+	font-size: 0.85rem;
+	color: var(--muted);
+}
+.recall .grades button { background: var(--card); color: var(--ink); border-color: var(--rule); }
+.recall .grades button:hover:not(:disabled) { border-color: var(--accent); }
+.recall .grades button:disabled { opacity: 0.55; cursor: default; }
+.recall-kind, .recall-meta {
+	display: block;
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.66rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--muted);
+	margin-bottom: 0.4rem;
+}
+.recall.bug { border-left: 4px solid var(--warn); }
+
+.deck-bar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+	font-family: ui-monospace, "SF Mono", Menlo, monospace;
+	font-size: 0.78rem;
+	color: var(--muted);
+	padding: 0.6rem 0;
+	border-bottom: 1px solid var(--rule);
+}
+.deck-bar button { background: var(--card); color: var(--accent); }
+.deck-empty { color: var(--muted); font-style: italic; }
+
+/* ---------- Skill map ---------- */
+.level {
+	display: inline-flex;
+	gap: 2px;
+	vertical-align: middle;
+	margin-right: 0.4rem;
+}
+.level i {
+	display: block;
+	width: 0.7rem;
+	height: 0.7rem;
+	border-radius: 2px;
+	background: var(--code-bg);
+	border: 1px solid var(--rule);
+}
+.level i.on { background: var(--ok); border-color: var(--ok); }
+.level.focus i.on { background: var(--accent); border-color: var(--accent); }
+
+@media print {
+	.recall textarea, .recall button, .recall .grades, .drill input, .drill button, .deck-bar { display: none; }
+	.recall .model, .drill .explain { display: block !important; }
+	.drill, .recall { break-inside: avoid; }
+}
+
+/* ---------- Keyword lessons (lessons 0012+) ---------- */
+.kw-strip { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.6rem 0 1.6rem; padding: 0; list-style: none; }
+.kw-strip li { margin: 0; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.72rem; padding: 0.15rem 0.6rem; border: 1px solid var(--rule); border-radius: 999px; background: var(--card); }
+.kw-strip a { color: var(--ink); border-bottom: none; }
+.kw-strip a:hover { color: var(--accent); }
+dl.kw { margin: 1rem 0 1.6rem; }
+dl.kw > div { border-left: 3px solid var(--accent); padding: 0.45rem 0 0.5rem 0.95rem; margin: 0.8rem 0; scroll-margin-top: 1rem; }
+dl.kw > div:target { background: var(--accent-soft); }
+dl.kw dt { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-weight: 700; font-size: 0.9rem; color: var(--ink); }
+dl.kw dt .alt { font-weight: 400; color: var(--muted); font-size: 0.78rem; margin-left: 0.35rem; }
+dl.kw dd { margin: 0.2rem 0 0; font-size: 0.97rem; }
+dl.kw dd .so { display: block; margin-top: 0.3rem; font-size: 0.9rem; color: var(--muted); }
+dl.kw dd .so::before { content: "→ why it matters: "; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); }
+.cite { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.68rem; color: var(--muted); white-space: nowrap; }
+.cite::before { content: "["; } .cite::after { content: "]"; }
+.kw-recall { columns: 2 15rem; column-gap: 1.5rem; margin: 0.8rem 0 1.6rem; }
+.kw-recall details { break-inside: avoid; margin: 0.35rem 0; }
+.kw-recall details > summary { font-weight: 700; color: var(--ink); }
+.kw-recall details > .body { font-size: 0.9rem; }
+.examq li { margin: 0.6rem 0; }
+@media print { .kw-recall details > .body { display: block; } }
+
+/* ---------- Click-to-answer questions (assets/bq.js), FOMO-style lessons ---------- */
+.bq { margin: 1.3rem 0; padding: 1rem 1.1rem; border: 1px solid var(--rule); border-radius: 6px; background: var(--card); }
+.bq .q { margin: 0 0 0.7rem; font-weight: 600; }
+.bq button.opt { display: block; width: 100%; text-align: left; margin: 0.35rem 0; padding: 0.55rem 0.8rem; font: inherit; font-size: 0.95rem; color: var(--ink); background: transparent; border: 1px solid var(--rule); border-radius: 4px; cursor: pointer; }
+.bq button.opt:hover:not(:disabled) { border-color: var(--accent); }
+.bq button.opt.right { background: var(--ok-soft); border-color: var(--ok); }
+.bq button.opt.wrong { background: #f6e2e0; border-color: #9b2c2c; }
+.bq button.opt:disabled { cursor: default; }
+.bq .why { display: none; margin: 0.6rem 0 0; font-size: 0.92rem; }
+.bq.done .why { display: block; }
+.qbank { counter-reset: qn; }
+.qbank .item { counter-increment: qn; margin: 1rem 0; padding: 0.7rem 1rem; border: 1px solid var(--rule); border-radius: 6px; background: var(--card); }
+.qbank .item.bq { padding: 0.7rem 1rem; }
+.qbank .item > p:first-child::before { content: counter(qn) ". "; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-weight: 700; color: var(--muted); }
+.qbank .item > p:first-child { margin: 0 0 0.3rem; }
+.qbank .bq button.opt { display: inline-block; width: auto; min-width: 6rem; margin: 0.2rem 0.4rem 0.2rem 0; text-align: center; }
+.qbank details { margin: 0.3rem 0 0; border: none; background: none; }
+.qbank details > summary { padding: 0.2rem 0; font-size: 0.82rem; }
+.qbank details > .body { border-top: none; padding: 0.2rem 0 0; }
+.qbank pre { margin: 0.4rem 0 0.4rem; }
+.qtype { display: inline-block; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.1rem 0.45rem; border-radius: 3px; margin-right: 0.35rem; vertical-align: 0.1em; background: var(--code-bg); color: var(--muted); }
+.qtype.tf { background: var(--accent-soft); color: var(--accent); }
+.qtype.calc { background: var(--ok-soft); color: var(--ok); }
+.qtype.code { background: var(--warn-soft); color: var(--warn); }
+.lv { display: inline-block; font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.08rem 0.4rem; border-radius: 3px; margin-right: 0.35rem; vertical-align: 0.1em; border: 1px solid var(--rule); color: var(--muted); }
+.lv.hard { border-color: var(--warn); color: var(--warn); }
+.key { border: 1px solid var(--rule); padding: 0.8rem 1rem; margin: 1.2rem 0; border-radius: 4px; background: var(--card); font-size: 0.95rem; }
+.key > strong:first-child { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 0.3rem; }
+@media print { .bq .why { display: block; } }

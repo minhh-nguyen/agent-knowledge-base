@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{COURSE_TITLE}} · learning map</title>
+<link rel="stylesheet" href="assets/course.css">
+<link rel="stylesheet" href="assets/components.css">
+<script>
+(function () {
+    try {
+        var t = localStorage.getItem("theme");
+        if (t !== "light" && t !== "dark") {
+            t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+        document.documentElement.setAttribute("data-theme", t);
+    } catch (e) {}
+})();
+</script>
+<script src="/assets/theme.js" defer></script>
+</head>
+<body>
+<main class="wrap">
+
+<header class="site-header">
+    <a class="site-name" href="/">Minh Nguyen</a>
+    <nav aria-label="Site">
+        <a href="/">Home</a>
+        <a href="/ws26-27/">WS 26/27</a>
+        <a href="/blog/">Blog</a>
+        <!-- Add a link for each other ws26-27/<course>/ here too, and add
+             one for THIS course into each of their headers (see
+             template/AGENTS.md, "Using it", steps 1-2). -->
+        <a href="/ws26-27/{{COURSE_SLUG}}/" aria-current="page">{{COURSE_LABEL}}</a>
+        <button type="button" class="theme-toggle" data-theme-toggle aria-label="Switch theme">&#9728;</button>
+    </nav>
+</header>
+
+<nav class="breadcrumb">{{COURSE_LABEL}} · {{COURSE_TITLE}} · TU Darmstadt WS 2026/27</nav>
+
+<h1>{{COURSE_TITLE}}</h1>
+<p class="lede">{{COURSE_LEDE}}</p>
+
+<h2>Lessons</h2>
+<div class="grid">
+	<a class="card" href="lessons/0001-example.html">
+		<span class="badge ok">ready</span>
+		<h3>0001 · First lesson</h3>
+		<p>Replace with the real keyword lesson. One card per lesson.</p>
+		<span class="meta">Lecture 1</span>
+	</a>
+</div>
+
+<footer>
+<p><a href="MISSION.md">MISSION</a> · <a href="RESOURCES.md">RESOURCES</a> · <a href="NOTES.md">NOTES</a></p>
+</footer>
+
+<footer class="site-footer">
+    <a href="/ws26-27/">&larr; All WS 26/27 courses</a> &middot;
+    <a href="/">minhh.systems</a>
+</footer>
+
+</main>
+</body>
+</html>

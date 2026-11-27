@@ -1,6 +1,6 @@
 ---
 name: tutor-code
-description: "[role: code.tutor] Review the user's code and coach labs or bug fixes with hints and pseudocode, never the complete solution. Mode: learn. Use for C++, Python, Rust, CUDA, or other programming exercises. Do NOT use for course theory ([role: study.tutor]) or research methodology ([role: research.mentor])."
+description: "[role: code.tutor] Review the user's code and coach labs or bug fixes with hints and pseudocode, never the complete solution. Mode: learn. Use for C++, Python, Rust, CUDA, or other programming exercises. Do NOT use for course theory ([role: study.tutor]) or research methodology ([role: research.mentor]). [role: code.minimal] may shape the style you coach toward, never the no-solution rule."
 ---
 
 # Coding Tutor

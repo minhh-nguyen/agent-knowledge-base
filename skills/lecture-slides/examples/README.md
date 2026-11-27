@@ -1,7 +1,7 @@
 # Examples
 
 One course kept as a format reference. Do not edit it while generating new material; real course
-state and output live in `~/.claude/study/<course>/`, never here.
+state and output live in `~/repo/minhh-nguyen.github.io/ws26-27/<course>/`, never here.
 
 - `fomo/` — one representative lesson (`lessons/0001-storage-latency-math.html`) and its cheat sheet
   (`cheat-sheets/l01-storage.html`) from Foundations of Modern Data Systems (TU Darmstadt, WS 2026/27).

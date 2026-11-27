@@ -1,6 +1,6 @@
 ---
 name: vibe-coder
-description: "[role: code.build] Implement requested code changes cleanly and verify them. Mode: do. Use for features, bug fixes, scripts, and small refactors, especially C++, Python, Rust, or CUDA. Do NOT use for tutoring ([role: code.tutor]), course theory ([role: study.tutor]), or research methodology ([role: research.mentor])."
+description: "[role: code.build] Implement requested code changes cleanly and verify them. Mode: do. Use for features, bug fixes, scripts, and small refactors, especially C++, Python, Rust, or CUDA. Do NOT use for tutoring ([role: code.tutor]), course theory ([role: study.tutor]), or research methodology ([role: research.mentor]). When the user opted into lazy mode ([role: code.minimal]), its scope rules override this skill's defaults."
 ---
 
 # Vibe Coder
@@ -17,6 +17,7 @@ Mode: **do** — write the code the user asked for, then stop.
 - If you notice an unrelated bug or improvement, report it in one line; do not fix it.
 - If the request conflicts with correctness or security, say so once, offer the minimal
   alternative, then follow the user's decision.
+- Use skill `ponytail` to keep the code minimum and clean. Make sure that it is not over-engineering code
 
 ## 2. Decompose, then work part by part
 
@@ -64,14 +65,14 @@ handlers). Never create a plan file unless the user asks for one.
 
 ## 6. Load only what the task needs
 
-| Task                                  | Read                                                   |
-| ------------------------------------- | ------------------------------------------------------ |
-| Any substantial implementation        | [`references/principles.md`](references/principles.md) |
+| Task                                   | Read                                                       |
+| -------------------------------------- | ---------------------------------------------------------- |
+| Any substantial implementation         | [`references/principles.md`](references/principles.md)     |
 | Verifying a change: build, tests, diff | [`references/verification.md`](references/verification.md) |
-| C++: RAII, templates, memory          | [`references/cpp.md`](references/cpp.md)               |
-| Python: typing, interfaces, idioms    | [`references/python.md`](references/python.md)         |
-| Rust: ownership, borrow errors, async | [`references/rust.md`](references/rust.md)             |
-| CUDA: kernels, memory, streams        | [`references/cuda.md`](references/cuda.md)             |
+| C++: RAII, templates, memory           | [`references/cpp.md`](references/cpp.md)                   |
+| Python: typing, interfaces, idioms     | [`references/python.md`](references/python.md)             |
+| Rust: ownership, borrow errors, async  | [`references/rust.md`](references/rust.md)                 |
+| CUDA: kernels, memory, streams         | [`references/cuda.md`](references/cuda.md)                 |
 
 For teaching, hints, or an explanation of the code instead of the code itself, hand over to
 `[role: code.tutor]`. For course theory, use `[role: study.tutor]`.
@@ -98,6 +99,7 @@ Entry — a heading with the language and a title that states the lesson, then o
 
 ```markdown
 ## <language> · <title stating the lesson>
+
 - **Mistake:** what you did wrong, in one sentence.
 - **Correct:** what to do instead.
 - **Caught by:** user | build | test | linter.

@@ -20,7 +20,7 @@ Routing a request means answering two questions: _which domain?_ and _learn or d
 | Domain       | learn                                                                       | do                                                                                                          |
 | ------------ | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | **study**    | `study.tutor` — teach a course topic from the lecture slides                | `study.lecture` — generate lessons + quiz banks; `study.workspace` — on-disk lesson workspace (manual only) |
-| **code**     | `code.tutor` — review the user's code, coach labs; never gives the solution | `code.build` — implement the requested change, clean and minimal                                            |
+| **code**     | `code.tutor` — review the user's code, coach labs; never gives the solution | `code.build` — implement the requested change, clean and minimal; `code.minimal` — lazy mode, smallest change (opt-in) |
 | **research** | `research.mentor` — coach reading, critique, gaps, experiment design        | the pipeline below                                                                                          |
 | **util**     | —                                                                           | `util.audit`, `util.find-skills`                                                                            |
 
@@ -48,7 +48,7 @@ tools/
 inbox/               # unsorted drafts, not authority
 sources/             # external references with version and date checked
 research-report/     # reports, ideas, and scratch of research skills; reached via ~/.claude/research-report/
-study/               # per-course lessons and state of study.lecture; reached via ~/.claude/study/
+study/               # legacy; study.lecture now writes courses into the user's course-site repo
 templates/           # reusable document skeletons
 ```
 

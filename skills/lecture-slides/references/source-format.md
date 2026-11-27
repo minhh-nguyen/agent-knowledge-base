@@ -8,14 +8,15 @@ content and counts; this file is only the syntax. Never write lesson or cheat-sh
 ## Files
 
 ```
-~/.claude/study/<course>/src/NNNN-<slug>.md   → lessons/NNNN-<slug>.html
-~/.claude/study/<course>/src/lNN-<slug>.md    → cheat-sheets/lNN-<slug>.html
+~/repo/minhh-nguyen.github.io/ws26-27/<course>/src/NNNN-<slug>.md   → lessons/NNNN-<slug>.html
+~/repo/minhh-nguyen.github.io/ws26-27/<course>/src/lNN-<slug>.md    → cheat-sheets/lNN-<slug>.html
 ```
 
 Render (uv installs the `markdown` dependency on first run):
 
 ```sh
-uv run ~/.claude/skills/lecture-slides/scripts/render.py ~/.claude/study/<course>/src/NNNN-<slug>.md
+uv run ~/.claude/skills/lecture-slides/scripts/render.py \
+  ~/repo/minhh-nguyen.github.io/ws26-27/<course>/src/NNNN-<slug>.md
 ```
 
 Exit `0` = written and all counts pass; `1` = written but `check:` lines list count violations to
