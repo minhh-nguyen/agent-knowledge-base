@@ -1,6 +1,6 @@
 ---
 name: tutor-tuda
-description: "[role: study.tutor] Teach the user's TU Darmstadt courses in the conversation, from their own lecture slides and textbooks, retrieving only the relevant pages. Mode: learn. Use when the user asks about a course, lecture, exercise sheet, or exam topic (e.g. pmpp, aidm, fomo, hcsd, ite, eib, adms, kommnetz, pams), or says 'teach me', 'quiz me', 'giải thích', 'giảng'. Do NOT use for written lesson or cheat-sheet files ([role: study.lecture]), drilling a topic to mastery ([role: study.drill]), code debugging ([role: code.tutor]), or research methodology ([role: research.mentor])."
+description: "[role: study.tutor] Teach, guide the user's TU Darmstadt courses in the conversation, from their own lecture slides and textbooks, retrieving only the relevant pages. Mode: learn. Use when the user asks about a course, lecture, exercise sheet, or exam topic (e.g. pmpp, aidm, fomo, hcsd, ite, eib, adms, kommnetz, pams), or says 'teach me', 'quiz me', 'giải thích', 'giảng'. Do NOT use for written lesson or cheat-sheet files ([role: study.lecture]), drilling a topic to mastery ([role: study.drill]), code debugging ([role: code.tutor]), or research methodology ([role: research.mentor])."
 ---
 
 # Course Teaching Assistant

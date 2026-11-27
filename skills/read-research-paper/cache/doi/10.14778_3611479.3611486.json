@@ -1,0 +1,29 @@
+{
+  "title": "Exploiting Cloud Object Storage for High-Performance Analytics",
+  "authors": ["Dominik Durner", "Viktor Leis", "Thomas Neumann"],
+  "affiliation": "Technische Universität München",
+  "year": 2023,
+  "venue": "PVLDB 16(11): 2769-2782",
+  "doi": "10.14778/3611479.3611486",
+  "url": "https://vldb.org/pvldb/vol16/p2769-durner.pdf",
+  "code": "https://github.com/durner/AnyBlob",
+  "source": "local PDF in repo (14 pages, pypdf extraction)",
+  "sections": ["1 Introduction", "2 Cloud Storage Characteristics", "3 AnyBlob", "4 Cloud Storage Integration", "5 Experimental Evaluation", "6 Related Work", "7 Conclusion"],
+  "findings": [
+    {"id": 1, "text": "Object storage: best durability, cheapest storage", "page": 3},
+    {"id": 2, "text": "Object retrieval can reach network bandwidth", "page": 4},
+    {"id": 3, "text": "8-16 MiB requests are cost-throughput optimal", "page": 5},
+    {"id": 4, "text": "Saturating high-bandwidth networks requires hundreds of outstanding requests", "page": 5}
+  ],
+  "key_numbers": {
+    "s3_base_latency_ms": 30, "s3_data_latency_ms_per_mib": 20, "cloudXY_data_latency_ms_per_mib": "12-15",
+    "per_object_bw_median_mib_s": "55-60", "per_object_bw_max_mib_s": 95,
+    "concurrency_for_100gbit": "200-250", "aws_median_throughput_gbit": ">=75",
+    "anyblob_cpu_vs_best_sdk": 0.7, "tpch_sf500_geomean_remote_s": 4.94, "tpch_sf500_geomean_inmem_s": 2.03,
+    "https_cpu_vs_http": ">2x", "aes_cpu_overhead": "~30%",
+    "azure_get_per_1M_usd_2022": 0.40, "azure_put_per_1M_usd_2022": 6.25
+  },
+  "model": "requests = throughput * (baseLatency + size*dataLatency) / size",
+  "setup": "AWS eu-central-1 (+us-east-2), c5n.18xlarge 100 Gbit/s, measurements Jul-Aug 2022",
+  "figures_generated": ["figures/table2_slowdown_vs_bandwidth.png", "figures/model_concurrency.png"]
+}

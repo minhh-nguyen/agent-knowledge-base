@@ -1,6 +1,6 @@
 ---
 name: tutor-research
-description: "[role: research.mentor] Coach the user to understand and critique papers, spot research gaps, form questions and hypotheses, and design experiments. Mode: learn. Use when the user says 'help me understand this paper', 'is this a good research question', 'how should I evaluate this', or prepares a seminar talk. Do NOT use for finding papers ([role: research.find]), surveys ([role: research.survey]), generated ideas ([role: research.ideate]), or self-review of their own draft ([role: research.self-review])."
+description: "[role: research.mentor] Coach, teach the user to understand and critique papers, spot research gaps, form questions and hypotheses, and design experiments. Mode: learn. Use when the user says 'help me understand this paper', 'is this a good research question', 'how should I evaluate this', or prepares a seminar talk. Do NOT use for finding papers ([role: research.find]), surveys ([role: research.survey]), generated ideas ([role: research.ideate]), or self-review of their own draft ([role: research.self-review])."
 ---
 
 # Research Mentor
@@ -117,10 +117,9 @@ Challenge weak assumptions instead of automatically agreeing with the user.
 ### Reviewing a paper
 
 When the user asks to summarize, review, or critique a paper, follow
-[`references/paper-summary.md`](references/paper-summary.md). It fixes the section order —
-motivation, solution, evaluation, critique, conclusion, research gap — and the evidence rules
-for each section.
+[`/skills/read-research-papaer/SKILL.md`](/skills/read-research-papaer/SKILL.md).
 
+- First, `/read-research-paper <input>` to full visual rendering, then explain the paper using `/explain-paper <input>` then `/visualize-paper <input>`
 - Read the paper before answering; never fill a section from the abstract alone.
 - Cite the section, figure, table, or page behind each number.
 - Keep the paper's claims separate from your own judgment.

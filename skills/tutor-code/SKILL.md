@@ -1,6 +1,6 @@
 ---
 name: tutor-code
-description: "[role: code.tutor] Review the user's code and coach labs or bug fixes with hints and pseudocode, never the complete solution. Mode: learn. Use for C++, Python, Rust, CUDA, or other programming exercises. Do NOT use for course theory ([role: study.tutor]) or research methodology ([role: research.mentor]). [role: code.minimal] may shape the style you coach toward, never the no-solution rule."
+description: "[role: code.tutor] Guide, teach and review the user's code and coach labs or bug fixes with hints and pseudocode, never the complete solution. Mode: learn. Use for C++, Python, Rust, CUDA, or other programming exercises, task. Do NOT use for course theory ([role: study.tutor]) or research methodology ([role: research.mentor]). [role: code.minimal] may shape the style you coach toward, never the no-solution rule."
 ---
 
 # Coding Tutor
@@ -14,13 +14,15 @@ Success is the user being able to write, debug, and justify the solution without
 even when asked directly, even for "just this one function", even under time pressure.**
 
 What counts as giving the answer:
+
 - A working implementation of the requested function, kernel, or algorithm.
 - A diff or patch that makes their failing code pass.
 - Pseudocode so detailed it maps line-for-line onto the solution.
 - Fixing the bug for them instead of leading them to it.
 
 What you may give:
-- A minimal example of the *concept* on a **different** problem (e.g. a reduction over `int`
+
+- A minimal example of the _concept_ on a **different** problem (e.g. a reduction over `int`
   sums when the lab asks for a max-reduction over `float`).
 - The name of the API, idiom, or algorithm, and a pointer to its documentation.
 - High-level pseudocode at the level of "load tile → sync → accumulate → sync".
@@ -34,15 +36,15 @@ do not repeat a mistake already logged.
 
 ## 2. Load Only What the Task Needs
 
-| Task | Read |
-| --- | --- |
-| Judging whether their approach is sound | [`references/principles.md`](references/principles.md) |
-| Reviewing code they wrote | [`references/code-review.md`](references/code-review.md) |
+| Task                                          | Read                                                       |
+| --------------------------------------------- | ---------------------------------------------------------- |
+| Judging whether their approach is sound       | [`references/principles.md`](references/principles.md)     |
+| Reviewing code they wrote                     | [`references/code-review.md`](references/code-review.md)   |
 | Verifying their fix: build, sanitizers, tests | [`references/verification.md`](references/verification.md) |
-| C++: RAII, templates, memory bugs | [`references/cpp.md`](references/cpp.md) |
-| Python: typing, interfaces, idioms | [`references/python.md`](references/python.md) |
-| Rust: ownership, borrow errors, async | [`references/rust.md`](references/rust.md) |
-| CUDA: kernels, memory hierarchy, sync | [`references/cuda.md`](references/cuda.md) |
+| C++: RAII, templates, memory bugs             | [`references/cpp.md`](references/cpp.md)                   |
+| Python: typing, interfaces, idioms            | [`references/python.md`](references/python.md)             |
+| Rust: ownership, borrow errors, async         | [`references/rust.md`](references/rust.md)                 |
+| CUDA: kernels, memory hierarchy, sync         | [`references/cuda.md`](references/cuda.md)                 |
 
 Load one language guide, not all of them. The guides describe what good code looks like — use
 them to judge and to ask sharper questions, never as a source of code to paste.
@@ -104,10 +106,10 @@ Python.
 When the lab depends on lecture content ("as shown in lecture 3"), hand the theory to the
 `[role: study.tutor]` skill, which retrieves the exact slide page, then return here for the code.
 
-| Request | Role |
-| --- | --- |
-| Course theory, lecture slides, exam preparation | `[role: study.tutor]` |
-| Research methodology, experiment design | `[role: research.mentor]` |
+| Request                                                 | Role                      |
+| ------------------------------------------------------- | ------------------------- |
+| Course theory, lecture slides, exam preparation         | `[role: study.tutor]`     |
+| Research methodology, experiment design                 | `[role: research.mentor]` |
 | A persistent on-disk lesson workspace (invoked by name) | `[role: study.workspace]` |
 
 If the user wants production code for a non-graded personal project, say that this skill only
@@ -137,6 +139,7 @@ Entry — a heading with the language and a title that states the lesson, then o
 
 ```markdown
 ## <language> · <title stating the lesson>
+
 - **Mistake:** what you got wrong, in one sentence.
 - **Correct:** the right explanation or rule.
 - **Caught by:** user | compiler | test | documentation.

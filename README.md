@@ -54,9 +54,10 @@ templates/           # reusable document skeletons
 
 ## Authoring checks
 
-There is no install step. Each skill in `skills/` is symlinked into `~/.claude/skills` (Claude Code)
-and `~/.agents/skills` (Codex, Cursor, Gemini CLI, … via the skills CLI) once; never copy it. Claude
-Code does not read `~/.agents/skills`. Editing a file here changes behavior immediately.
+There is no install step. `~/.claude/skills` (Claude Code) and `~/.agents/skills` (Codex, Cursor,
+Gemini CLI, …) are each one symlink to the whole `skills/` folder, so a new skill needs no linking.
+Claude Code does not read `~/.agents/skills`. Anything an app or installer writes into either path
+lands in `skills/`; Claude's own `skills/synced/` is gitignored. Editing a file here changes behavior immediately.
 
 Before committing a skill change, check by hand:
 
@@ -82,7 +83,7 @@ Nothing else changes: every other skill refers to it by role.
 1. Pick a role `<domain>.<function>` not already declared by another skill.
 2. Start its description with `[role: <domain>.<function>]` and state its mode (learn or do), when
    to use it, and which roles to use instead — by role tag, never by name.
-3. Add the folder under `skills/` and link it into `~/.claude/skills`.
+3. Add the folder under `skills/`.
 
 ### Third-party skills
 
