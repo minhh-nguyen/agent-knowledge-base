@@ -3,7 +3,7 @@ name: research-ideation
 description: "[role: research.ideate] End-to-end research ideation pipeline: literature grounding → multi-track idea generation (3 personas: innovator/pragmatist/critic) → iterative refinement → ELO tournament ranking → update [role: research.memory] (IDE) → user selects direction → expand into manuscript-quality proposal. Use when: user wants to find a research direction, brainstorm ideas, evaluate idea novelty, design a novel solution, rank/compare research ideas, or generate a research proposal. Do NOT use for finding/searching/reading papers (use [role: research.find]), literature survey reports (use [role: research.survey]), or planning a paper (use paper-planning)."
 allowed-tools: "write_file edit_file read_file think_tool execute"
 metadata:
-  author: EvoScientist - edited: Minh 
+  author: "EvoScientist - edited: Minh"
   version: "2.1.2"
   tags: [core, research, ideation, tournament, proposal]
 ---

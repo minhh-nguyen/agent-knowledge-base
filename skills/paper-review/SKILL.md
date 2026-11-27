@@ -3,7 +3,7 @@ name: paper-review
 description: "[role: research.self-review] Guides self-review of YOUR OWN academic paper before submission with adversarial stress-testing. Core method: three passes (adversarial deep read; 5-aspect checklist — contribution sufficiency, writing clarity, results quality, testing completeness, method design; mechanical consistency scans and experimental protocol audit of data flow, assumptions, leakage), counterintuitive protocol (reject-first simulation, delete unsupported claims, score trust, promote limitations, attack novelty), reverse-outlining, and figure/table quality checks. Use when: user wants to self-review or self-check their own paper draft before submission, stress-test their claims, prepare for reviewer criticism, or mentions 'self-review', 'check my draft', 'is my paper ready'. Do NOT use for writing a peer review of someone else's paper, and do NOT use after receiving actual reviews (use paper-rebuttal instead). Also runs as a background expert: dispatch it async with a draft path and it reviews end-to-end while you keep working."
 allowed-tools: "read_file edit_file write_file think_tool execute"
 metadata:
-  author: EvoScientist - edited: Minh 
+  author: "EvoScientist - edited: Minh"
   version: "1.3.1"
   type: [skill, expert]
   tags: [core, writing, academic-writing, peer-review]

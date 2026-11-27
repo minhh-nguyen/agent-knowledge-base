@@ -74,6 +74,9 @@ Help the user understand programming, not just obtain solutions.
 - Keep `references/verification.md` mirrored between the two code skills: the coverage,
   consistency, and limitations sections stay identical apart from links to references a skill does
   not bundle, while the checklist differs by mode (tutor vs builder).
+- Keep `references/lecture-materials.md` mirrored between `[role: study.tutor]` and
+  `[role: study.lecture]`: everything before the final section stays identical; only the final
+  section ("Then teach" / "Then write") differs. Change both in the same commit.
 - Check for existing content before creating documentation.
 - Preserve original files and do not delete or move existing content without permission.
 - Reopen modified files to verify changes.

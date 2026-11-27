@@ -3,7 +3,7 @@ name: paper-navigator
 description: "[role: research.find] Find and read academic papers (S2 + arXiv). Disambiguate ambiguous queries, search by keyword + citation graph + recommendations + snippets, judge relevance against an authored rubric, and read with L1/L2/L3 strategy. Trigger phrases: find papers, search papers, related work, citation analysis, recent advances, read this paper, baseline with code. Do NOT use for: survey reports ([role: research.survey]), idea generation ([role: research.ideate]), Related Work sections (paper-writing)."
 allowed-tools: "write_file edit_file read_file think_tool execute"
 metadata:
-  author: EvoScientist - edited: Minh 
+  author: "EvoScientist - edited: Minh"
   version: '3.4.2'
   tags: [core, research, literature, papers, search, rubric]
 ---

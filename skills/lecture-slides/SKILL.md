@@ -64,8 +64,10 @@ Do not generate a lesson while the mission still contains placeholders.
 
 1. **Read the state.** `MISSION.md`, `NOTES.md`, `RESOURCES.md`. If a placeholder remains, run the
    setup interview first. If the course or deck is unclear, ask before generating.
-2. **Locate the deck and its exam slide.** Use the paths recorded in `RESOURCES.md`. Read only the
-   pages the lesson cites; never load a whole PDF. Note the page number for every fact.
+2. **Retrieve the deck cheaply.** Follow
+   [`references/lecture-materials.md`](references/lecture-materials.md): course index → the deck's
+   page-tagged text sidecar → PDF pages only for figures and formulas. Never load a whole PDF; never
+   read a textbook sidecar. Note the page number for every fact.
 3. **Choose the next number.** List `lessons/` and continue from the highest `NNNN`; never reuse or
    overwrite an existing lesson.
 4. **Extract the keywords.** 10–16 terms that carry the deck. If there are more, the lesson covers
@@ -92,10 +94,29 @@ Do not generate a lesson while the mission still contains placeholders.
 - Match the learner's language in prose; keep technical terms in English with a short gloss.
 - Never delete or renumber an existing lesson without asking.
 
+## Design: simple, token-cheap
+
+Every byte of HTML is output the model has to generate. The content is the product; the design
+only has to be readable.
+
+- Plain semantic HTML: headings, paragraphs, lists, `table`, `details`. Nothing else is needed.
+- All styling comes from `../assets/style.css` through its existing classes. No inline `style=`,
+  no `<style>` blocks, no new classes unless the format references require them.
+- No decoration: no SVG drawings, icons, emoji, gradients, animations, or wrapper `div`s that
+  carry no meaning. Reproduce a slide's figure as a short table or list, or cite its page.
+- Short prose: one idea per sentence, no restating the slide around a question.
+- Never re-read a lesson you just wrote to check it; check it against the finish list from what
+  you generated. Never paste a full example file into context; open `examples/` only when the
+  format references leave a question open, and read the part you need.
+- Target size: the reference example — a lesson around 26 KB (of which ~15 KB is visible text,
+  set by the required question counts), a cheat sheet around 6 KB. Well over that means the deck
+  should be split, or the prose is padded. Never meet the target by dropping required questions.
+
 ## References
 
 | Task                                                           | Load                                                                   |
 | -------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Finding the deck and its pages without reading whole PDFs      | [`references/lecture-materials.md`](references/lecture-materials.md)   |
 | Lesson skeleton, section order, keyword cards, citation rules  | [`references/lesson-format.md`](references/lesson-format.md)           |
 | MCQ, True/False, What-is, calculation, written-question markup | [`references/quiz-format.md`](references/quiz-format.md)               |
 | Cheat sheet structure and page-citation rules                  | [`references/cheat-sheet-format.md`](references/cheat-sheet-format.md) |
@@ -108,5 +129,6 @@ Do not generate a lesson while the mission still contains placeholders.
 - [ ] Every citation points to a real deck page.
 - [ ] The four banks have the required counts and no answer leaks into a question.
 - [ ] The cheat sheet fits two pages and ends with the deck's exam-style questions.
+- [ ] No inline styles, `<style>` blocks, SVG, icons, or emoji; sizes near the targets above.
 - [ ] `NOTES.md` has a dated entry for this session.
 - [ ] The three state files describe this course, with no leftover `<...>` placeholder.
