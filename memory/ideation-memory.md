@@ -1,9 +1,17 @@
 # Ideation Memory
 
-Last Updated: 2026-11-26
-Total Cycles: 2
+Last Updated: 2026-11-27
+Total Cycles: 3
 
 ## Index
+
+- Strong-model-labeled, cache-friendly demonstrations for cheap-model semantic operators | feasible | `### [Cycle 3] Strong-Model-Labeled, Cache-Friendly Demonstrations for Semantic Operators`
+- Retrieve-then-select semantic joins (RAG over the database) | feasible | `### [Cycle 3] Retrieve-Then-Select Semantic Joins`
+- Prompting strategy as a physical-operator choice in a cost-accuracy optimizer | feasible | `### [Cycle 3] Prompting Strategy as a Physical-Operator Choice`
+- External-knowledge RAG for self-contained benchmark semantic operators | fundamental failure | `### External-knowledge RAG for self-contained semantic query benchmarks`
+- Benchmark ground truth as few-shot demonstrations | fundamental failure | `### Benchmark ground truth as few-shot demonstrations`
+- Per-row kNN-retrieved demonstrations as the main contribution | implementation-level prune | `### Per-row kNN-retrieved demonstrations as main contribution`
+- This is the research for `AIDM` course with semantic database. It does not relate to other ideas about `data-movement`.
 
 - Tier-Aware Fetch Planning Across Azure Blob Price Structures | selected by user | `### [Cycle 2] Tier-Aware Fetch Planning Across Azure Blob Price Structures`
 - Column-Granular Storage Tiering + Local-Cache Break-Even | feasible | `### [Cycle 2] Column-Granular Storage Tiering + Local-Cache Break-Even`
@@ -16,6 +24,42 @@ Total Cycles: 2
 - Learned column-tiering policy | implementation-level prune | `### Learned column-tiering policy`
 
 ## Feasible Directions
+
+### [Cycle 3] Strong-Model-Labeled, Cache-Friendly Demonstrations for Semantic Operators - AIDM idea
+
+- **Summary**: At query time a strong LLM labels a small sample; rows where the cheap LLM disagrees or is unsure become few-shot demonstrations in one fixed (prompt-cacheable) prefix, so the cheap model approaches strong-model quality at near-cheap cost without ground truth.
+- **Why Promising**: SemBench reports few-shot prompts raise quality but cost input tokens; a static prefix turns that cost into cached tokens (10x cheaper on the course proxy). Active selection of ambiguous examples (APE 2024; inconsistency-driven sampling for EM 2026) targets decision boundaries.
+- **Requirements**: Course API proxy (gpt-6-luna / gpt-6.1-sol), SemBench Movie/Animals/MMQA/E-Comm at small scale factor, prompt-cache hit check via usage.prompt_tokens_details.cached_tokens.
+- **Validation Plan**: Per query compare luna zero-shot, luna+random demos, luna+boundary demos, sol zero-shot on F1 and $; ablate k, static vs per-row demos, text vs image demos; 3+ runs for variance.
+- **Evidence**: Cycle 3 ELO winner, 1531 (N7 F8 R9 C8). Details: `~/.claude/research-report/direction-summary-fewshot-rag-semantic-operators-2026-11-27.md`.
+- **Status**: feasible (awaiting user selection)
+- **Related Entries**: Retrieve-Then-Select Semantic Joins; Prompting Strategy as a Physical-Operator Choice
+- **Retrieval Tags**: few-shot, in-context learning, demonstration selection, prompt caching, model cascade, semantic operators, SemBench, LLM query processing
+- **Date Added**: 2026-11-27
+- **Last Updated**: 2026-11-27
+
+### [Cycle 3] Retrieve-Then-Select Semantic Joins - AIDM idea
+
+- **Summary**: Replace |L|x|R| pairwise LLM join calls with embedding retrieval of top-k candidates per left row plus one "select the match or none" LLM call; k tuned for recall on a strong-model-labeled sample.
+- **Why Promising**: Match, Compare, or Select? (2024) shows selecting among candidates often beats pairwise matching; joins dominate semantic query cost.
+- **Requirements**: Text embeddings; captions or local CLIP for image sides (proxy embeddings are text-only).
+- **Validation Plan**: MMQA q2a/q7 and E-Comm joins: calls, $, recall/F1 vs nested-loop join across k.
+- **Evidence**: Cycle 3 ELO rank 2, 1500 (N6 F8 R9 C8). Threats: LOTUS sim-join, DASE, Trummer block join.
+- **Status**: feasible
+- **Retrieval Tags**: semantic join, entity matching, retrieval, blocking, cross-modal join, RAG
+- **Date Added**: 2026-11-27
+- **Last Updated**: 2026-11-27
+
+### [Cycle 3] Prompting Strategy as a Physical-Operator Choice - AIDM idea
+
+- **Summary**: Treat {cheap zero-shot, cheap + k demos, strong zero-shot} as alternative physical implementations of a semantic operator; choose per operator on the cost-accuracy frontier using sample estimates.
+- **Why Promising**: Directly yields Pareto plots; extends Abacus-style optimizers with a prompting dimension.
+- **Requirements**: Same as cycle 3 D1, plus a small optimizer over per-operator configurations.
+- **Evidence**: Cycle 3 ELO rank 3, 1469 (N6 F7 R8 C7). Threats: Abacus, Stretto, DSPy/MIPRO; sample noise (IBM run-to-run variance study 2026).
+- **Status**: feasible
+- **Retrieval Tags**: cost-based optimization, Pareto frontier, physical operators, few-shot, model routing
+- **Date Added**: 2026-11-27
+- **Last Updated**: 2026-11-27
 
 ### [Cycle 2] Tier-Aware Fetch Planning Across Azure Blob Price Structures
 
@@ -98,6 +142,21 @@ Total Cycles: 2
 - **TEE/confidential-computing DBMS storage engines bridged by io_uring**: cross-domain transfer from Ringmaster (arXiv:2601.16448), which uses io_uring to let TrustZone TEEs access untrusted OS services asynchronously. Not scored — same reason as above.
 
 ## Unsuccessful Directions
+
+### External-knowledge RAG for self-contained semantic query benchmarks
+
+- **Failure type**: fundamental (task fit) — SemBench-style queries are answerable from the table/text/image itself; UQE notes RAG is not directly applicable to analytical tasks with aggregation, and Task Cascades found naive chunk RAG often fails on complex long-context tasks. Retrieval is useful only as candidate/demonstration retrieval inside the database.
+- **Date**: 2026-11-27
+
+### Benchmark ground truth as few-shot demonstrations
+
+- **Failure type**: fundamental (validity) — using benchmark labels as demos leaks the answer and is unavailable for held-out queries; labels must come from a strong model or the user.
+- **Date**: 2026-11-27
+
+### Per-row kNN-retrieved demonstrations as main contribution
+
+- **Failure type**: implementation-level prune — per-row demos change the prompt prefix and lose prompt caching; kNN/diversity demo selection is well studied (Revisiting Demonstration Selection 2024; IDS 2023; CoDR 2025). Keep only as an ablation.
+- **Date**: 2026-11-27
 
 ### io_uring experiments on macOS host
 
