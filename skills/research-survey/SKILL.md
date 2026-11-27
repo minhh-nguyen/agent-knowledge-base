@@ -1,6 +1,6 @@
 ---
 name: research-survey
-description: "[role: research.survey] Write a structured literature survey report from collected papers: taxonomy, comparison tables, dense citations. Mode: do. Use when the user wants a literature review, field overview, or systematic synthesis of many papers. Do NOT use for finding papers (use [role: research.find]), generating ideas (use [role: research.ideate]), or a paper's Related Work section."
+description: "[role: research.survey] Write a structured literature survey with taxonomy, comparison tables, and citations. Mode: do. Use for literature reviews or field overviews. Do NOT use for finding papers ([role: research.find]), generating ideas ([role: research.ideate]), or one paper's Related Work section."
 allowed-tools: "write_file edit_file read_file think_tool"
 metadata:
   author: "EvoScientist - edited: Minh"
@@ -38,7 +38,7 @@ Stage 6: Assemble + References
 
 - **Finding papers** → use `[role: research.find]` first, then come here
 - **Generating research ideas** → use `[role: research.ideate]`
-- **Writing a Related Work section for a paper** → use `paper-writing`
+- **Writing a Related Work section for a paper** → no skill is installed for this: tell the user, and help inline only if they ask
 
 ## Dependency: [role: research.find]
 
@@ -209,8 +209,7 @@ Save to `~/.claude/research-report/survey-{topic}-{date}.md`.
 | -------------------------------- | --------------------------------------------------- |
 | `[role: research.find]` → here   | Papers collected, user wants synthesis              |
 | Here → `[role: research.ideate]` | Survey reveals research gaps worth pursuing         |
-| Here → `paper-writing`           | Survey informs Related Work section of a paper      |
-| Here → `paper-planning`          | Survey provides literature context for story design |
+| Related Work or paper planning   | No skill installed: tell the user                   |
 
 ## Output Location
 

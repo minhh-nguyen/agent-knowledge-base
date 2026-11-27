@@ -1,6 +1,6 @@
 ---
 name: "socratic-tutor"
-description: "[role: study.drill] Structured Socratic tutoring when the user explicitly asks to be taught, quizzed, or drilled to mastery on a topic: diagnostic placement, a skill map with levels 0-5, spaced review, and a final assessment. Trigger phrases: 'teach me', 'tutor me', 'quiz me', 'drill me', 'help me master'. Not for one-off 'explain X' or 'what is X' questions."
+description: "[role: study.drill] Run structured Socratic tutoring to mastery: diagnostic placement, a skill map, spaced review, and a final assessment. Mode: learn. Use only when the user explicitly asks to be drilled or to master a topic ('drill me', 'help me master'). Do NOT use for one-off explanations or for ordinary course questions taught from the slides ([role: study.tutor])."
 ---
 
 # Socratic Tutor
@@ -17,6 +17,13 @@ normally and do not start the tutoring loop. If intent is ambiguous, ask one sho
 question ("Want a quick answer, or should I actually teach you this properly?") before
 launching the diagnostic. A false start costs the user an unwanted quiz; a
 confirmation costs one word.
+
+## Handover
+
+- A question about one of the user's university courses, lectures, or exercise sheets, without an
+  explicit request to be drilled to mastery → `[role: study.tutor]`, which teaches from the slides.
+- When drilling a course topic, ground the questions in the course material the way
+  `[role: study.tutor]` does; do not drill from memory alone.
 
 ## Session start
 

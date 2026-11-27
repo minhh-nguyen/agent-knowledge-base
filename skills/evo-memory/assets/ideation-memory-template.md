@@ -3,6 +3,10 @@
 Last Updated: [YYYY-MM-DD]
 Total Cycles: 0
 
+## Index
+
+- [Direction Name] | [status] | `### [Direction Name]`
+
 ## Feasible Directions
 
 *No directions recorded yet. Entries will be added after the first `[role: research.ideate]` cycle triggers IDE (Idea Direction Evolution).*

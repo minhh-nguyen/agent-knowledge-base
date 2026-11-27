@@ -1,6 +1,6 @@
 ---
 name: lecture-slides
-description: "[role: study.lecture] Produce course lessons and question banks as self-contained HTML from lecture slides, following a fixed template: keyword cards, mid-lesson MCQs, True/False, What-is, calculation and written exam questions, plus one cheat sheet per lecture. Use when the user asks for a lesson, quiz, question bank, cheat sheet, or exam-prep material for a course lecture. Do not use for interactive tutoring or Socratic quizzing (use [role: study.tutor]), for mastery drilling (use [role: study.drill]), or for a generic on-disk teaching workspace (use [role: study.workspace])."
+description: "[role: study.lecture] Produce self-contained HTML lessons and quiz banks from lecture slides, including keyword cards, MCQs, written questions, and a cheat sheet. Mode: do. Use for lecture lessons or exam-prep material. Do NOT use for interactive tutoring ([role: study.tutor]), mastery drilling ([role: study.drill]), or workspace lessons ([role: study.workspace])."
 ---
 
 # Lecture Slides
@@ -73,16 +73,21 @@ Do not generate a lesson while the mission still contains placeholders.
    [`references/lecture-materials.md`](references/lecture-materials.md): course index → the deck's
    page-tagged text sidecar → PDF pages only for figures and formulas. Never load a whole PDF; never
    read a textbook sidecar. Note the page number for every fact.
-3. **Choose the next number.** List `lessons/` and continue from the highest `NNNN`; never reuse or
-   overwrite an existing lesson.
+3. **Choose the next number.** List `src/` and `lessons/` and continue from the highest `NNNN`;
+   never reuse or overwrite an existing lesson.
 4. **Extract the keywords.** 10–16 terms that carry the deck. If there are more, the lesson covers
    too much: split the deck into two lessons and say where the cut is.
-5. **Write the lesson** exactly as [`references/lesson-format.md`](references/lesson-format.md)
-   specifies, with the banks from [`references/quiz-format.md`](references/quiz-format.md).
-6. **Write the cheat sheet** for the same deck as
-   [`references/cheat-sheet-format.md`](references/cheat-sheet-format.md) specifies. The lesson and
-   the cheat sheet link to each other.
-7. **Update the workspace.** Append a dated entry to `NOTES.md` (what was produced, what the learner
+5. **Write the lesson source** `src/NNNN-<slug>.md` in the syntax of
+   [`references/source-format.md`](references/source-format.md), following the section order and
+   content rules of [`references/lesson-format.md`](references/lesson-format.md) and
+   [`references/quiz-format.md`](references/quiz-format.md). Never write the HTML yourself.
+6. **Write the cheat-sheet source** `src/lNN-<slug>.md` for the same deck, following
+   [`references/cheat-sheet-format.md`](references/cheat-sheet-format.md). Front matter links the
+   two (`cheat:` / `lesson_file:`).
+7. **Render both:** `uv run ~/.claude/skills/lecture-slides/scripts/render.py <source>`. On exit
+   `1` fix the reported counts in the source and render again; on exit `2` fix the source error.
+   Do not open the HTML to check it.
+8. **Update the workspace.** Append a dated entry to `NOTES.md` (what was produced, what the learner
    struggled with, what to review next). Add any newly checked source to `RESOURCES.md`.
 
 ## Hard rules
@@ -91,50 +96,46 @@ Do not generate a lesson while the mission still contains placeholders.
   recall drill → True/False → What-is → Calculations → written exam → Read next.
 - Counts per lesson: 2 MCQs per keyword section, 8–10 True/False, 8 What-is, 5 calculations,
   4 written questions.
-- Every factual sentence carries `<span class="cite">Deck p.N</span>`. Never invent a number, page,
-  or formula.
-- Reuse `../assets/style.css` and `../assets/quiz.js`. No new CSS files, no external JS, no CDN.
-- Written exam answers stay out of the HTML; they are graded in chat.
+- Every factual sentence carries a `[[p.N]]` citation. Never invent a number, page, or formula.
+- Output HTML comes only from `scripts/render.py`; no hand-written HTML, CSS, or JS.
+- Written exam answers stay out of the source; they are graded in chat.
 - No lab solutions. Respect the lab rules recorded in `MISSION.md`; concepts only.
 - Match the learner's language in prose; keep technical terms in English with a short gloss.
 - Never delete or renumber an existing lesson without asking.
 
 ## Design: simple, token-cheap
 
-Every byte of HTML is output the model has to generate. The content is the product; the design
-only has to be readable.
+The agent writes content only; the renderer adds every tag, class, and link. Keep the source lean:
 
-- Plain semantic HTML: headings, paragraphs, lists, `table`, `details`. Nothing else is needed.
-- All styling comes from `../assets/style.css` through its existing classes. No inline `style=`,
-  no `<style>` blocks, no new classes unless the format references require them.
-- No decoration: no SVG drawings, icons, emoji, gradients, animations, or wrapper `div`s that
-  carry no meaning. Reproduce a slide's figure as a short table or list, or cite its page.
 - Short prose: one idea per sentence, no restating the slide around a question.
-- Never re-read a lesson you just wrote to check it; check it against the finish list from what
-  you generated. Never paste a full example file into context; open `examples/` only when the
-  format references leave a question open, and read the part you need.
-- Target size: the reference example — a lesson around 26 KB (of which ~15 KB is visible text,
-  set by the required question counts), a cheat sheet around 6 KB. Well over that means the deck
-  should be split, or the prose is padded. Never meet the target by dropping required questions.
+- No decoration: no raw HTML, SVG, icons, or emoji in the source. Reproduce a slide's figure as a
+  short Markdown table or list, or cite its page.
+- Never re-read a source or rendered file you just wrote; the renderer's exit code and `check:` lines
+  replace that. Open `examples/` only when the references leave a question open, and read only the
+  part you need.
+- Target size: a lesson source around 15 KB (the visible text the required question counts need),
+  a cheat-sheet source around 4 KB. Well over that means the deck should be split, or the prose is
+  padded. Never meet the target by dropping required questions.
 
 ## References
 
 | Task                                                           | Load                                                                   |
 | -------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | Finding the deck and its pages without reading whole PDFs      | [`references/lecture-materials.md`](references/lecture-materials.md)   |
-| Lesson skeleton, section order, keyword cards, citation rules  | [`references/lesson-format.md`](references/lesson-format.md)           |
-| MCQ, True/False, What-is, calculation, written-question markup | [`references/quiz-format.md`](references/quiz-format.md)               |
+| Source syntax and render command (always, before writing)      | [`references/source-format.md`](references/source-format.md)           |
+| Section order, keyword and writing rules (skip the HTML parts) | [`references/lesson-format.md`](references/lesson-format.md)           |
+| MCQ, True/False, What-is, calculation, written-question rules  | [`references/quiz-format.md`](references/quiz-format.md)               |
 | Cheat sheet structure and page-citation rules                  | [`references/cheat-sheet-format.md`](references/cheat-sheet-format.md) |
 | MISSION/NOTES/RESOURCES structure, naming, state updates       | [`references/workspace-format.md`](references/workspace-format.md)     |
 
 ## Finish checklist
 
-- [ ] File names follow `NNNN-<slug>.html` / `lNN-<slug>.html`; links resolve both ways.
+- [ ] Sources are `src/NNNN-<slug>.md` / `src/lNN-<slug>.md`; both rendered with exit `0`.
 - [ ] Every keyword has a card, a recall entry, and at least one question.
 - [ ] Every citation points to a real deck page.
-- [ ] The four banks have the required counts and no answer leaks into a question.
+- [ ] No answer leaks into a question (counts are checked by the renderer).
 - [ ] The cheat sheet fits two pages and ends with the deck's exam-style questions.
-- [ ] No inline styles, `<style>` blocks, SVG, icons, or emoji; sizes near the targets above.
+- [ ] No raw HTML, SVG, icons, or emoji in the sources; sizes near the targets above.
 - [ ] `NOTES.md` has a dated entry for this session.
 - [ ] The three state files describe this course, with no leftover `<...>` placeholder.
 - [ ] Everything was written under `~/.claude/study/<course>/`; nothing in the skill folder.

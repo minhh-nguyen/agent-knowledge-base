@@ -18,7 +18,10 @@ This file lives only in the knowledge-base repository and is reached as
 Rules:
 
 - No date. The heading carries only the language and the title.
-- Append only; never rewrite or delete an earlier entry.
+- Append only; never rewrite or delete an earlier entry, except when merging duplicates (last rule).
 - One mistake per entry. Do not bundle unrelated errors.
+- At around 30 entries, merge entries that teach the same rule:
+  keep one concise canonical entry, combine only duplicate/repeated lessons, and preserve the
+  distinct language when relevant. Do not merge unrelated mistakes.
 
 ## Log

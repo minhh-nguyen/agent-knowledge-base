@@ -1,6 +1,6 @@
 ---
 name: paper-review
-description: "[role: research.self-review] Adversarial self-review of the user's OWN paper draft before submission. Mode: do. Use when the user wants to check, stress-test, or self-review their draft, prepare for reviewer criticism, or asks 'is my paper ready', 'check my draft', 'self-review'. Do NOT use for reviewing someone else's paper or learning to critique one (use [role: research.mentor]), or for answering reviews already received."
+description: "[role: research.self-review] Adversarially self-review the user's own paper draft before submission. Mode: do. Use for readiness checks, critique, and reviewer-preparation tasks. Do NOT use for someone else's paper ([role: research.mentor]) or for drafting replies to existing reviews."
 allowed-tools: "read_file edit_file write_file think_tool execute"
 metadata:
   author: "EvoScientist - edited: Minh"
@@ -32,7 +32,7 @@ with the draft path and it reviews end-to-end while the main conversation contin
 
 ## Prerequisites
 
-Before starting review, confirm the `paper-writing` handoff checklist is satisfied: all sections drafted, claims anchored to evidence, limitation section present, figures finalized, and no unresolved `\todo{}` markers. If any item is incomplete, finish writing before reviewing.
+Before starting review, confirm the draft is complete: all sections drafted, claims anchored to evidence, limitation section present, figures finalized, and no unresolved `\todo{}` markers. If any item is incomplete, finish writing before reviewing.
 
 ---
 
@@ -271,7 +271,7 @@ Four more scans belong to this pass but their criteria already live elsewhere in
 
 ## Handoff to Rebuttal
 
-When reviews come back, use the `paper-rebuttal` skill for:
+When reviews come back, writing the rebuttal is out of scope (no skill is installed for this: tell the user, and help inline only if they ask). A rebuttal covers:
 
 - Score diagnosis and review color-coding
 - Champion strategy (arming your positive reviewer for discussion)

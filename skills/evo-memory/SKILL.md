@@ -1,6 +1,6 @@
 ---
 name: evo-memory
-description: "[role: research.memory] Persistent research memory: which directions worked, which failed and why, and reusable experiment strategies. Mode: do. Use after a [role: research.ideate] cycle or an experiment, to classify why a method failed, or when the user asks 'what worked before', 'update memory', 'research history'. Do NOT use for generating ideas (use [role: research.ideate]), or for running or debugging experiments."
+description: "[role: research.memory] Record research outcomes, failures, and reusable experiment strategies in persistent memory. Mode: do. Use after ideation or experiments ([role: research.ideate]) or when asking what worked before. Do NOT use for generating ideas or debugging experiments."
 allowed-tools: "write_file edit_file read_file think_tool"
 metadata:
   author: EvoScientist
@@ -15,7 +15,7 @@ A persistent learning layer that accumulates research knowledge across ideation 
 ## When to Use This Skill
 
 - User has completed an `[role: research.ideate]` and needs to update Ideation Memory
-- User has completed (or failed) an `experiment-pipeline` and needs to update memory
+- User has completed (or failed) the experiment pipeline and needs to update memory
 - User is starting a new research cycle and wants to load prior knowledge
 - User asks about research memory, learned patterns, or cross-cycle knowledge
 - User mentions "evo-memory", "update memory", "what worked before", "research history", "evolution"
@@ -66,7 +66,7 @@ The paper defines M_E as storing "reusable data processing and model training st
 
 **Each entry records**: Strategy name, context (when to use this), evidence (which cycle, what results), generality (domain-specific or broadly applicable), date.
 
-**How it's used**: `experiment-pipeline` reads M_E at the start of each cycle. The paper uses embedding-based retrieval with cosine similarity, selecting the top-k_E most similar items (k_E=1 in experiments). Relevant strategies from prior cycles inform hyperparameter choices, data processing decisions, and debugging approaches, reducing the number of attempts needed.
+**How it's used**: the experiment pipeline reads M_E at the start of each cycle. The paper uses embedding-based retrieval with cosine similarity, selecting the top-k_E most similar items (k_E=1 in experiments). Relevant strategies from prior cycles inform hyperparameter choices, data processing decisions, and debugging approaches, reducing the number of attempts needed.
 
 See [assets/experiment-memory-template.md](assets/experiment-memory-template.md) for the template.
 
@@ -81,12 +81,14 @@ See [assets/experiment-memory-template.md](assets/experiment-memory-template.md)
 **Paper Prompt**: Use the IDE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary extraction mechanism. Fill in `{user_goal}` from the original research direction and `{top_ranked_ideas}` from the direction summary whose path `[role: research.ideate]` passed (`~/.claude/research-report/direction-summary-<topic>-<YYYY-MM-DD>.md`; if no path was passed, the newest `direction-summary-*.md` there, confirmed with the user), then reason through the prompt step by step. The output (DIRECTION SUMMARY with Title, Core idea, Why promising, Requirements, Validation plan) feeds directly into the steps below.
 
 **Process**:
-1. Read current M_I from `~/.claude/memory/ideation-memory.md`
-2. Run the paper's IDE prompt (see above), reasoning through it step by step
-3. For each direction in the prompt output, abstract it to a reusable level. "Attention-based feature selection for 3D point clouds" becomes "Cross-domain attention mechanisms for sparse data" — specific enough to be useful, abstract enough to transfer.
-4. Check M_I for existing entries on similar directions. Update if exists, append if new.
-5. If any previously "feasible" direction was found to be exhausted during this cycle, update its status.
-6. Write an evolution report documenting what changed and why.
+1. Read only the `## Index` block in `~/.claude/memory/ideation-memory.md`
+2. Grep for the abstracted direction names and retrieval tags, then read only matching H3 entry blocks; never read the full M_I file
+3. Check M_I for existing entries on similar directions. Update if exists, append if new
+4. Run the paper's IDE prompt (see above), reasoning through it step by step
+5. For each direction in the prompt output, abstract it to a reusable level. "Attention-based feature selection for 3D point clouds" becomes "Cross-domain attention mechanisms for sparse data" — specific enough to be useful, abstract enough to transfer.
+6. If any previously "feasible" direction was found to be exhausted during this cycle, update its status.
+7. Update both the matching H3 entry and its one-line `## Index` entry; append a new index line before adding a new entry
+8. Write an evolution report documenting what changed and why.
 
 **Key principle**: Store directions, not ideas. A direction like "contrastive learning for structured data" can spawn many specific ideas across future cycles. A specific idea like "SimCLR with graph augmentations on molecular datasets" is too narrow to be reusable.
 
@@ -122,7 +124,7 @@ See [references/ive-protocol.md](references/ive-protocol.md) for the full proces
 
 ### ESE — Experiment Strategy Evolution
 
-**Trigger**: After `experiment-pipeline` succeeds — all 4 stages complete and gates met.
+**Trigger**: After the experiment pipeline succeeds — all 4 stages complete and gates met.
 
 **Purpose**: Distill reusable strategies from the successful experiment run and store them in M_E for future cycles.
 
@@ -147,12 +149,14 @@ See [references/ese-protocol.md](references/ese-protocol.md) for the full proces
 
 ## Reading Memory at Cycle Start
 
-When starting a new research cycle (loading `[role: research.ideate]` or `experiment-pipeline`):
+When starting a new research cycle (loading `[role: research.ideate]` or starting the experiment pipeline):
 
-1. Read `~/.claude/memory/ideation-memory.md` and `~/.claude/memory/experiment-memory.md`
-2. Summarize relevant entries to inject into the current context
-3. For `[role: research.ideate]`: Offer M_I feasible directions as candidate research directions in Step 3. Use M_I unsuccessful directions (fundamental failures only) to prune ideas during Step 4 refinement.
-4. For `experiment-pipeline`: Use M_E strategies to inform hyperparameter ranges, training schedules, and debugging approaches.
+1. Read only the index in `~/.claude/memory/ideation-memory.md`; do not read the full M_I file
+2. Grep the matching index names/tags, then read only the top-k relevant H3 entry blocks
+3. If needed, read `~/.claude/memory/experiment-memory.md`
+4. Summarize only relevant entries to inject into the current context
+5. For `[role: research.ideate]`: Offer M_I feasible directions as candidate research directions in Step 3. Use M_I unsuccessful directions (fundamental failures only) to prune ideas during Step 4 refinement.
+6. For the experiment pipeline: Use M_E strategies to inform hyperparameter ranges, training schedules, and debugging approaches.
 
 **Don't blindly apply old strategies.** Context matters. A strategy that worked for image classification may not work for text generation. Always check the recorded context against the current problem.
 
@@ -160,12 +164,14 @@ When starting a new research cycle (loading `[role: research.ideate]` or `experi
 
 ### For [role: research.ideate] (inject M_I)
 
-1. Read `~/.claude/memory/ideation-memory.md`
-2. Select the top-k_I=2 entries most relevant to the user's current goal. Compare the user's goal statement against each entry's Summary and Retrieval Tags for semantic similarity.
-3. For each selected feasible direction: offer it as a candidate when Step 3 chooses its 3 research directions (the total stays at 3). Example injection: *"Prior cycle found 'Modality-aware model compression' promising (Elo 1500, cycle 3). Consider it as one of the 3 research directions alongside new ones."*
-4. For each unsuccessful direction with `Failure Classification: Fundamental`: flag for pruning. Example injection: *"Prior cycle confirmed 'Autoregressive real-time video generation' is a fundamental failure (O(n) latency). Prune any idea matching this pattern."*
+1. Read only the `## Index` block in `~/.claude/memory/ideation-memory.md`
+2. Grep the index and matching entries for names and `Retrieval Tags`
+3. Read only the top-k_I=2 matching H3 entry blocks; never read unrelated entries or the full file
+4. Compare the user's goal against the retrieved summaries and tags
+5. For each selected feasible direction: offer it as a candidate when Step 3 chooses its 3 research directions (the total stays at 3).
+6. For unsuccessful directions with `Failure Classification: Fundamental`: flag for pruning.
 
-### For experiment-pipeline (inject M_E)
+### For the experiment pipeline (inject M_E)
 
 1. Read `~/.claude/memory/experiment-memory.md`
 2. Select the top-k_E=1 entry most relevant to the current experiment domain. Compare the experiment's problem description against each entry's Context and Category.
@@ -218,18 +224,18 @@ How evo-memory connects to other skills in the pipeline:
 | Trigger | Source Skill | Mechanism | Memory Updated |
 |---------|-------------|-----------|----------------|
 | Tournament completed | `[role: research.ideate]` | IDE | M_I (feasible directions) |
-| No executable code within budget, or method underperforms baseline | `experiment-pipeline` | IVE | M_I (unsuccessful directions) |
-| Pipeline succeeded | `experiment-pipeline` | ESE | M_E (data processing + model training; optionally architecture + debugging) |
+| No executable code within budget, or method underperforms baseline | the experiment pipeline | IVE | M_I (unsuccessful directions) |
+| Pipeline succeeded | the experiment pipeline | ESE | M_E (data processing + model training; optionally architecture + debugging) |
 | New cycle starts | `[role: research.ideate]` | Read (top-k_I=2) | M_I read for seeding/pruning |
-| New cycle starts | `experiment-pipeline` | Read (top-k_E=1) | M_E read for strategy guidance |
+| New cycle starts | the experiment pipeline | Read (top-k_E=1) | M_E read for strategy guidance |
 
 ## Reference Navigation
 
 | Topic | Reference File | When to Use |
 |-------|---------------|-------------|
 | IDE process details | [ide-protocol.md](references/ide-protocol.md) | After completing [role: research.ideate] |
-| IVE process details | [ive-protocol.md](references/ive-protocol.md) | After experiment-pipeline failure (no executable code or method underperforms) |
-| ESE process details | [ese-protocol.md](references/ese-protocol.md) | After experiment-pipeline succeeds |
+| IVE process details | [ive-protocol.md](references/ive-protocol.md) | After a failed experiment pipeline (no executable code, or the method underperforms) |
+| ESE process details | [ese-protocol.md](references/ese-protocol.md) | After the experiment pipeline succeeds |
 | Paper's actual prompts | [paper-prompts.md](references/paper-prompts.md) | Reference for exact IDE/IVE/ESE prompt design |
 | Memory data structures | [memory-schema.md](references/memory-schema.md) | Understanding M_I and M_E formats |
 | Ideation memory template | [ideation-memory-template.md](assets/ideation-memory-template.md) | Initializing M_I |

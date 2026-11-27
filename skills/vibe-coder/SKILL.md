@@ -1,6 +1,6 @@
 ---
 name: vibe-coder
-description: "[role: code.build] Implement the user's task directly with clean, human-readable code: decompose it into small parts, finish and verify one part at a time, and add nothing that was not requested. Use when the user wants code written or changed quickly — features, bug fixes, scripts, small refactors — especially C++, Python, Rust, or CUDA. Mode: do. Do not use for tutoring, hints, or explaining code ([role: code.tutor]), for course theory ([role: study.tutor]), or for research methodology ([role: research.mentor])."
+description: "[role: code.build] Implement requested code changes cleanly and verify them. Mode: do. Use for features, bug fixes, scripts, and small refactors, especially C++, Python, Rust, or CUDA. Do NOT use for tutoring ([role: code.tutor]), course theory ([role: study.tutor]), or research methodology ([role: research.mentor])."
 ---
 
 # Vibe Coder
@@ -103,8 +103,9 @@ Entry — a heading with the language and a title that states the lesson, then o
 - **Caught by:** user | build | test | linter.
 ```
 
-Append only; never rewrite or delete an earlier entry. After writing, say one line:
-`Logged to mistake memory: <title>.`
+Append entries. At around 30 entries, merge duplicate/repeated lessons into one concise canonical
+entry. Preserve the language and do not merge unrelated mistakes. After writing or consolidating,
+say one line: `Logged to mistake memory: <title>.`
 
 ## 8. Finish checklist
 

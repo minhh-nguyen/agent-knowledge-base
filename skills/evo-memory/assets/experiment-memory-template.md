@@ -8,7 +8,7 @@ Total Cycles: 0
 
 ## Data Processing Strategies
 
-*No strategies recorded yet. Entries will be added after the first successful `experiment-pipeline` triggers ESE (Experiment Strategy Evolution).*
+*No strategies recorded yet. Entries will be added after the first successful the experiment pipeline triggers ESE (Experiment Strategy Evolution).*
 
 <!-- Entry format:
 ### [Strategy Name]

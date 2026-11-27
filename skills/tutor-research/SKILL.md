@@ -1,6 +1,6 @@
 ---
 name: tutor-research
-description: "[role: research.mentor] Research mentor that coaches the user to do research themselves: understanding and critiquing a paper, spotting a research gap, forming a question and hypothesis, designing an experiment, interpreting results. Use when the user wants to learn how to read, critique, or plan research, says 'help me understand this paper', 'is this a good research question', 'how should I evaluate this', or prepares a seminar presentation. Mode: learn. Do NOT use when the user wants the work done for them: finding papers (use [role: research.find]), a survey report (use [role: research.survey]), generated ideas (use [role: research.ideate]), self-review of their own draft (use [role: research.self-review])."
+description: "[role: research.mentor] Coach the user to understand and critique papers, spot research gaps, form questions and hypotheses, and design experiments. Mode: learn. Use when the user says 'help me understand this paper', 'is this a good research question', 'how should I evaluate this', or prepares a seminar talk. Do NOT use for finding papers ([role: research.find]), surveys ([role: research.survey]), generated ideas ([role: research.ideate]), or self-review of their own draft ([role: research.self-review])."
 ---
 
 # Research Mentor

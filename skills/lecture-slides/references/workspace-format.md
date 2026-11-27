@@ -1,7 +1,7 @@
 # Workspace Format
 
-The skill folder holds only the method: `SKILL.md`, `references/`, `templates/`, `assets/`, and
-`examples/`. Course state and generated material live in one folder per course under
+The skill folder holds only the method: `SKILL.md`, `scripts/`, `references/`, `templates/`,
+`assets/`, and `examples/`. Course state and generated material live in one folder per course under
 `~/.claude/study/`, a symlink into the knowledge-base repository's `study/` folder:
 
 ```
@@ -10,11 +10,13 @@ The skill folder holds only the method: `SKILL.md`, `references/`, `templates/`,
 ├── NOTES.md                # live state, append-only
 ├── RESOURCES.md            # live state, filled per course
 ├── assets -> ../../skills/lecture-slides/assets   # style.css, quiz.js
-├── lessons/                # NNNN-<slug>.html
-└── cheat-sheets/           # lNN-<slug>.html
+├── src/                    # NNNN-<slug>.md, lNN-<slug>.md: what the agent writes
+├── lessons/                # NNNN-<slug>.html, rendered from src/
+└── cheat-sheets/           # lNN-<slug>.html, rendered from src/
 
 <skill>/
 ├── SKILL.md
+├── scripts/render.py      # source → lesson / cheat-sheet HTML
 ├── templates/              # pristine MISSION/NOTES/RESOURCES, copied into each new course
 ├── assets/                 # style.css, quiz.js: shared by every course
 ├── examples/fomo/          # one reference lesson and cheat sheet (read-only)
@@ -37,7 +39,7 @@ Otherwise create the course folder once, from the skill folder:
 
 ```sh
 c=~/.claude/study/<course>
-mkdir -p "$c"/{lessons,cheat-sheets}
+mkdir -p "$c"/{src,lessons,cheat-sheets}
 cp templates/MISSION.md templates/NOTES.md templates/RESOURCES.md "$c"/
 ln -s ../../skills/lecture-slides/assets "$c/assets"   # relative: resolves inside the repository
 ```
@@ -122,6 +124,6 @@ asking.
 
 ## Output naming
 
-- Lesson: `lessons/NNNN-<slug>.html`, numbered continuously within the course.
-- Cheat sheet: `cheat-sheets/lNN-<slug>.html`, where `NN` is the lecture number.
+- Lesson: `src/NNNN-<slug>.md` → `lessons/NNNN-<slug>.html`, numbered continuously within the course.
+- Cheat sheet: `src/lNN-<slug>.md` → `cheat-sheets/lNN-<slug>.html`, where `NN` is the lecture number.
 - Do not reuse a number after a lesson is written; if the deck splits, use the next two numbers.

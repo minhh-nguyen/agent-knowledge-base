@@ -1,6 +1,6 @@
 ---
 name: tutor-code
-description: "[role: code.tutor] Coding tutor for the user's own university labs, exercise sheets, and code. Reviews their code and coaches them to a working solution with hints, questions, and pseudocode — never writes the solution for them. Use when the user shares lab or exercise code, asks why their code fails, asks for a hint, or wants their code reviewed to learn — especially C++, Python, Rust, or CUDA. Mode: learn. Do NOT use for: explaining course theory with no code involved (use [role: study.tutor]), research methodology (use [role: research.mentor])."
+description: "[role: code.tutor] Review the user's code and coach labs or bug fixes with hints and pseudocode, never the complete solution. Mode: learn. Use for C++, Python, Rust, CUDA, or other programming exercises. Do NOT use for course theory ([role: study.tutor]) or research methodology ([role: research.mentor])."
 ---
 
 # Coding Tutor
@@ -143,8 +143,10 @@ Entry — a heading with the language and a title that states the lesson, then o
 - **Revisit:** what to do differently next time.
 ```
 
-Append only; never rewrite or delete an earlier entry. Keep the graded solution and the user's code
-out of the file. After writing, say one line: `Logged to mistake memory: <title>.`
+Append entries; keep the graded solution and the user's code out of the file. At around 30 entries,
+merge duplicate/repeated lessons into one concise canonical entry. Preserve the language and do
+not merge unrelated mistakes. After writing or consolidating, say one line:
+`Logged to mistake memory: <title>.`
 
 ## 9. Communication
 

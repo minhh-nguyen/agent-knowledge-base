@@ -3,6 +3,18 @@
 Last Updated: 2026-11-26
 Total Cycles: 2
 
+## Index
+
+- Tier-Aware Fetch Planning Across Azure Blob Price Structures | selected by user | `### [Cycle 2] Tier-Aware Fetch Planning Across Azure Blob Price Structures`
+- Column-Granular Storage Tiering + Local-Cache Break-Even | feasible | `### [Cycle 2] Column-Granular Storage Tiering + Local-Cache Break-Even`
+- io_uring Guidelines Re-validated on Cloud Ephemeral NVMe (Azure L-series) | feasible-conditional | `### [Cycle 2] io_uring Guidelines Re-validated on Cloud Ephemeral NVMe (Azure L-series)`
+- Telemetry-Driven Adaptive I/O-Path Controller for OLTP Storage Engines | selected by user for proposal expansion | `### Telemetry-Driven Adaptive I/O-Path Controller for OLTP Storage Engines`
+- Minimal-Attack-Surface, Portable io_uring Storage Engines | feasible | `### Minimal-Attack-Surface, Portable io_uring Storage Engines`
+- io_uring-Native Cloud WAL with Placement-Aware Batching | feasible | `### io_uring-Native Cloud WAL with Placement-Aware Batching`
+- io_uring experiments on macOS host | fundamental failure | `### io_uring experiments on macOS host`
+- Cross-cloud price comparison as main contribution | fundamental failure | `### Cross-cloud price comparison as main contribution`
+- Learned column-tiering policy | implementation-level prune | `### Learned column-tiering policy`
+
 ## Feasible Directions
 
 ### [Cycle 2] Tier-Aware Fetch Planning Across Azure Blob Price Structures
@@ -11,8 +23,8 @@ Total Cycles: 2
 - **Why Promising**: Runs fully on Mac (GET/bytes/$ deterministic from logs); Azure trial only for cheap calibration; single-provider multi-tier design removes cross-cloud confounds; Azure prices verified via prices.azure.com 2026-11-26.
 - **Requirements**: moto/Garage + delay proxy, DuckDB v2.0.1, PyArrow, one Azure storage account (4 tiers) + Premium account, small in-region Linux VM for TTFB calibration.
 - **Validation Plan**: Mac sweep σ × clustering × TTFB × N × gap; compute $ per tier; measure per-tier TTFB/BW on Azure; check measured-optimal g vs predicted g*; verify HNS read billing granularity (per-4MiB? unverified).
-- **Evidence**: Cycle 2 ELO winner, 1531 (N7 F9 R9 C9). Details: repo reports/direction-summary-2026-11-26-mac-azure.md.
-- **Status**: selected by user (2026-11-27); reading list at repo reports/idea1-reading-list.md; next = Step 7 proposal
+- **Evidence**: Cycle 2 ELO winner, 1531 (N7 F9 R9 C9). Details: `~/.claude/research-report/direction-summary-2026-11-26-mac-azure.md`.
+- **Status**: selected by user (2026-11-27); reading list at `~/.claude/research-report/idea1-reading-list.md`; next = Step 7 proposal
 - **Related Entries**: RQ1 remote fetch planning (repo report); Column-Granular Tiering
 - **Retrieval Tags**: object storage, range GET coalescing, Parquet, Azure Blob tiers, request pricing, MacBook-feasible
 - **Date Added**: 2026-11-26

@@ -1,6 +1,6 @@
 ---
 name: paper-figures
-description: "[role: research.figures] Publication-ready figures from tabular data (CSV or DataFrame): a PNG plus the matplotlib script that reproduces it. Mode: do. Use when the user wants a chart or multi-panel figure for a paper or report as an image file. Do NOT use for interactive or HTML charts, slides or posters, diagrams without data (flowcharts, schematics), or recreating code from a screenshot."
+description: "[role: research.figures] Create publication-ready PNG charts and reproducible matplotlib scripts from CSV or DataFrames. Mode: do. Use for data charts or multi-panel figures. Do NOT use for HTML charts, slides, schematic diagrams, or screenshot recreation."
 allowed-tools: "write_file edit_file read_file think_tool execute"
 metadata:
   author: "EvoScientist - edited: Minh"

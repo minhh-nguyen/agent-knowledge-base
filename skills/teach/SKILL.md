@@ -1,6 +1,6 @@
 ---
 name: teach
-description: "[role: study.workspace] Teach the user a new skill or concept, within this workspace."
+description: "[role: study.workspace] Teach a skill or concept through a workspace-based lesson. Mode: learn."
 disable-model-invocation: true
 argument-hint: "What would you like to learn about?"
 ---

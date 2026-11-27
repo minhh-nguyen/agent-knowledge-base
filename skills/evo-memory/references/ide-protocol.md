@@ -10,9 +10,11 @@ IDE runs after `[role: research.ideate]` Step 5 (ELO Tournament) is complete and
 
 ### Step 1: Read Current M_I
 
-Read `~/.claude/memory/ideation-memory.md` to understand what's already stored:
-- Which directions are currently listed as feasible?
-- Which are listed as unsuccessful?
+Read only the `## Index` block in `~/.claude/memory/ideation-memory.md`.
+Grep matching names and Retrieval Tags, then read only the relevant H3 entry blocks.
+Never read the full M_I file during overlap checking:
+- Which indexed directions are currently listed as feasible?
+- Which are indexed as unsuccessful?
 - Are any of the top-3 ideas related to existing entries?
 
 ### Step 2: Run the Paper's IDE Prompt

@@ -1,6 +1,6 @@
 ---
 name: research-ideation
-description: "[role: research.ideate] Generate, rank, and refine research ideas grounded in the literature, then expand the chosen one into a proposal. Mode: do. Use when the user wants a research direction, brainstormed or ranked ideas, a novelty check of an idea, or a research proposal. Do NOT use for finding or reading papers (use [role: research.find]), survey reports (use [role: research.survey]), or learning to form a research question yourself (use [role: research.mentor])."
+description: "[role: research.ideate] Generate, rank, and refine literature-grounded research ideas, then expand one into a proposal. Mode: do. Use for research directions, novelty checks, or proposals. Do NOT use for finding papers ([role: research.find]), surveys ([role: research.survey]), or learning research-methodology ([role: research.mentor])."
 allowed-tools: "write_file edit_file read_file think_tool execute"
 metadata:
   author: "EvoScientist - edited: Minh"
@@ -45,7 +45,7 @@ Step 8: Validate and Iterate
 
 - **Finding/reading papers** → use `[role: research.find]`
 - **Literature survey report** → use `[role: research.survey]`
-- **Planning a paper (story design, experiment plan)** → use `paper-planning`
+- **Planning a paper (story design, experiment plan)** → no skill is installed for this: tell the user, and help inline only if they ask
 
 ---
 
@@ -53,11 +53,12 @@ Step 8: Validate and Iterate
 
 **Before any ideation begins**, load Ideation Memory (M_I) from prior research cycles:
 
-1. Read M_I at `~/.claude/memory/ideation-memory.md` (refer to `[role: research.memory]` skill)
-2. Select the **top-2 entries** (k_I=2) most relevant to the user's current goal by comparing each entry's Summary and Retrieval Tags against the goal
-3. **Feasible directions** from prior cycles → use as seeds in Step 3 (incorporate as candidate research directions alongside new ones; Step 3 still selects exactly 3 directions)
-4. **Unsuccessful directions** marked as fundamental failures → use during idea pruning in Step 4 (prune any idea that matches a fundamental failure pattern)
-5. If M_I doesn't exist yet (first cycle), skip this step
+1. Read only the `## Index` block in `~/.claude/memory/ideation-memory.md` (refer to `[role: research.memory]`)
+2. Grep the index and matching entries for names and Retrieval Tags
+3. Read only the **top-2 matching H3 entry blocks** (k_I=2); do not read the full M_I file
+4. **Feasible directions** from prior cycles → use as seeds in Step 3 (incorporate as candidate research directions alongside new ones; Step 3 still selects exactly 3 directions)
+5. **Unsuccessful directions** marked as fundamental failures → use during idea pruning in Step 4 (prune any idea that matches a fundamental failure pattern)
+6. If M_I doesn't exist yet (first cycle), skip this step
 
 This step prevents repeating known dead ends and builds on prior successes across research cycles.
 
@@ -280,7 +281,7 @@ See `references/proposal-extension.md` for detailed section guidance.
 
 ## Step 8: Validate and Iterate
 
-Run experiments on representative data. If the approach fails, return to Step 3 or Step 4 with updated knowledge. See `experiment-craft` for systematic debugging.
+Run experiments on representative data. If the approach fails, return to Step 3 or Step 4 with updated knowledge.
 
 ---
 
@@ -310,15 +311,15 @@ All paper discovery goes through `[role: research.find]`. This skill does not se
 
 | When                          | Action                | Details                                                                                                                                    |
 | ----------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Step 0** (before ideation)  | **Read M_I**          | Load `~/.claude/memory/ideation-memory.md`, select top-2 relevant entries, use feasible directions as seeds, avoid fundamental failures |
+| **Step 0** (before ideation)  | **Read M_I index**    | Read only `## Index`, grep names/tags, read top-2 matching H3 entries; use feasible directions as seeds, avoid fundamental failures |
 | **Step 6** (after tournament) | **Write M_I via IDE** | Save top-3 directions with ELO scores as feasible; save dead-end ideas as unsuccessful with failure classification                         |
 
 ## Handoff
 
 | To                        | When                                                                | Key Artifacts                                                                  |
 | ------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `paper-planning`          | Proposal complete (Step 7) → plan paper structure                   | `~/.claude/research-report/research-proposal-<topic>-<YYYY-MM-DD>.md`, `~/.claude/research-report/direction-summary-<topic>-<YYYY-MM-DD>.md` |
-| `experiment-pipeline`     | Proposal complete (Step 7) → start experiments                      | `~/.claude/research-report/research-proposal-<topic>-<YYYY-MM-DD>.md`, `~/.claude/research-report/direction-summary-<topic>-<YYYY-MM-DD>.md` |
+| Paper planning (none installed: tell the user) | Proposal complete (Step 7) → plan paper structure | `~/.claude/research-report/research-proposal-<topic>-<YYYY-MM-DD>.md`, `~/.claude/research-report/direction-summary-<topic>-<YYYY-MM-DD>.md` |
+| Experiments (none installed: tell the user) | Proposal complete (Step 7) → start experiments | `~/.claude/research-report/research-proposal-<topic>-<YYYY-MM-DD>.md`, `~/.claude/research-report/direction-summary-<topic>-<YYYY-MM-DD>.md` |
 | `[role: research.memory]` | After tournament (Step 6) → update Ideation Memory via IDE protocol | `~/.claude/research-report/direction-summary-<topic>-<YYYY-MM-DD>.md`                                         |
 
 ---

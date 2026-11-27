@@ -99,7 +99,7 @@ Order contributions by strength:
 
 ### What to Include
 
-Structure this section to align with what `experiment-pipeline` will need:
+Structure this section to align with what the experiment pipeline will need:
 
 **Datasets**:
 - Which datasets will you use? Why these specifically?
@@ -121,9 +121,9 @@ Structure this section to align with what `experiment-pipeline` will need:
 - Which ablation design? (Leave-one-out, additive, substitution)
 - This should map directly to Contribution 2 (analysis claim)
 
-### Connecting to experiment-pipeline
+### Connecting to the experiment pipeline
 
-The experiment plan here becomes the input for `experiment-pipeline`:
+The experiment plan here becomes the input for the experiment pipeline:
 - Datasets and baselines → Stage 1 (Initial Implementation)
 - Metrics → Gate conditions for all stages
 - Ablation design → Stage 4

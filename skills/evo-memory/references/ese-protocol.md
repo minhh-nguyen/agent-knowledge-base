@@ -4,7 +4,7 @@ Step-by-step process for extracting reusable strategies from successful experime
 
 ## When to Trigger
 
-ESE runs after `experiment-pipeline` succeeds — all 4 stages complete and all gate conditions met. This means the full pipeline produced validated results, and the code trajectory logs contain a complete record of what worked.
+ESE runs after the experiment pipeline succeeds — all 4 stages complete and all gate conditions met. This means the full pipeline produced validated results, and the code trajectory logs contain a complete record of what worked.
 
 ## Step-by-Step Process
 
@@ -124,7 +124,7 @@ Generate a report at `~/.claude/memory/evolution-reports/cycle_N_ese.md`:
 - Which categories they fall into
 - Which are broadly applicable (highest value)
 - Any contradictions with existing M_E entries
-- Expected impact on future `experiment-pipeline` cycles
+- Expected impact on future the experiment pipeline cycles
 
 ## Extraction Quality Guidelines
 

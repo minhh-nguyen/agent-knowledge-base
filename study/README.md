@@ -9,8 +9,9 @@ study/<course>/
 ├── NOTES.md          # learner preferences, course plan, dated entries (append-only)
 ├── RESOURCES.md      # trusted sources with versions and dates
 ├── assets -> ../../skills/lecture-slides/assets
-├── lessons/          # NNNN-<slug>.html
-└── cheat-sheets/     # lNN-<slug>.html
+├── src/              # NNNN-<slug>.md, lNN-<slug>.md (written by the agent)
+├── lessons/          # NNNN-<slug>.html (rendered)
+└── cheat-sheets/     # lNN-<slug>.html (rendered)
 ```
 
 `<course>` is the short course code used for the lecture folders (`fomo`, `pmpp`, …). The skill

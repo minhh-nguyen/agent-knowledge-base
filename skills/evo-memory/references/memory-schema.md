@@ -22,6 +22,10 @@ All paths are absolute links into the knowledge-base repository, never relative 
 Last Updated: [YYYY-MM-DD]
 Total Cycles: [N]
 
+## Index
+
+- [Direction Name] | [status] | `### [Direction Name]`
+
 ## Feasible Directions
 
 ### [Direction 1 Name]
@@ -290,7 +294,7 @@ extracted? Why at this level of abstraction? Any judgment calls made.]
 ## Impact on Future Cycles
 
 - **For [role: research.ideate]**: [How will M_I changes affect future ideation?]
-- **For experiment-pipeline**: [How will M_E changes affect future experiments?]
+- **For the experiment pipeline**: [How will M_E changes affect future experiments?]
 - **Confidence level**: [How confident are you in these updates?]
 ```
 

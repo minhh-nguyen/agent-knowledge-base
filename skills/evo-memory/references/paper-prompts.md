@@ -55,7 +55,7 @@ DIRECTION SUMMARY:
 
 1. **Deduplication is explicit**: The prompt instructs merging of same-direction ideas, retaining the most actionable formulation. This maps to our abstraction ladder in `ide-protocol.md`.
 2. **Four-dimension evaluation carried forward**: "Why promising" references novelty/feasibility/relevance/clarity — the same 4 dimensions used in the Elo tournament.
-3. **Minimal validation plan**: Each direction includes a 2-4 step validation plan, making the memory item immediately actionable for future `experiment-pipeline` cycles.
+3. **Minimal validation plan**: Each direction includes a 2-4 step validation plan, making the memory item immediately actionable for future the experiment pipeline cycles.
 4. **Memory-oriented writing**: The constraint "Write so a future researcher agent can directly reuse the direction" emphasizes that IDE output is for retrieval, not for human reading.
 
 ---

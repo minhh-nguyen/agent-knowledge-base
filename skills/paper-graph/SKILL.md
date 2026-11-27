@@ -1,6 +1,6 @@
 ---
 name: paper-graph
-description: "[role: research.lineage] Map how a research field or model family evolved: predecessors, follow-ups, and which problems led to which approaches, as a Markdown report with Mermaid diagrams. Mode: do. Use when the user asks for a topic's history, a model's family tree, or what a seed paper built on and led to. Do NOT use for finding papers (use [role: research.find]), one-paper summaries, head-to-head comparisons, or lists of datasets and tools."
+description: "[role: research.lineage] Map a field or model family's evolution with predecessors, follow-ups, and Mermaid diagrams in Markdown. Mode: do. Use for topic history or family trees. Do NOT use for paper search ([role: research.find]), one-paper summaries, comparisons, or dataset lists."
 allowed-tools: "write_file edit_file read_file execute"
 metadata:
   author: "EvoScientist - edited: Minh"
@@ -18,22 +18,9 @@ The skill has no outbound LLM dependency. The host agent provides all LLM calls;
 
 ## When to Use This Skill
 
-Trigger when the user asks something like:
-
-- "Show me the history of <topic>" / "How did <topic> evolve?"
-- "Where does <paper> stem from?" / "What did <paper> build on?"
-- "What are significant improvements / follow-ups to <paper>?"
-- "Trace the lineage of ideas in <field>" / "Give me a literature taxonomy of <field>"
-- "Citation tree of <paper>" / "Idea trace of <topic>"
-
-Skip when:
-
-- The user just wants a one-paper summary or single search hit (no relational/evolutionary aspect).
-- The request is for non-academic citation work.
-- The user explicitly wants a plain bibliography rather than a graph.
-- The request is an inventory of datasets, benchmarks, libraries, or other artifacts.
-- The user wants the single latest paper, a simple keyword search (use `[role: research.find]`),
-  or a head-to-head comparison of specific methods.
+The description already routed here. Stop and hand over if the request turns out to be a one-paper
+summary, a single latest paper or keyword search (`[role: research.find]`), a plain bibliography,
+an inventory of datasets / benchmarks / tools, or a head-to-head comparison.
 
 ---
 
@@ -72,34 +59,8 @@ Mermaid is just text inside ` ```mermaid ` fences — the file renders directly 
 
 **Working directory:** create one dir per run at `~/.claude/research-report/.work/paper-graph/<basename>/`, never in the project you are working in (see Output Location). Resolve `~` once to the absolute home path (`echo $HOME`) and use that same absolute path in both the shell and the file tools, so both see the same directory. Avoid `/tmp/...`. If the shell or the file tools cannot reach that directory, stop and tell the user rather than falling back to the working directory.
 
-Suggested layout of the run's scratch directory:
-
-```
-~/.claude/research-report/.work/paper-graph/<basename>/
-├── query.txt                user query (verbatim)
-├── seed.json                resolve_seed_papers
-├── seed_block.txt           format_seed_block
-├── parsed_query.json        LLM: parse_query output
-├── goal_block.txt           build_goal_block (reused in steps 8, 10, 11)
-├── papers.json              fetch_papers → prefetch_sections → classify-merged
-├── papers_input.txt         format_papers (full set)
-├── classify_raw.json        LLM: classify output (consumed by merge_classifications)
-├── core_filter.json         compute_core_filter (+ core_filter.json.allowed.txt)
-├── papers_input_core.txt    format_papers (CORE-only; + papers_input_core.txt.allowed.txt)
-├── outline_raw.md           LLM: outline output
-├── outline.json             parse_outline summary
-├── outline_mermaid.json     render_outline_mermaid
-├── solutions/<key>.json     per-solution context (one file per solution)
-├── parsed/<key>.json        parse_detail output (used by step 11 audit)
-├── details/
-│   ├── <key>_input.txt      format_papers (optional: same content as papers_input_core.txt; + .allowed.txt sibling)
-│   ├── <key>_raw.md         LLM: detail output
-│   └── <key>.json           render_detail_mermaid (consumed by assemble)
-├── verdicts/<key>.json      [{source_n, target_n, verdict, source_quote, target_quote, reason}] from audit ([] when no edges)
-└── <run>.log.jsonl files    one next to each subcommand output, default-on
-```
-
-Filenames are agent-chosen — these are recommendations to match what the runbook below references. `<key>` is the solution key string `<s_major>.<s_minor>` (e.g. `1.1`). Every `format_papers` call writes a sibling `<out>.allowed.txt` containing the `(N), (N), ...` form ready to drop into a `{allowed_numbers}` placeholder.
+The file each step reads and writes is named in the step itself; the full scratch-directory map
+is in [`references/workdir-layout.md`](references/workdir-layout.md) (open it only when a path is unclear).
 
 ---
 
@@ -419,17 +380,7 @@ If any of those fail, the most likely cause is the outline LLM (step 8) returnin
 
 ---
 
-## Design notes (for editors of this skill, not the runtime agent)
-
-- **No outbound LLM dependency**: the skill exposes data fetchers, prompt templates (`references/*.md`), parsers, and renderers. The host agent is the LLM provider. This is why there's no `OPENROUTER_API_KEY` requirement and no `llm.py`.
-- **The audit gate is code, not prose**: `scripts/audit.py` re-checks every verdict record (label, quotes found in the paper's own text, chronology, self-edges, duplicates, cycles). `render_detail_mermaid` cannot run without `--verdicts`, stamps its output `"audited": true`, and `assemble_report` refuses a render without the stamp. `mermaid.py` takes its set of edge-drawing labels from `audit.SUPPORTED_VERDICTS`.
-- **Single source of truth for the detail parser**: `mermaid._parse_detail_markdown` is called by both `detail_to_mermaid` (rendering) and the `parse_detail` CLI subcommand. Any change to scratchpad stripping, paper/EP/OC extraction, or hallucination dropping propagates to both.
-- **`references/seed_paper_block.md` is an internal template fragment** consumed by `format_seed_block`; the runtime agent never substitutes its placeholders directly. The other five `references/*.md` files are the agent-facing templates the runbook references.
-- **Themed Mermaid**: `mermaid.py` defines `LIGHT_THEME` and `DARK_THEME`. The renderer subcommands resolve the theme by name (CLI arg) → `MERMAID_THEME` env → `"light"`. Each render emits a self-contained Mermaid graph (init directive + classDefs + linkStyle).
-- **JSONL logging is default-on**: every subcommand writes `<out>.log.jsonl` next to its output unless `--log none` is passed. These logs are for the human developer iterating on the skill — the runtime agent should not read them back.
-- **`papers.json` is checked once per subcommand**: every step that reads it exits with code 2 and the offending entry numbers when the file is not an array of paper objects, instead of failing later on a missing field.
-- **Failure mode preference**: loud over silent. Missing keys, malformed LLM output, zero papers from search — all abort with a printed reason rather than producing a degraded artifact.
-- **English-only**: the upstream `paper-graph` prompts emitted bilingual labels; this skill strips Chinese and keeps English only.
+Editors of this skill: design notes are in [`references/design-notes.md`](references/design-notes.md); the runtime agent does not need them.
 
 ## Output Location
 

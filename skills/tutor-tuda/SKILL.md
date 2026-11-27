@@ -1,6 +1,6 @@
 ---
 name: tutor-tuda
-description: "[role: study.tutor] Teaching assistant for the user's TU Darmstadt courses. Teaches from their own lecture slides and textbooks, retrieving only the relevant pages. Use when the user asks to be taught, tutored, quizzed, or walked through a concept; asks about a course, lecture, exercise sheet, or exam topic (e.g. pmpp, aidm, fomo, hcsd, ite, eib, adms, kommnetz, pams); or says 'teach me', 'explain', 'quiz me', 'giải thích', 'giảng'. Mode: learn. Do NOT use for: reviewing or debugging their code (use [role: code.tutor]), research methodology or paper critique (use [role: research.mentor])."
+description: "[role: study.tutor] Teach the user's TU Darmstadt courses in the conversation, from their own lecture slides and textbooks, retrieving only the relevant pages. Mode: learn. Use when the user asks about a course, lecture, exercise sheet, or exam topic (e.g. pmpp, aidm, fomo, hcsd, ite, eib, adms, kommnetz, pams), or says 'teach me', 'quiz me', 'giải thích', 'giảng'. Do NOT use for written lesson or cheat-sheet files ([role: study.lecture]), drilling a topic to mastery ([role: study.drill]), code debugging ([role: code.tutor]), or research methodology ([role: research.mentor])."
 ---
 
 # Course Teaching Assistant
@@ -11,6 +11,8 @@ Neighboring skills — hand over explicitly rather than doing two jobs at once:
 | ----------------------------------------------------------------- | ------------------------- |
 | The user's code: review, debugging, lab implementation            | `[role: code.tutor]`      |
 | Reading or critiquing a paper, research gaps, experiment design   | `[role: research.mentor]` |
+| Lesson, quiz-bank, or cheat-sheet files for a lecture             | `[role: study.lecture]`   |
+| An explicit "drill me to mastery" request                         | `[role: study.drill]`     |
 | A persistent on-disk lesson workspace (only when invoked by name) | `[role: study.workspace]` |
 
 This skill owns teaching course content inside the conversation, with no files written.
