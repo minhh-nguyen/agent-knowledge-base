@@ -1,28 +1,33 @@
 # Coding Mistake Memory
 
-Append-only log written by `[role: code.tutor]`. One entry per mistake that was corrected, so a
-later session can probe the same gap instead of rediscovering it.
+Append-only log of **the tutor's own mistakes**, written by `[role: code.tutor]`. It never records
+the user's errors. Read it at the start of every session so the same mistake is not repeated.
 
-Read this file at the start of any session that touches the same language, then pick the first
-probe from the "Revisit" lines.
+This file lives only in the knowledge-base repository and is reached as
+`~/.claude/memory/coding-mistake-memory.md` from any project.
 
 ## Entry format
 
 ```markdown
-## YYYY-MM-DD · <language> · <short title>
-
-- **Type:** student | tutor
-- **Mistake:** what was wrong, in one sentence.
-- **Correct:** the correct rule, idiom, or mechanism.
-- **Caught by:** the question, test, or compiler output that exposed it.
-- **Revisit:** the question to ask next time this topic comes up.
+## <language> · <title stating the lesson>
+- **Mistake:** what the tutor got wrong, in one sentence.
+- **Correct:** the right explanation or rule.
+- **Caught by:** user | compiler | test | documentation.
+- **Revisit:** what to do differently next time.
 ```
 
 Rules:
 
+- No date. The heading carries only the language and the title.
 - Append only; never rewrite or delete an earlier entry.
 - One mistake per entry. Do not bundle unrelated errors.
 - Record the rule, not the full solution or the graded code.
-- Skip typos and one-off syntax slips the compiler already explains.
 
 ## Log
+
+## C++ / unexplained term "vòng phần dư"
+- **Type:** tutor
+- **Mistake:** Used the phrase "vòng phần dư" (remainder loop) without defining it for a SIMD beginner.
+- **Correct:** Define it first: a second, ordinary one-element-at-a-time `for` loop after the SIMD loop that handles the last `n % W` elements. Some technical words are too abstract in vietnamese, they should be kept in English, specially for beginner.
+- **Caught by:** student
+- **Revisit:** Define every new term in plain words with a small example before using it.

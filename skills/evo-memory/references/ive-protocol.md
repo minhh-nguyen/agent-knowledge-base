@@ -18,7 +18,7 @@ The paper's IVE prompt (see [paper-prompts.md](paper-prompts.md)) is the primary
 
 1. Read the IVE prompt from `paper-prompts.md`
 2. Fill in the variables:
-   - `{research_proposal}` ← the content of `research-report/research-proposal.md`
+   - `{research_proposal}` ← the content of the research proposal for this cycle (`~/.claude/research-report/research-proposal-<topic>-<YYYY-MM-DD>.md`; if no path was passed, the newest `research-proposal-*.md` there, confirmed with the user)
    - `{execution_report}` ← Stage 3 trajectory logs and metrics (or the stage where failure occurred)
 3. Reason through the filled prompt step by step
 4. The prompt performs a two-step classification:
@@ -179,6 +179,6 @@ Add an entry to the M_I unsuccessful directions section:
 ## Post-IVE Actions
 
 After updating M_I:
-1. Write an evolution report at `~/.claude/kb-memory/evolution-reports/cycle_N_ive.md`
+1. Write an evolution report at `~/.claude/memory/evolution-reports/cycle_N_ive.md`
 2. If classified as implementation failure: The direction stays in the feasible list. The next `[role: research.ideate]` cycle may regenerate ideas in this direction, informed by the retry guidance.
 3. If classified as fundamental failure: The direction is added to the unsuccessful list. Future `[role: research.ideate]` cycles will prune tree branches that match this direction.

@@ -40,22 +40,23 @@ someone else's paper, use `research.mentor`.
 
 ```
 AGENTS.md            # rules for agents editing this repository
-VERIFICATION.md      # what has and has not been verified
 skills/<name>/       # one folder per skill: SKILL.md + references/ (+ scripts/, assets/)
-memory/              # persistent state written by skills; reached via ~/.claude/kb-memory/
+memory/              # persistent state written by skills; reached via ~/.claude/memory/
 mcp/                 # MCP server configurations used by the research skills
 tools/
 └── index-lectures.sh  # page-level search index for lecture PDFs
 inbox/               # unsorted drafts, not authority
 sources/             # external references with version and date checked
-research-report/     # Markdown answers, reports, and syntheses produced by research skills
+research-report/     # reports, ideas, and scratch of research skills; reached via ~/.claude/research-report/
+study/               # per-course lessons and state of study.lecture; reached via ~/.claude/study/
 templates/           # reusable document skeletons
 ```
 
 ## Authoring checks
 
-There is no install step. Each skill in `skills/` is linked into `~/.claude/skills` once; editing a
-file here changes behavior immediately.
+There is no install step. Each skill in `skills/` is symlinked into `~/.claude/skills` (Claude Code)
+and `~/.agents/skills` (Codex, Cursor, Gemini CLI, … via the skills CLI) once; never copy it. Claude
+Code does not read `~/.agents/skills`. Editing a file here changes behavior immediately.
 
 Before committing a skill change, check by hand:
 

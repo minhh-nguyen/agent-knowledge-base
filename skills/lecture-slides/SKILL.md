@@ -22,34 +22,38 @@ both jobs in one response.
 
 ## Workspace
 
-This skill is a single live workspace whose course state is dynamic. Read these before writing
-anything:
+Course state and generated material live **outside this skill folder**, one folder per course:
+`~/.claude/study/<course>/` (`<course>` = the short course code, e.g. `fomo`, `pmpp`). That path is
+a symlink into the knowledge-base repository. Never write state or output into this skill folder or
+into the project you are working in. If `~/.claude/study` does not exist, tell the user and stop.
+
+Read these in the course folder before writing anything:
 
 - `MISSION.md` — why the learner studies, deadline, grade target, constraints.
 - `NOTES.md` — learner preferences, format overrides, course plan, working notes.
 - `RESOURCES.md` — trusted sources with versions and dates.
 
-All three start as fill-in templates. If any `<...>` placeholder remains, or a file is missing,
-run the setup interview before generating material. `templates/` keeps pristine copies for resetting
-a workspace; `examples/fomo/` holds one representative lesson and its cheat sheet. Never copy an
+A new course folder is created from `templates/` (see
+[`references/workspace-format.md`](references/workspace-format.md#new-course)). If any `<...>`
+placeholder remains, or a file is missing, run the setup interview before generating material.
+`examples/fomo/` in this skill holds one representative lesson and its cheat sheet. Never copy an
 example's facts into a new course.
 
-Generated material:
+Generated material, relative to the course folder:
 
 ```
 lessons/NNNN-<slug>.html        one self-contained lesson per deck
 cheat-sheets/lNN-<slug>.html    one cheat sheet per deck
-assets/style.css                shared stylesheet — reuse, never fork per lesson
-assets/quiz.js                  MCQ reveal behaviour — no other script
+assets/                         symlink to this skill's assets/: style.css, quiz.js — never fork
 ```
 
-One course per workspace. To switch course, archive the current state first; see
-[`references/workspace-format.md`](references/workspace-format.md#switching-course).
+Each course has its own folder; switching course means switching folder, nothing is archived.
 
 ## Course setup
 
-Run this once per course, or whenever a state file is still a template. Ask one question at a time,
-then write the answers into the three files:
+Run this once per course, or whenever a state file is still a template. First create the course
+folder if it is missing ([`references/workspace-format.md`](references/workspace-format.md#new-course)).
+Ask one question at a time, then write the answers into the course folder's three files:
 
 1. Course name, university, term; exam date and grade target.
 2. Where the slides, exercises, and past exams live (path or URL).
@@ -62,8 +66,9 @@ Do not generate a lesson while the mission still contains placeholders.
 
 ## Workflow
 
-1. **Read the state.** `MISSION.md`, `NOTES.md`, `RESOURCES.md`. If a placeholder remains, run the
-   setup interview first. If the course or deck is unclear, ask before generating.
+1. **Read the state.** Resolve the course folder `~/.claude/study/<course>/`, then read its
+   `MISSION.md`, `NOTES.md`, `RESOURCES.md`. If the folder is missing or a placeholder remains, run
+   the setup interview first. If the course or deck is unclear, ask before generating.
 2. **Retrieve the deck cheaply.** Follow
    [`references/lecture-materials.md`](references/lecture-materials.md): course index → the deck's
    page-tagged text sidecar → PDF pages only for figures and formulas. Never load a whole PDF; never
@@ -132,3 +137,4 @@ only has to be readable.
 - [ ] No inline styles, `<style>` blocks, SVG, icons, or emoji; sizes near the targets above.
 - [ ] `NOTES.md` has a dated entry for this session.
 - [ ] The three state files describe this course, with no leftover `<...>` placeholder.
+- [ ] Everything was written under `~/.claude/study/<course>/`; nothing in the skill folder.

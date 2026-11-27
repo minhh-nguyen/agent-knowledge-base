@@ -14,7 +14,7 @@ The paper's ESE prompt (in [paper-prompts.md](paper-prompts.md)) is the primary 
 
 1. Read the ESE prompt from `paper-prompts.md`
 2. Fill in the variables:
-   - `{research_proposal}` ← the content of `research-report/research-proposal.md`
+   - `{research_proposal}` ← the content of the research proposal for this cycle (`~/.claude/research-report/research-proposal-<topic>-<YYYY-MM-DD>.md`; if no path was passed, the newest `research-proposal-*.md` there, confirmed with the user)
    - `{trajectories}` ← concatenated trajectory logs from all 4 stages (see Step 2 below for file paths) plus the final working code from `experiments/stage3_method/` (or `experiments/stage4_ablation/` if ablation modified the implementation)
 3. Reason through the filled prompt step by step
 4. The output contains two sections:
@@ -92,7 +92,7 @@ For each identified pattern, classify its generality:
 
 ### Step 5: Check for Existing Entries
 
-Read `~/.claude/kb-memory/experiment-memory.md` and check:
+Read `~/.claude/memory/experiment-memory.md` and check:
 
 - **Exact match**: Same strategy already stored → update evidence with new cycle data and date
 - **Contradicting entry**: New evidence contradicts existing strategy → add the new evidence as a note. Do NOT delete the old entry yet — wait for a third data point to resolve the contradiction
@@ -119,7 +119,7 @@ For each new or updated strategy:
 
 ### Step 7: Write Evolution Report
 
-Generate a report at `~/.claude/kb-memory/evolution-reports/cycle_N_ese.md`:
+Generate a report at `~/.claude/memory/evolution-reports/cycle_N_ese.md`:
 - How many strategies were extracted
 - Which categories they fall into
 - Which are broadly applicable (highest value)

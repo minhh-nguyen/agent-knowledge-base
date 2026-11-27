@@ -1,37 +1,48 @@
 # Workspace Format
 
-The skill is one workspace with a **dynamic course state**. The same checkout is reused for any
-course: only the three state files and the generated output change.
+The skill folder holds only the method: `SKILL.md`, `references/`, `templates/`, `assets/`, and
+`examples/`. Course state and generated material live in one folder per course under
+`~/.claude/study/`, a symlink into the knowledge-base repository's `study/` folder:
 
 ```
-lecture-slides/
+~/.claude/study/<course>/
+├── MISSION.md              # live state, filled per course
+├── NOTES.md                # live state, append-only
+├── RESOURCES.md            # live state, filled per course
+├── assets -> ../../skills/lecture-slides/assets   # style.css, quiz.js
+├── lessons/                # NNNN-<slug>.html
+└── cheat-sheets/           # lNN-<slug>.html
+
+<skill>/
 ├── SKILL.md
-├── MISSION.md              # live state — filled per course
-├── NOTES.md                # live state — append-only
-├── RESOURCES.md            # live state — filled per course
-├── templates/              # pristine copies, used to reset for a new course
-│   ├── MISSION.md
-│   ├── NOTES.md
-│   └── RESOURCES.md
-├── assets/
-│   ├── style.css           # shared by lessons and cheat sheets
-│   └── quiz.js
-├── lessons/                # active course: NNNN-<slug>.html
-├── cheat-sheets/           # active course: lNN-<slug>.html
-├── examples/               # archived courses (read-only reference)
-│   └── fomo/
+├── templates/              # pristine MISSION/NOTES/RESOURCES, copied into each new course
+├── assets/                 # style.css, quiz.js: shared by every course
+├── examples/fomo/          # one reference lesson and cheat sheet (read-only)
 └── references/             # format documentation
 ```
 
 Rules:
 
-- `MISSION.md`, `NOTES.md`, `RESOURCES.md` at the root describe the **active** course only.
+- Never write state or generated material into the skill folder or into the working project.
+- `<course>` is the short course code used by the lecture folders (`fomo`, `pmpp`, …), lowercase.
 - `templates/` holds the pristine skeletons. Never edit a template while working on a course.
-- `lessons/` and `cheat-sheets/` hold the active course only. One deck per lesson, one cheat sheet
-  per deck.
-- `examples/<slug>/` is an archived course, with its own `assets` symlink so its HTML keeps working.
+- One deck per lesson, one cheat sheet per deck.
 - A file still containing `<...>` is a template, not state: run the setup interview in `SKILL.md`
   before generating anything.
+
+## New course
+
+If `~/.claude/study` is missing, tell the user and stop; never fall back to another location.
+Otherwise create the course folder once, from the skill folder:
+
+```sh
+c=~/.claude/study/<course>
+mkdir -p "$c"/{lessons,cheat-sheets}
+cp templates/MISSION.md templates/NOTES.md templates/RESOURCES.md "$c"/
+ln -s ../../skills/lecture-slides/assets "$c/assets"   # relative: resolves inside the repository
+```
+
+Never overwrite an existing course folder. Then run the setup interview and fill the three files.
 
 ## MISSION.md
 
@@ -105,29 +116,12 @@ Add a source only after checking it; record the version or date checked. Lesson 
 
 ## Switching course
 
-Archive the finished course, then reset the live state from the templates:
-
-```sh
-slug=<new-course-slug>          # name of the course being archived
-mkdir -p "examples/$slug"/{lessons,cheat-sheets}
-git mv MISSION.md NOTES.md RESOURCES.md "examples/$slug"/
-git mv lessons/*.html "examples/$slug/lessons/"
-git mv cheat-sheets/*.html "examples/$slug/cheat-sheets/"
-ln -s ../../assets "examples/$slug/assets"
-cp templates/MISSION.md templates/NOTES.md templates/RESOURCES.md .
-```
-
-Then run the setup interview and fill the three root files for the new course. Keep `.gitkeep` in
-the emptied `lessons/` and `cheat-sheets/`.
-
-Rules for the archive:
-
-- The archived HTML must keep working: `examples/<slug>/assets` points at the shared `assets/`.
-- Do not edit an archived course while the new one is active.
-- Never delete an archive without asking.
+Switching course means switching folder: each course keeps its own state and output under
+`~/.claude/study/<course>/`. Nothing is archived or moved. Never delete a course folder without
+asking.
 
 ## Output naming
 
-- Lesson: `lessons/NNNN-<slug>.html`, numbered continuously within the active course.
+- Lesson: `lessons/NNNN-<slug>.html`, numbered continuously within the course.
 - Cheat sheet: `cheat-sheets/lNN-<slug>.html`, where `NN` is the lecture number.
 - Do not reuse a number after a lesson is written; if the deck splits, use the next two numbers.

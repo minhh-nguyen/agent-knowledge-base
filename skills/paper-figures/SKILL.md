@@ -1,6 +1,6 @@
 ---
 name: paper-figures
-description: "[role: research.figures] Use this skill to produce standalone, publication-ready PNG graphics and reproducible matplotlib scripts from tabular data (CSVs or DataFrames). It renders numerical data into formal scientific visualizations—including scatter, line, bar, pie, ring, bubble, tornado, KDE, violin, box, heatmap, histogram, and area charts, plus composite multi-panel figures that combine these types in a single image—for scholarly manuscripts. Only trigger when the final deliverable is an individual image file. Do not use for interactive dashboards or HTML-rendered outputs (Plotly, Streamlit, Quarto, Jupyter notebooks), nor when the request involves building a container document or presentation that includes charts (slide deck, conference poster). It is not for non-data conceptual illustrations like flowcharts, algorithm schematics, or process diagrams. This skill focuses on high-fidelity data rendering into final image files, not presentation design, document layout, or reverse-engineering code from existing screenshots."
+description: "[role: research.figures] Publication-ready figures from tabular data (CSV or DataFrame): a PNG plus the matplotlib script that reproduces it. Mode: do. Use when the user wants a chart or multi-panel figure for a paper or report as an image file. Do NOT use for interactive or HTML charts, slides or posters, diagrams without data (flowcharts, schematics), or recreating code from a screenshot."
 allowed-tools: "write_file edit_file read_file think_tool execute"
 metadata:
   author: "EvoScientist - edited: Minh"
@@ -17,6 +17,16 @@ A structured approach to producing publication-ready chart figures (PNG) from ta
 - User provides a CSV / dataframe / inline data and asks for a chart
 - User describes a target figure in words and wants it rendered
 - User mentions "figure", "plot", "chart", "visualize", "render" for a paper or experiment
+
+Supported chart types: scatter, line, bar, pie, ring, bubble, tornado, KDE, violin, box, heatmap,
+histogram, area, and composite multi-panel figures combining them in one image.
+
+Only trigger when the final deliverable is an individual image file. Do not use for:
+
+- interactive dashboards or HTML-rendered output (Plotly, Streamlit, Quarto, Jupyter notebooks);
+- a container document or presentation that includes charts (slide deck, conference poster);
+- non-data conceptual illustrations (flowcharts, algorithm schematics, process diagrams);
+- reverse-engineering plotting code from an existing screenshot.
 
 ---
 
@@ -44,7 +54,7 @@ A structured approach to producing publication-ready chart figures (PNG) from ta
 **Output directory:**
 
 - If the user specifies an output directory (e.g. "save to `path/to/dir/`"), write `plot.py` and `plot.png` inside that directory. Create the directory if it does not exist.
-- If no directory is given, write to `research-report/figures/<figure-name>/` (see Output Location).
+- If no directory is given, write to `~/.claude/research-report/figures/<figure-name>/` (see Output Location).
 - The two filenames are always `plot.py` and `plot.png`. Repeated runs on different inputs go to **different directories**, not different filenames — this keeps the script reference inside the PNG's neighbourhood stable and makes batch comparison easy.
 
 ---
@@ -291,13 +301,18 @@ Every time you tweak `rcParams` for one plot, you create a one-off look that's h
 
 ## Output Location
 
-Every new file this skill writes to answer, report, summarize, or synthesize goes into
-`research-report/` under the current working directory, as Markdown.
+Everything this skill writes — answers, reports, summaries, syntheses, ideas, and scratch files —
+is stored **only in the knowledge-base repository**, reached from any project through
+`~/.claude/research-report/` (expand `~` to the absolute home path when a tool needs one).
+Persistent memory goes to `~/.claude/memory/`, which also lives in that repository.
 
-- Create the folder if it does not exist: `mkdir -p research-report`.
-- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+- Never write into the project you are working in: no `research-report/`, `memory/`, or scratch
+  folder in the working directory.
+- If `~/.claude/research-report` does not exist, do not fall back to the working directory:
+  tell the user and stop before writing.
+- Name reports `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
   `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
 - An output path given explicitly by the user wins.
 - An answer given only in the chat needs no file.
 - Figures: with no directory given, write each run's bundle (`plot.py`, `plot.png`, `figure-spec.md`,
-  `audit.md`, `final-status.md`) to `research-report/figures/<figure-name>/`.
+  `audit.md`, `final-status.md`) to `~/.claude/research-report/figures/<figure-name>/`.

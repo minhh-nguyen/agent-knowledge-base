@@ -6,11 +6,11 @@ Complete data structure definitions for Ideation Memory (M_I), Experimentation M
 
 | Memory Store | File Path | Created By |
 |-------------|-----------|------------|
-| Ideation Memory (M_I) | `~/.claude/kb-memory/ideation-memory.md` | First IDE or IVE trigger |
-| Experimentation Memory (M_E) | `~/.claude/kb-memory/experiment-memory.md` | First ESE trigger |
-| Evolution Reports | `~/.claude/kb-memory/evolution-reports/cycle_N_type.md` | Each evolution trigger |
+| Ideation Memory (M_I) | `~/.claude/memory/ideation-memory.md` | First IDE or IVE trigger |
+| Experimentation Memory (M_E) | `~/.claude/memory/experiment-memory.md` | First ESE trigger |
+| Evolution Reports | `~/.claude/memory/evolution-reports/cycle_N_type.md` | Each evolution trigger |
 
-All paths are relative to the workspace root. Memory files persist across sessions because `~/.claude/kb-memory/` maps to the shared memory directory.
+All paths are absolute links into the knowledge-base repository, never relative to the project you are working in. Memory persists across sessions and projects because `~/.claude/memory/` points to that repository's `memory/` directory. Never create a `memory/` folder in the working directory.
 
 ## Ideation Memory (M_I) Schema
 
@@ -262,7 +262,7 @@ Total Cycles: [N]
 
 ### File Structure
 
-Reports are saved to `~/.claude/kb-memory/evolution-reports/cycle_N_type.md` where `type` is `ide`, `ive`, or `ese`.
+Reports are saved to `~/.claude/memory/evolution-reports/cycle_N_type.md` where `type` is `ide`, `ive`, or `ese`.
 
 ```markdown
 # Evolution Report: Cycle [N] — [IDE|IVE|ESE]

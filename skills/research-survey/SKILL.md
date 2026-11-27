@@ -1,6 +1,6 @@
 ---
 name: research-survey
-description: "[role: research.survey] Generates structured literature survey reports from collected papers using a multi-stage pipeline: outline generation (query-type adaptive) → draft survey → section-by-section expansion → summary section refinement → final assembly. Produces survey-grade output with taxonomy-based method analysis, LaTeX formalizations, comparative tables, and dense citations. Use when: user wants a literature review, research survey, field overview, or systematic synthesis of multiple papers. Do NOT use for finding/searching papers (use [role: research.find]), generating research ideas (use [role: research.ideate]), or writing a paper's Related Work section (use paper-writing)."
+description: "[role: research.survey] Write a structured literature survey report from collected papers: taxonomy, comparison tables, dense citations. Mode: do. Use when the user wants a literature review, field overview, or systematic synthesis of many papers. Do NOT use for finding papers (use [role: research.find]), generating ideas (use [role: research.ideate]), or a paper's Related Work section."
 allowed-tools: "write_file edit_file read_file think_tool"
 metadata:
   author: "EvoScientist - edited: Minh"
@@ -171,7 +171,7 @@ Assemble sections in outline order, then append formatted references:
 **1. Title** (Year). _Authors_. *Venue*. Citations: N. [[Link]](url)
 ```
 
-Save to `research-report/survey-{topic}-{date}.md`.
+Save to `~/.claude/research-report/survey-{topic}-{date}.md`.
 
 ---
 
@@ -214,11 +214,16 @@ Save to `research-report/survey-{topic}-{date}.md`.
 
 ## Output Location
 
-Every new file this skill writes to answer, report, summarize, or synthesize goes into
-`research-report/` under the current working directory, as Markdown.
+Everything this skill writes — answers, reports, summaries, syntheses, ideas, and scratch files —
+is stored **only in the knowledge-base repository**, reached from any project through
+`~/.claude/research-report/` (expand `~` to the absolute home path when a tool needs one).
+Persistent memory goes to `~/.claude/memory/`, which also lives in that repository.
 
-- Create the folder if it does not exist: `mkdir -p research-report`.
-- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+- Never write into the project you are working in: no `research-report/`, `memory/`, or scratch
+  folder in the working directory.
+- If `~/.claude/research-report` does not exist, do not fall back to the working directory:
+  tell the user and stop before writing.
+- Name reports `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
   `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
 - An output path given explicitly by the user wins.
 - An answer given only in the chat needs no file.

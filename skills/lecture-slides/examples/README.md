@@ -1,7 +1,7 @@
 # Examples
 
-One archived course kept as a format reference. Do not edit it while generating new material; the
-active course state lives at the skill root.
+One course kept as a format reference. Do not edit it while generating new material; real course
+state and output live in `~/.claude/study/<course>/`, never here.
 
 - `fomo/` — one representative lesson (`lessons/0001-storage-latency-math.html`) and its cheat sheet
   (`cheat-sheets/l01-storage.html`) from Foundations of Modern Data Systems (TU Darmstadt, WS 2026/27).

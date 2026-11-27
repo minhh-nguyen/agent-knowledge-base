@@ -1,6 +1,6 @@
 ---
 name: paper-navigator
-description: "[role: research.find] Find and read academic papers (S2 + arXiv). Disambiguate ambiguous queries, search by keyword + citation graph + recommendations + snippets, judge relevance against an authored rubric, and read with L1/L2/L3 strategy. Trigger phrases: find papers, search papers, related work, citation analysis, recent advances, read this paper, baseline with code. Do NOT use for: survey reports ([role: research.survey]), idea generation ([role: research.ideate]), Related Work sections (paper-writing)."
+description: "[role: research.find] Find and read academic papers (S2 + arXiv). Disambiguate ambiguous queries, search by keyword + citation graph + recommendations + snippets, judge relevance against an authored rubric, and read with L1/L2/L3 strategy. Trigger phrases: find papers, search papers, related work, citation analysis, recent advances, read this paper, baseline with code. Do NOT use for: survey reports ([role: research.survey]), idea generation ([role: research.ideate]), writing a Related Work section."
 allowed-tools: "write_file edit_file read_file think_tool execute"
 metadata:
   author: "EvoScientist - edited: Minh"
@@ -130,7 +130,7 @@ For ITERATIVE, criteria can be lighter (e.g. `covers topic` + `is canonical`); d
 
 Probe first to grasp the user's need comprehensively, then run up to **3 paper rounds** (R2 breadth / R3 deepen / R4 close). Decide round-by-round whether more rounds are needed (Step 5 gate) — **do NOT fix a round count**. There is no R5; the cap is 3 paper rounds.
 
-**Workspace pool:** Choose a fresh `<run-id>` for this task and replace it in every example below. Every `scholar_search`, `citation_traverse` and `recommend` call for this task appends to `./paper-navigator/<run-id>/pool.jsonl` in the task workspace (the folder is created on the first write). `arxiv_monitor` keeps printing its results: its rows have no `paperId`, so `--append` would drop them. Read that exact same workspace-relative path with `read_file` after a successful write, before continuing triage. Keep it for all rounds of this task, and use a different directory for a new task.
+**Workspace pool:** Choose a fresh `<run-id>` for this task and replace it in every example below. Every `scholar_search`, `citation_traverse` and `recommend` call for this task appends to `~/.claude/research-report/.work/paper-navigator/<run-id>/pool.jsonl` in the task workspace (the folder is created on the first write). `arxiv_monitor` keeps printing its results: its rows have no `paperId`, so `--append` would drop them. Read that exact same workspace-relative path with `read_file` after a successful write, before continuing triage. Keep it for all rounds of this task, and use a different directory for a new task.
 
 **Probe (prerequisite — NOT counted in the 3 rounds, 2 parallel queries):** establish a comprehensive understanding of the need and lift named entities / angle gaps.
 
@@ -138,11 +138,11 @@ Probe first to grasp the user's need comprehensively, then run up to **3 paper r
 - `Q-narrow` — a specific mechanism / sub-question / method (angle: tagged)
 
 ```bash
-python scripts/scholar_search.py --query "<Q-broad>"  --limit 15 --sort-by relevance --output "./paper-navigator/<run-id>/pool.jsonl" --append
-python scripts/scholar_search.py --query "<Q-narrow>" --limit 15 --sort-by relevance --output "./paper-navigator/<run-id>/pool.jsonl" --append
+python scripts/scholar_search.py --query "<Q-broad>"  --limit 15 --sort-by relevance --output "$HOME/.claude/research-report/.work/paper-navigator/<run-id>/pool.jsonl" --append
+python scripts/scholar_search.py --query "<Q-narrow>" --limit 15 --sort-by relevance --output "$HOME/.claude/research-report/.work/paper-navigator/<run-id>/pool.jsonl" --append
 ```
 
-`--output --append` auto-dedupes by `paperId` across rounds (built into the script), so a paper found by two queries is written once. Nonempty `tldr` values retain the S2 `{ "text": "..." }` shape; empty or null TLDRs are omitted. Read `./paper-navigator/<run-id>/pool.jsonl` to inspect (Step 4 triage). From Probe titles + tldrs, lift:
+`--output --append` auto-dedupes by `paperId` across rounds (built into the script), so a paper found by two queries is written once. Nonempty `tldr` values retain the S2 `{ "text": "..." }` shape; empty or null TLDRs are omitted. Read `~/.claude/research-report/.work/paper-navigator/<run-id>/pool.jsonl` to inspect (Step 4 triage). From Probe titles + tldrs, lift:
 
 - recurring **named entities** (algorithm / benchmark / dataset / model names),
 - **angle gaps** (Step-2 tags not seen),
@@ -182,9 +182,9 @@ python scripts/scholar_search.py --query "<Q-narrow>" --limit 15 --sort-by relev
 **Citation expansion** (ITERATIVE, or LIST after ≥3 All-core/Partial seeds):
 
 ```bash
-python scripts/citation_traverse.py --paper-id <SEED> --direction co-citation --limit 15 --output "./paper-navigator/<run-id>/pool.jsonl" --append
-python scripts/citation_traverse.py --paper-id <SEED> --direction forward --limit 20 --min-citations 20 --year-min 2022 --output "./paper-navigator/<run-id>/pool.jsonl" --append
-python scripts/recommend.py --positive <SEED1>,<SEED2> --limit 15 --output "./paper-navigator/<run-id>/pool.jsonl" --append
+python scripts/citation_traverse.py --paper-id <SEED> --direction co-citation --limit 15 --output "$HOME/.claude/research-report/.work/paper-navigator/<run-id>/pool.jsonl" --append
+python scripts/citation_traverse.py --paper-id <SEED> --direction forward --limit 20 --min-citations 20 --year-min 2022 --output "$HOME/.claude/research-report/.work/paper-navigator/<run-id>/pool.jsonl" --append
+python scripts/recommend.py --positive <SEED1>,<SEED2> --limit 15 --output "$HOME/.claude/research-report/.work/paper-navigator/<run-id>/pool.jsonl" --append
 ```
 
 ### Step 4: Triage — All-core / Partial / Irrelevant
@@ -394,13 +394,18 @@ References are self-contained. Don't chain between them — return here to re-ro
 
 ## Output Location
 
-Every new file this skill writes to answer, report, summarize, or synthesize goes into
-`research-report/` under the current working directory, as Markdown.
+Everything this skill writes — answers, reports, summaries, syntheses, ideas, and scratch files —
+is stored **only in the knowledge-base repository**, reached from any project through
+`~/.claude/research-report/` (expand `~` to the absolute home path when a tool needs one).
+Persistent memory goes to `~/.claude/memory/`, which also lives in that repository.
 
-- Create the folder if it does not exist: `mkdir -p research-report`.
-- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+- Never write into the project you are working in: no `research-report/`, `memory/`, or scratch
+  folder in the working directory.
+- If `~/.claude/research-report` does not exist, do not fall back to the working directory:
+  tell the user and stop before writing.
+- Name reports `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
   `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
 - An output path given explicitly by the user wins.
 - An answer given only in the chat needs no file.
-- Scratch data such as `./paper-navigator/<run-id>/pool.jsonl` is working state, not a report, and
-  stays where the workflow puts it. Reading notes and paper cards saved to a file go to `research-report/`.
+- Scratch data such as `~/.claude/research-report/.work/paper-navigator/<run-id>/pool.jsonl` is working state, not a report, and
+  stays where the workflow puts it. Reading notes and paper cards saved to a file go to `~/.claude/research-report/`.

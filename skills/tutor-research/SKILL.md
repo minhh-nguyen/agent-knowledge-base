@@ -205,11 +205,16 @@ Success means the user can independently explain concepts, solve unfamiliar prob
 
 ## Output Location
 
-Every new file this skill writes to answer, report, summarize, or synthesize goes into
-`research-report/` under the current working directory, as Markdown.
+Everything this skill writes — answers, reports, summaries, syntheses, ideas, and scratch files —
+is stored **only in the knowledge-base repository**, reached from any project through
+`~/.claude/research-report/` (expand `~` to the absolute home path when a tool needs one).
+Persistent memory goes to `~/.claude/memory/`, which also lives in that repository.
 
-- Create the folder if it does not exist: `mkdir -p research-report`.
-- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+- Never write into the project you are working in: no `research-report/`, `memory/`, or scratch
+  folder in the working directory.
+- If `~/.claude/research-report` does not exist, do not fall back to the working directory:
+  tell the user and stop before writing.
+- Name reports `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
   `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
 - An output path given explicitly by the user wins.
 - An answer given only in the chat needs no file.

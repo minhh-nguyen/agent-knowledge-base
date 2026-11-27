@@ -1,6 +1,6 @@
 ---
 name: evo-memory
-description: "[role: research.memory] Manages persistent research memory across ideation and experimentation cycles. Maintains two stores: Ideation Memory M_I (feasible/unsuccessful directions) and Experimentation Memory M_E (reusable strategies for data processing, model training, architecture, debugging). Three evolution mechanisms: IDE (after [role: research.ideate]), IVE (after experiment failure — classifies failures as implementation vs fundamental), ESE (after experiment success — extracts reusable strategies). Use when: updating memory after completing [role: research.ideate] cycles or experiment pipelines, classifying why a method failed (implementation vs fundamental failure), starting a new research cycle needing prior knowledge, user mentions 'update memory', 'classify failure', 'what worked before', 'research history', 'evolution'. Do NOT use for running experiments (use experiment-pipeline), debugging experiment code (use experiment-craft), or generating ideas (use [role: research.ideate])."
+description: "[role: research.memory] Persistent research memory: which directions worked, which failed and why, and reusable experiment strategies. Mode: do. Use after a [role: research.ideate] cycle or an experiment, to classify why a method failed, or when the user asks 'what worked before', 'update memory', 'research history'. Do NOT use for generating ideas (use [role: research.ideate]), or for running or debugging experiments."
 allowed-tools: "write_file edit_file read_file think_tool"
 metadata:
   author: EvoScientist
@@ -30,7 +30,7 @@ Evo-memory solves this by maintaining two structured memory stores and three evo
 
 ### Ideation Memory (M_I)
 
-**Location**: `~/.claude/kb-memory/ideation-memory.md`
+**Location**: `~/.claude/memory/ideation-memory.md`
 
 Records what you've learned about research DIRECTIONS — which areas are promising and which are dead ends.
 
@@ -49,7 +49,7 @@ See [assets/ideation-memory-template.md](assets/ideation-memory-template.md) for
 
 ### Experimentation Memory (M_E)
 
-**Location**: `~/.claude/kb-memory/experiment-memory.md`
+**Location**: `~/.claude/memory/experiment-memory.md`
 
 Records what you've learned about research STRATEGIES — which technical approaches and configurations work in practice.
 
@@ -74,14 +74,14 @@ See [assets/experiment-memory-template.md](assets/experiment-memory-template.md)
 
 ### IDE — Idea Direction Evolution
 
-**Trigger**: After `[role: research.ideate]` completes Step 5 and saves `research-report/direction-summary.md` for Step 6.
+**Trigger**: After `[role: research.ideate]` completes Step 5 and saves `~/.claude/research-report/direction-summary-<topic>-<YYYY-MM-DD>.md` for Step 6.
 
 **Purpose**: Extract promising research directions from the tournament results and store them in M_I for future cycles.
 
-**Paper Prompt**: Use the IDE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary extraction mechanism. Fill in `{user_goal}` from the original research direction and `{top_ranked_ideas}` from `research-report/direction-summary.md`, then reason through the prompt step by step. The output (DIRECTION SUMMARY with Title, Core idea, Why promising, Requirements, Validation plan) feeds directly into the steps below.
+**Paper Prompt**: Use the IDE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary extraction mechanism. Fill in `{user_goal}` from the original research direction and `{top_ranked_ideas}` from the direction summary whose path `[role: research.ideate]` passed (`~/.claude/research-report/direction-summary-<topic>-<YYYY-MM-DD>.md`; if no path was passed, the newest `direction-summary-*.md` there, confirmed with the user), then reason through the prompt step by step. The output (DIRECTION SUMMARY with Title, Core idea, Why promising, Requirements, Validation plan) feeds directly into the steps below.
 
 **Process**:
-1. Read current M_I from `~/.claude/kb-memory/ideation-memory.md`
+1. Read current M_I from `~/.claude/memory/ideation-memory.md`
 2. Run the paper's IDE prompt (see above), reasoning through it step by step
 3. For each direction in the prompt output, abstract it to a reusable level. "Attention-based feature selection for 3D point clouds" becomes "Cross-domain attention mechanisms for sparse data" — specific enough to be useful, abstract enough to transfer.
 4. Check M_I for existing entries on similar directions. Update if exists, append if new.
@@ -100,7 +100,7 @@ See [references/ide-protocol.md](references/ide-protocol.md) for the full proces
 
 **Purpose**: Classify WHY the method failed and update M_I accordingly. This is the most critical evolution mechanism because it prevents future cycles from repeating dead-end directions.
 
-**Paper Prompt**: Use the IVE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary classification mechanism. Fill in `{research_proposal}` from `research-report/research-proposal.md` and `{execution_report}` from the stage trajectory logs, then reason through the prompt step by step. The prompt classifies the failure as FAILED(NoExecutableWithinBudget), FAILED(WorseThanBaseline), or NOT_FAILED.
+**Paper Prompt**: Use the IVE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary classification mechanism. Fill in `{research_proposal}` from the research proposal for this cycle (`~/.claude/research-report/research-proposal-<topic>-<YYYY-MM-DD>.md`; if no path was passed, the newest `research-proposal-*.md` there, confirmed with the user) and `{execution_report}` from the stage trajectory logs, then reason through the prompt step by step. The prompt classifies the failure as FAILED(NoExecutableWithinBudget), FAILED(WorseThanBaseline), or NOT_FAILED.
 
 **After running the paper prompt**:
 - **FAILED(NoExecutableWithinBudget)** → Implementation failure (retryable). Record as "retry with fixes" in M_I.
@@ -126,7 +126,7 @@ See [references/ive-protocol.md](references/ive-protocol.md) for the full proces
 
 **Purpose**: Distill reusable strategies from the successful experiment run and store them in M_E for future cycles.
 
-**Paper Prompt**: Use the ESE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary extraction mechanism. Fill in `{research_proposal}` from `research-report/research-proposal.md` and `{trajectories}` from all 4 stage trajectory logs, then reason through the prompt step by step. The prompt outputs DATA SUMMARY and MODEL SUMMARY, which map to our Data Processing Strategies and Model Training Strategies sections.
+**Paper Prompt**: Use the ESE prompt from [references/paper-prompts.md](references/paper-prompts.md) as the primary extraction mechanism. Fill in `{research_proposal}` from the research proposal for this cycle (`~/.claude/research-report/research-proposal-<topic>-<YYYY-MM-DD>.md`; if no path was passed, the newest `research-proposal-*.md` there, confirmed with the user) and `{trajectories}` from all 4 stage trajectory logs, then reason through the prompt step by step. The prompt outputs DATA SUMMARY and MODEL SUMMARY, which map to our Data Processing Strategies and Model Training Strategies sections.
 
 **Process**:
 1. Run the paper's ESE prompt (see above), reasoning through it step by step
@@ -149,7 +149,7 @@ See [references/ese-protocol.md](references/ese-protocol.md) for the full proces
 
 When starting a new research cycle (loading `[role: research.ideate]` or `experiment-pipeline`):
 
-1. Read `~/.claude/kb-memory/ideation-memory.md` and `~/.claude/kb-memory/experiment-memory.md`
+1. Read `~/.claude/memory/ideation-memory.md` and `~/.claude/memory/experiment-memory.md`
 2. Summarize relevant entries to inject into the current context
 3. For `[role: research.ideate]`: Offer M_I feasible directions as candidate research directions in Step 3. Use M_I unsuccessful directions (fundamental failures only) to prune ideas during Step 4 refinement.
 4. For `experiment-pipeline`: Use M_E strategies to inform hyperparameter ranges, training schedules, and debugging approaches.
@@ -160,14 +160,14 @@ When starting a new research cycle (loading `[role: research.ideate]` or `experi
 
 ### For [role: research.ideate] (inject M_I)
 
-1. Read `~/.claude/kb-memory/ideation-memory.md`
+1. Read `~/.claude/memory/ideation-memory.md`
 2. Select the top-k_I=2 entries most relevant to the user's current goal. Compare the user's goal statement against each entry's Summary and Retrieval Tags for semantic similarity.
 3. For each selected feasible direction: offer it as a candidate when Step 3 chooses its 3 research directions (the total stays at 3). Example injection: *"Prior cycle found 'Modality-aware model compression' promising (Elo 1500, cycle 3). Consider it as one of the 3 research directions alongside new ones."*
 4. For each unsuccessful direction with `Failure Classification: Fundamental`: flag for pruning. Example injection: *"Prior cycle confirmed 'Autoregressive real-time video generation' is a fundamental failure (O(n) latency). Prune any idea matching this pattern."*
 
 ### For experiment-pipeline (inject M_E)
 
-1. Read `~/.claude/kb-memory/experiment-memory.md`
+1. Read `~/.claude/memory/experiment-memory.md`
 2. Select the top-k_E=1 entry most relevant to the current experiment domain. Compare the experiment's problem description against each entry's Context and Category.
 3. Inject the selected strategy as context for all stages. Example injection: *"Prior cycle found 'Cosine annealing with warm restarts (T_0=10, T_mult=2)' effective for transformer fine-tuning on small datasets (confirmed, 2 cycles). Apply in Stage 2 tuning as the default schedule."*
 4. Also scan the Debugging Strategies section for any entries matching the current domain — these can save significant time when diagnosing failures.
@@ -188,7 +188,7 @@ Each memory file maintains a `Last Updated` field and a cycle counter. When entr
 
 ### Evolution Reports
 
-After each evolution mechanism triggers, generate a report saved to `~/.claude/kb-memory/evolution-reports/cycle_N_type.md`:
+After each evolution mechanism triggers, generate a report saved to `~/.claude/memory/evolution-reports/cycle_N_type.md`:
 - What changed (added, updated, or removed entries)
 - Why (evidence from the triggering cycle)
 - Expected impact on future cycles
@@ -238,13 +238,18 @@ How evo-memory connects to other skills in the pipeline:
 
 ## Output Location
 
-Every new file this skill writes to answer, report, summarize, or synthesize goes into
-`research-report/` under the current working directory, as Markdown.
+Everything this skill writes — answers, reports, summaries, syntheses, ideas, and scratch files —
+is stored **only in the knowledge-base repository**, reached from any project through
+`~/.claude/research-report/` (expand `~` to the absolute home path when a tool needs one).
+Persistent memory goes to `~/.claude/memory/`, which also lives in that repository.
 
-- Create the folder if it does not exist: `mkdir -p research-report`.
-- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+- Never write into the project you are working in: no `research-report/`, `memory/`, or scratch
+  folder in the working directory.
+- If `~/.claude/research-report` does not exist, do not fall back to the working directory:
+  tell the user and stop before writing.
+- Name reports `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
   `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
 - An output path given explicitly by the user wins.
 - An answer given only in the chat needs no file.
-- Exempt: the memory stores and evolution reports under `~/.claude/kb-memory/` are persistent
-  state, not reports, and stay there. Inputs from `[role: research.ideate]` are read from `research-report/`.
+- Exempt: the memory stores and evolution reports under `~/.claude/memory/` are persistent
+  state, not reports, and stay there. Inputs from `[role: research.ideate]` are read from `~/.claude/research-report/`.

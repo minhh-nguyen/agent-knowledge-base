@@ -95,8 +95,15 @@ Help the user understand programming, not just obtain solutions.
 - **Refer to other skills by role tag, never by name.** Every repository skill declares its stable
   role at the start of its `description` as `[role: <domain>.<function>]`. Handovers say
   "use `[role: research.find]`", so renaming a skill touches only its folder and its frontmatter
-  `name`. Shared data is referenced through the stable `~/.claude/kb-memory/` symlink, never by the
-  repository path.
+  `name`.
+- **Only this repository stores data.** Skills write memory to `~/.claude/memory/`, reports,
+  ideas, and scratch files to `~/.claude/research-report/`, and course study material to
+  `~/.claude/study/<course>/`: symlinks named exactly like the repository's `memory/`,
+  `research-report/`, and `study/` folders. A skill folder holds method only, never state. Never write a `memory/`, report, or
+  scratch folder into the project the skill runs in, and never fall back to it when a link is
+  missing: tell the user instead.
+- Mistake logs record only the skill's own mistakes, never the user's. Entries carry the language
+  and a title, no date.
 - Each description states its mode: **learn** (coach the user, who does the work) or **do**
   (produce the output). Two skills in the same domain must differ in mode or function.
 - Before committing a skill change, check by hand that every role tag resolves to a declared role,

@@ -1,6 +1,6 @@
 ---
 name: paper-review
-description: "[role: research.self-review] Guides self-review of YOUR OWN academic paper before submission with adversarial stress-testing. Core method: three passes (adversarial deep read; 5-aspect checklist — contribution sufficiency, writing clarity, results quality, testing completeness, method design; mechanical consistency scans and experimental protocol audit of data flow, assumptions, leakage), counterintuitive protocol (reject-first simulation, delete unsupported claims, score trust, promote limitations, attack novelty), reverse-outlining, and figure/table quality checks. Use when: user wants to self-review or self-check their own paper draft before submission, stress-test their claims, prepare for reviewer criticism, or mentions 'self-review', 'check my draft', 'is my paper ready'. Do NOT use for writing a peer review of someone else's paper, and do NOT use after receiving actual reviews (use paper-rebuttal instead). Also runs as a background expert: dispatch it async with a draft path and it reviews end-to-end while you keep working."
+description: "[role: research.self-review] Adversarial self-review of the user's OWN paper draft before submission. Mode: do. Use when the user wants to check, stress-test, or self-review their draft, prepare for reviewer criticism, or asks 'is my paper ready', 'check my draft', 'self-review'. Do NOT use for reviewing someone else's paper or learning to critique one (use [role: research.mentor]), or for answering reviews already received."
 allowed-tools: "read_file edit_file write_file think_tool execute"
 metadata:
   author: "EvoScientist - edited: Minh"
@@ -20,7 +20,15 @@ A systematic approach to self-reviewing academic papers before submission, run a
 - User wants to prepare for potential reviewer criticism
 - User mentions "review paper", "check my draft", "self-review"
 
-> If the user has already received reviewer comments and needs to write a rebuttal, use the `paper-rebuttal` skill instead.
+Do not use this skill:
+
+- to review or critique **someone else's** paper — that is a peer review; to learn how to critique
+  one, use `[role: research.mentor]`;
+- after real reviewer comments have arrived and a rebuttal is needed (no rebuttal skill is
+  installed here; say so).
+
+**Background mode:** this skill can also run as a background expert — dispatch it asynchronously
+with the draft path and it reviews end-to-end while the main conversation continues.
 
 ## Prerequisites
 
@@ -294,11 +302,16 @@ full coverage.
 
 ## Output Location
 
-Every new file this skill writes to answer, report, summarize, or synthesize goes into
-`research-report/` under the current working directory, as Markdown.
+Everything this skill writes — answers, reports, summaries, syntheses, ideas, and scratch files —
+is stored **only in the knowledge-base repository**, reached from any project through
+`~/agent-knowledge-base/research-report/` (expand `~` to the absolute home path when a tool needs one).
+Persistent memory goes to `~/agent-knowledge-base/memory/`, which also lives in that repository.
 
-- Create the folder if it does not exist: `mkdir -p research-report`.
-- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+- Never write into the project you are working in: no `research-report/`, `memory/`, or scratch
+  folder in the working directory.
+- If `~/agent-knowledge-base/research-report` does not exist, do not fall back to the working directory:
+  tell the user and stop before writing.
+- Name reports `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
   `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
 - An output path given explicitly by the user wins.
 - An answer given only in the chat needs no file.

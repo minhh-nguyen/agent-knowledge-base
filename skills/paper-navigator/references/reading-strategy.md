@@ -127,4 +127,4 @@ After reading multiple papers, build a mapping:
 - Which insights are versatile (solve many challenges)? → Powerful technique
 - Which insights are underexplored? → Potential for transfer
 
-Save the tree to `research-report/literature-tree.md` and update as you read more papers.
+Save the tree to `~/.claude/research-report/literature-tree-<topic>.md`, one file per topic, and update that file in place as you read more papers.

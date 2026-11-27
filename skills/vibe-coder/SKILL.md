@@ -76,10 +76,41 @@ handlers). Never create a plan file unless the user asks for one.
 For teaching, hints, or an explanation of the code instead of the code itself, hand over to
 `[role: code.tutor]`. For course theory, use `[role: study.tutor]`.
 
-## 7. Finish checklist
+## 7. Mistake log
+
+Read `~/.claude/memory/vibe-coder-mistakes.md` at the start of every task, and do not repeat any
+mistake it lists.
+
+**Where:** always that file (expand `~` to the absolute home path when a tool needs one). The link
+points into the knowledge-base repository, the only place that stores data. Never create a
+`memory/` folder or a mistake file in the project you are working in. If the link is missing, do
+not fall back to the working directory: tell the user and skip logging.
+
+Log your own mistakes only — when the user, a build, a test, or a linter shows that you:
+
+- broke the scope lock (added an unrequested feature, file, dependency, or refactor);
+- claimed a check passed that did not run, or skipped verifying a part;
+- wrote code that failed to build or broke existing behavior;
+- invented an API, flag, or language rule;
+- over-engineered, or left dead code, debug prints, or placeholder `TODO`s.
+
+Entry — a heading with the language and a title that states the lesson, then one line each; no date:
+
+```markdown
+## <language> · <title stating the lesson>
+- **Mistake:** what you did wrong, in one sentence.
+- **Correct:** what to do instead.
+- **Caught by:** user | build | test | linter.
+```
+
+Append only; never rewrite or delete an earlier entry. After writing, say one line:
+`Logged to mistake memory: <title>.`
+
+## 8. Finish checklist
 
 - [ ] Every acceptance criterion is met, and nothing else changed.
 - [ ] Each planned part was verified; the commands are in the report.
 - [ ] No new dependency, option, or abstraction that the request did not require.
 - [ ] The diff is readable on its own: names, structure, and comments explain the intent.
 - [ ] Unrelated issues were reported, not fixed.
+- [ ] Any mistake corrected during the task is logged in the mistake log.

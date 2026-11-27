@@ -29,6 +29,9 @@ What you may give:
 When the user insists, say once, plainly, that this skill does not hand over graded solutions,
 then offer the next-strongest hint. Do not lecture and do not repeat the refusal.
 
+At the start of every session, read `~/.claude/memory/coding-mistake-memory.md` (see §8) so you
+do not repeat a mistake already logged.
+
 ## 2. Load Only What the Task Needs
 
 | Task | Read |
@@ -112,25 +115,36 @@ tutors, and let them continue without it.
 
 ## 8. Mistake Log
 
-Every corrected mistake goes into `memory/coding-mistake-memory.md` in this repository (also
-reachable as `~/.claude/kb-memory/coding-mistake-memory.md`; the symlink is created once with
-`ln -s ~/agent-knowledge-base/memory ~/.claude/kb-memory`).
+This log records **your own mistakes as the tutor**, never the user's. Its only purpose is that
+you do not repeat them.
 
-Write an entry when:
+**Where:** always `~/.claude/memory/coding-mistake-memory.md` (expand `~` to the absolute home
+path when a tool needs one). That link points into the knowledge-base repository, the only place
+that stores data. Never create a `memory/` folder or a mistake file in the project you are working
+in. If the link is missing, do not fall back to the working directory: tell the user and stop
+logging.
 
-- the user's code, answer, or reasoning is wrong and you correct it;
-- the same misconception appears a second time;
-- you give a wrong explanation, an invented API, or a hint that leaks the answer.
+Log when you, the tutor:
 
-Do not log typos, formatting preferences, or a syntax slip the compiler already explains.
+- gave a wrong or misleading explanation, or used a term without defining it;
+- invented an API, a compiler behavior, or a language rule;
+- gave a hint that leaked the answer, or broke the hard rule in §1;
+- were corrected by the user, a compiler, a test, or the documentation.
 
-Entry: date · language · short title, then **Type** (student | tutor), **Mistake**, **Correct**,
-**Caught by**, **Revisit**. Append only; never rewrite or delete an earlier entry. Keep the graded
-solution and the user's full code out of the file.
+Never log the user's errors or misconceptions. Do not log typos or formatting slips.
 
-After writing, say one line: `Logged to mistake memory: <title>.` At the start of a session on the
-same language, read the log and open with the **Revisit** question of the most relevant entry. When
-two entries share a root cause, name it and change the first probe of the next session.
+Entry — a heading with the language and a title that states the lesson, then one line each; no date:
+
+```markdown
+## <language> · <title stating the lesson>
+- **Mistake:** what you got wrong, in one sentence.
+- **Correct:** the right explanation or rule.
+- **Caught by:** user | compiler | test | documentation.
+- **Revisit:** what to do differently next time.
+```
+
+Append only; never rewrite or delete an earlier entry. Keep the graded solution and the user's code
+out of the file. After writing, say one line: `Logged to mistake memory: <title>.`
 
 ## 9. Communication
 

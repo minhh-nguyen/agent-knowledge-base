@@ -4,13 +4,13 @@ Step-by-step process for extracting and storing promising research directions af
 
 ## When to Trigger
 
-IDE runs after `[role: research.ideate]` Step 5 (ELO Tournament) is complete and Step 6 has prepared `research-report/direction-summary.md`. The input is the direction summary containing the top-3 ranked ideas.
+IDE runs after `[role: research.ideate]` Step 5 (ELO Tournament) is complete and Step 6 has prepared `~/.claude/research-report/direction-summary-<topic>-<YYYY-MM-DD>.md`. The input is the direction summary containing the top-3 ranked ideas.
 
 ## Step-by-Step Process
 
 ### Step 1: Read Current M_I
 
-Read `~/.claude/kb-memory/ideation-memory.md` to understand what's already stored:
+Read `~/.claude/memory/ideation-memory.md` to understand what's already stored:
 - Which directions are currently listed as feasible?
 - Which are listed as unsuccessful?
 - Are any of the top-3 ideas related to existing entries?
@@ -21,8 +21,8 @@ The paper's IDE prompt (in [paper-prompts.md](paper-prompts.md)) is the primary 
 
 1. Read the IDE prompt from `paper-prompts.md`
 2. Fill in the variables:
-   - `{user_goal}` ← the original research direction from the user (the seed direction used before Step 3 ideation and Step 4 refinement). Note: do NOT use `research-report/research-proposal.md` here — that file is created in Step 7, which runs AFTER IDE is triggered in Step 6.
-   - `{top_ranked_ideas}` ← the content of `research-report/direction-summary.md` (top-3 ideas with ratings and feedback from the tournament)
+   - `{user_goal}` ← the original research direction from the user (the seed direction used before Step 3 ideation and Step 4 refinement). Note: do NOT use the research proposal (`~/.claude/research-report/research-proposal-<topic>-<YYYY-MM-DD>.md`) here — that file is created in Step 7, which runs AFTER IDE is triggered in Step 6.
+   - `{top_ranked_ideas}` ← the content of the direction summary whose path `[role: research.ideate]` passed (`~/.claude/research-report/direction-summary-<topic>-<YYYY-MM-DD>.md`; if no path was passed, the newest `direction-summary-*.md` there, confirmed with the user) (top-3 ideas with ratings and feedback from the tournament)
 3. Reason through the filled prompt step by step
 4. The output (DIRECTION SUMMARY with Title, Core idea, Why promising, Requirements, Validation plan) becomes the input to Step 3 below
 
@@ -78,7 +78,7 @@ For each new or updated direction, write an M_I entry. The paper's IDE prompt (s
 
 ### Step 7: Write Evolution Report
 
-Generate a report at `~/.claude/kb-memory/evolution-reports/cycle_N_ide.md`:
+Generate a report at `~/.claude/memory/evolution-reports/cycle_N_ide.md`:
 - What directions were added or updated
 - Why each change was made (evidence from tournament)
 - Expected impact on future `[role: research.ideate]` cycles

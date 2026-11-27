@@ -1,6 +1,6 @@
 ---
 name: paper-graph
-description: "[role: research.lineage] Map the genealogical lineage and historical progression of a research field. Visualize how earlier technical challenges led to later approaches and improvements, producing a Markdown report with embedded Mermaid diagrams. Trigger when the user asks for a topic's developmental trajectory, a model's family tree, significant predecessors or follow-ups to a seed paper, or how a research line matured over time. Do not trigger for inventories of datasets, benchmarks, libraries, or other artifacts; finding one latest paper; simple keyword search; one-paper summaries; or head-to-head comparisons. Use this skill for chronological synthesis across multiple works, not for bibliography cataloging or one-off retrieval."
+description: "[role: research.lineage] Map how a research field or model family evolved: predecessors, follow-ups, and which problems led to which approaches, as a Markdown report with Mermaid diagrams. Mode: do. Use when the user asks for a topic's history, a model's family tree, or what a seed paper built on and led to. Do NOT use for finding papers (use [role: research.find]), one-paper summaries, head-to-head comparisons, or lists of datasets and tools."
 allowed-tools: "write_file edit_file read_file execute"
 metadata:
   author: "EvoScientist - edited: Minh"
@@ -31,6 +31,9 @@ Skip when:
 - The user just wants a one-paper summary or single search hit (no relational/evolutionary aspect).
 - The request is for non-academic citation work.
 - The user explicitly wants a plain bibliography rather than a graph.
+- The request is an inventory of datasets, benchmarks, libraries, or other artifacts.
+- The user wants the single latest paper, a simple keyword search (use `[role: research.find]`),
+  or a head-to-head comparison of specific methods.
 
 ---
 
@@ -39,7 +42,7 @@ Skip when:
 **Inputs:**
 
 - A **research query**: a topic, a seed paper title/citation, or a hybrid. Free-form text.
-- **Output path**: path for the final Markdown report. Default: `research-report/lineage-<topic>-<YYYY-MM-DD>.md` (see Output Location).
+- **Output path**: path for the final Markdown report. Default: `~/.claude/research-report/lineage-<topic>-<YYYY-MM-DD>.md` (see Output Location).
 - _(Optional)_ number of papers to fetch (`--n` flag on `fetch_papers`). Default **10**.
 - _(Optional)_ Mermaid theme `light` or `dark` (`--theme` on render steps, or `MERMAID_THEME` env). Default **light**.
 
@@ -67,12 +70,12 @@ Mermaid is just text inside ` ```mermaid ` fences — the file renders directly 
 
 **LLM:** the host agent uses its own model and API key. The skill emits prompt templates and parses responses; it does not authenticate or call any LLM provider.
 
-**Working directory:** create one dir per run, anchored **relative to your current working directory** (e.g. `./<basename>.work/`). Avoid absolute system paths like `/tmp/...` — some harnesses sandbox the shell and the file-read tools to different filesystem roots, so an absolute path can appear writable to one and missing to the other. A cwd-relative path works the same everywhere. Run `pwd` once at the start if unsure.
+**Working directory:** create one dir per run at `~/.claude/research-report/.work/paper-graph/<basename>/`, never in the project you are working in (see Output Location). Resolve `~` once to the absolute home path (`echo $HOME`) and use that same absolute path in both the shell and the file tools, so both see the same directory. Avoid `/tmp/...`. If the shell or the file tools cannot reach that directory, stop and tell the user rather than falling back to the working directory.
 
-Suggested layout (assuming final report goes to `<output>`):
+Suggested layout of the run's scratch directory:
 
 ```
-<output>.work/
+~/.claude/research-report/.work/paper-graph/<basename>/
 ├── query.txt                user query (verbatim)
 ├── seed.json                resolve_seed_papers
 ├── seed_block.txt           format_seed_block
@@ -430,13 +433,18 @@ If any of those fail, the most likely cause is the outline LLM (step 8) returnin
 
 ## Output Location
 
-Every new file this skill writes to answer, report, summarize, or synthesize goes into
-`research-report/` under the current working directory, as Markdown.
+Everything this skill writes — answers, reports, summaries, syntheses, ideas, and scratch files —
+is stored **only in the knowledge-base repository**, reached from any project through
+`~/.claude/research-report/` (expand `~` to the absolute home path when a tool needs one).
+Persistent memory goes to `~/.claude/memory/`, which also lives in that repository.
 
-- Create the folder if it does not exist: `mkdir -p research-report`.
-- Name files `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
+- Never write into the project you are working in: no `research-report/`, `memory/`, or scratch
+  folder in the working directory.
+- If `~/.claude/research-report` does not exist, do not fall back to the working directory:
+  tell the user and stop before writing.
+- Name reports `<type>-<topic-in-kebab-case>-<YYYY-MM-DD>.md`, with a short type such as `survey`,
   `lineage`, `review`, `summary`, `ideas`, `notes`. Never overwrite an existing report: add `-2`, `-3`.
 - An output path given explicitly by the user wins.
 - An answer given only in the chat needs no file.
-- The final report defaults to `research-report/lineage-<topic>-<YYYY-MM-DD>.md`; do not ask for an
-  output path. Its `.work/` scratch directory sits next to it.
+- The final report defaults to `~/.claude/research-report/lineage-<topic>-<YYYY-MM-DD>.md`; do not ask for an
+  output path. Its scratch directory is `~/.claude/research-report/.work/paper-graph/<basename>/`.
