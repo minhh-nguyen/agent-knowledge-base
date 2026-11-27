@@ -100,7 +100,7 @@ Do not generate a lesson while the mission still contains placeholders.
 - Output HTML comes only from `scripts/render.py`; no hand-written HTML, CSS, or JS.
 - Written exam answers stay out of the source; they are graded in chat.
 - No lab solutions. Respect the lab rules recorded in `MISSION.md`; concepts only.
-- Match the learner's language in prose; keep technical terms in English with a short gloss.
+- All contents must be in English (user will mention in specific case); keep technical terms in English with a short gloss.
 - Never delete or renumber an existing lesson without asking.
 
 ## Design: simple, token-cheap
