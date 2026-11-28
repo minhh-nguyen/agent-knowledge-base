@@ -27,25 +27,26 @@ writing. To change a lesson later, edit the source and re-render; never patch th
 
 ```yaml
 ---
-kind: lesson                # lesson | cheat
-course: FOMO                # short name in the breadcrumb
+kind: lesson # lesson | cheat
+course: FOMO # short name in the breadcrumb
 lecture: 01
 topic: Storage
-deck: Storage               # citation label: [[p.6]] → "Storage p.6" (default "Deck")
-lesson: 0001                # lesson only; default: first 4 chars of the file name
-title: Storage, in 16 keywords   # lesson: the h1 claim; cheat: the topic in <title>
+deck: Storage # citation label: [[p.6]] → "Storage p.6" (default "Deck")
+lesson: 0001 # lesson only; default: first 4 chars of the file name
+title: Storage, in 16 keywords # lesson: the h1 claim; cheat: the topic in <title>
 subtitle: Learn the keywords, then estimate HDD vs SSD read time.
-win: You can answer the exam question on p.61 …   # lesson only
-minutes: 30                 # lesson only
-cheat: l01-storage.html     # lesson only: link to the cheat sheet
-next: 0002-ssd.html         # optional
-next_title: SSD internals   # optional
-lesson_file: 0001-storage-latency-math.html   # cheat only: link back to the lesson
+win: You can answer the exam question on p.61 … # lesson only
+minutes: 30 # lesson only
+cheat: l01-storage.html # lesson only: link to the cheat sheet
+next: 0002-ssd.html # optional
+next_title: SSD internals # optional
+lesson_file: 0001-storage-latency-math.html # cheat only: link back to the lesson
 ---
 ```
 
-The script generates the breadcrumb, `<title>`, `.win`, the `.kw-strip` (from every keyword in
-order), the footer, and the stylesheet/script links. Cheat sheets get no script.
+The script generates the breadcrumb, `<title>`, `.win`, the `.mm` mind map (from the lesson title and
+keyword sections), the `.kw-strip` (from every keyword in order), the footer, and the
+stylesheet/script links. Cheat sheets get no script.
 
 ## Body
 
@@ -56,17 +57,20 @@ a table) becomes `<p class="cite">`.
 
 Fenced blocks, one per component. Fields are separated by `|`; multi-line items by a blank line.
 
-| Block | One line / item | Renders |
-| --- | --- | --- |
-| `keywords` | `slug \| term \| alt \| definition [[p.N]] \| why it matters` (alt may be empty) | `dl.kw` with `#k-<slug>` |
-| `mcq` | `Q:` question, three `- ` options, `A:` 1–3, `Why:` explanation | `.quiz` |
-| `steps` | `Step 1: what to compute \| answer`, optional last line `Key: pattern` | `<details>` + `.key` |
-| `recall` | `term \| one-sentence answer`; **leave empty** to generate one per keyword | `.recall` |
-| `tf` | `T` or `F` `\| statement \| explanation [[p.N]]` | `.qbank` of `.item.quiz` |
-| `whatis` | `the thing \| answer [[p.N]]` | `.qbank`, answer in `<details>` |
-| `calc` | `Q:` problem, `S:` worked solution | `.qbank`, solution in `<details>` |
-| `exam` | `Explain why \| question` (verb first) | `ol.examq` + the closing line |
-| `math` | one formula per line | `span.math` |
+| Block      | One line / item                                                                  | Renders                           |
+| ---------- | -------------------------------------------------------------------------------- | --------------------------------- |
+| `keywords` | `slug \| term \| alt \| definition [[p.N]] \| why it matters` (alt may be empty) | `dl.kw` with `#k-<slug>`          |
+| `mcq`      | `Q:` question, three `- ` options, `A:` 1–3, `Why:` explanation                  | `.quiz`                           |
+| `steps`    | `Step 1: what to compute \| answer`, optional last line `Key: pattern`           | `<details>` + `.key`              |
+| `recall`   | `term \| one-sentence answer`; **leave empty** to generate one per keyword       | `.recall`                         |
+| `tf`       | `T` or `F` `\| statement \| explanation [[p.N]]`                                 | `.qbank` of `.item.quiz`          |
+| `whatis`   | `the thing \| answer [[p.N]]`                                                    | `.qbank`, answer in `<details>`   |
+| `calc`     | `Q:` problem, `S:` worked solution                                               | `.qbank`, solution in `<details>` |
+| `exam`     | `Explain why \| question` (verb first)                                           | `ol.examq` + the closing line     |
+| `math`     | one formula per line                                                             | `span.math`                       |
+
+The mind map is not a source block: `render.py` derives it from the `##` section headings and the
+`keywords` blocks, so never write Mermaid in the source.
 
 Example of one keyword section:
 

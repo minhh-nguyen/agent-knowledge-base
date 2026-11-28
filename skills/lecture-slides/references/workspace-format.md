@@ -33,6 +33,8 @@ Rules:
 - `assets/quiz.js` and `assets/style.css` are **owned copies**, not symlinks: a course may adapt
   its stylesheet (FOMO widened `main` and wired the site's light/dark toggle). Re-copy from the
   skill only when you want to reset a course back to the shared default.
+- Lessons with a mind map load the pinned Mermaid bundle from jsDelivr (added by `render.py`); no
+  Mermaid file is copied into the course.
 - One deck per lesson, one cheat sheet per deck.
 - A file still containing `<...>` is a template, not state: run the setup interview in `SKILL.md`
   before generating anything.
@@ -50,7 +52,7 @@ Three manual steps the script prints afterward — plain static HTML edits, sinc
 shared nav script (do them before the course is reachable from the rest of the site):
 
 1. In the new course's own `<header>`, list the other current courses too.
-2. In every *existing* course's `<header>`, plus `index.html`/`blog/index.html`/
+2. In every _existing_ course's `<header>`, plus `index.html`/`blog/index.html`/
    `ws26-27/index.html`, add an `<a href="/ws26-27/<slug>/">` link for the new one.
 3. Add a `.card` link to the new course inside the site repo's `ws26-27/index.html`'s `.grid`.
 
@@ -62,18 +64,22 @@ Then run the setup interview in `SKILL.md` and fill `MISSION.md`/`NOTES.md`/`RES
 # Mission: <course name> — <university>, <term>
 
 ## Why
+
 <exam date, grade target, what is currently behind>
 
 ## Success looks like
+
 - <observable ability tied to the exam or project>
 - <an ability to compute or compare, not just recall>
 
 ## Constraints
+
 - <time per week>
 - <preferred study style>
 - <rules that forbid certain help, e.g. individual labs>
 
 ## Out of scope
+
 - <what the learner explicitly does not want>
 ```
 
@@ -85,18 +91,22 @@ Change it only when the goal changes, and say why in `NOTES.md`.
 # Notes (teacher's scratchpad)
 
 ## Learner preferences (<YYYY-MM-DD>)
+
 - Goal, time budget, current position.
 - Style: <lesson then questions | Socratic | both>.
 - Language rule.
 - Format overrides, if any.
 
 ## Lesson format defaults
+
 - <the baseline counts and components for every lesson>
 
 ## Course plan (≈<N> min per unit)
+
 1. <lecture number and topic> — <queued | written>
 
 ## Working notes
+
 - <deck-specific observations>
 ```
 
@@ -109,17 +119,21 @@ review next. Never rewrite an older entry.
 # Resources
 
 ## Primary (highest trust — the exam is built from these)
-- **Course slides**, <path or URL> — cite as *deck p.N*.
+
+- **Course slides**, <path or URL> — cite as _deck p.N_.
 - **Exercises / projects**, <path or URL>.
 - **Previous year**, <path or URL> — may be revised.
 
 ## Books / chapters
-- <author>, *<title>*, <chapter and topic> — <URL>
+
+- <author>, _<title>_, <chapter and topic> — <URL>
 
 ## Papers cited in slides
+
 - <authors>, "<title>" (<venue, year>) — <URL> (<deck p.N>)
 
 ## Community
+
 - <forum, Q&A sessions, office hours>
 ```
 

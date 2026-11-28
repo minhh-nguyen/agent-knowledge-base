@@ -95,12 +95,14 @@ Do not generate a lesson while the mission still contains placeholders.
 
 ## Hard rules
 
-- Fixed section order: win → keyword strip → 5–6 keyword sections with MCQs → worked exam question →
-  recall drill → True/False → What-is → Calculations → written exam → Read next.
+- Fixed section order: win → mind map → keyword strip → 5–6 keyword sections with MCQs → worked exam
+  question → recall drill → True/False → What-is → Calculations → written exam → Read next.
 - Counts per lesson: 2 MCQs per keyword section, 8–10 True/False, 8 What-is, 5 calculations,
   4 written questions.
 - Every factual sentence carries a `[[p.N]]` citation. Never invent a number, page, or formula.
 - Output HTML comes only from `scripts/render.py`; no hand-written HTML, CSS, or JS.
+- The only external script is the pinned Mermaid bundle that renders the mind map; no other CDN or
+  remote asset.
 - Written exam answers stay out of the source; they are graded in chat.
 - No lab solutions. Respect the lab rules recorded in `MISSION.md`; concepts only.
 - All contents must be in English (user will mention in specific case); keep technical terms in English with a short gloss.
@@ -110,6 +112,9 @@ Do not generate a lesson while the mission still contains placeholders.
 
 The agent writes content only; the renderer adds every tag, class, and link. Keep the source lean:
 
+- The mind map is derived, not written: `render.py` builds a Mermaid `mindmap` from the lesson title,
+  the `##` section headings, and the `keywords` blocks. Never put Mermaid in the source; every
+  keyword appears once as a leaf.
 - Short prose: one idea per sentence, no restating the slide around a question.
 - No decoration: no raw HTML, SVG, icons, or emoji in the source. Reproduce a slide's figure as a
   short Markdown table or list, or cite its page.
@@ -140,6 +145,7 @@ The agent writes content only; the renderer adds every tag, class, and link. Kee
 - [ ] No answer leaks into a question (counts are checked by the renderer).
 - [ ] The cheat sheet fits two pages and ends with the deck's exam-style questions.
 - [ ] No raw HTML, SVG, icons, or emoji in the sources; sizes near the targets above.
+- [ ] The mind map is derived from the section headings and keywords; no Mermaid in the source.
 - [ ] `NOTES.md` has a dated entry for this session.
 - [ ] The three state files describe this course, with no leftover `<...>` placeholder.
 - [ ] Everything was written under `~/repo/minhh-nguyen.github.io/ws26-27/<course>/`; nothing in

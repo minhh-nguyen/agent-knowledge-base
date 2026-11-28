@@ -20,6 +20,7 @@ Output path is derived from the source: <course>/lessons/<stem>.html for a lesso
 from __future__ import annotations
 
 import argparse
+import html
 import re
 import sys
 from pathlib import Path
@@ -32,10 +33,26 @@ FENCE_RE = re.compile(
     r"^```(keywords|mcq|tf|whatis|calc|steps|exam|recall|math)[ \t]*\n(.*?)^```[ \t]*$",
     re.S | re.M,
 )
-EXAM_CLOSING = "Bring your answers to the chat and I'll grade them the way an examiner would."
+EXAM_CLOSING = (
+    "Bring your answers to the chat and I'll grade them the way an examiner would."
+)
 FOOTER = (
     "Something unclear? Ask me in chat. Say “I don’t get X” and I’ll explain it again, "
     "starting from what X builds on."
+)
+MERMAID_CDN = "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"
+MERMAID_INIT = (
+    f'<script src="{MERMAID_CDN}"></script>\n'
+    "<script>\n"
+    "(function () {\n"
+    "  if (!window.mermaid) return;\n"
+    "  var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;\n"
+    "  mermaid.initialize({ startOnLoad: false, securityLevel: 'strict', "
+    "theme: dark ? 'dark' : 'default' });\n"
+    "  mermaid.run({ querySelector: '.mermaid' }).catch(function (e) { "
+    "console.error('mermaid:', e); });\n"
+    "})();\n"
+    "</script>"
 )
 
 
@@ -81,16 +98,28 @@ def tagged(item: str, *tags: str) -> dict[str, str]:
     return out
 
 
+def mm_label(text: str) -> str:
+    """Make text safe inside a Mermaid mindmap `["..."]` label."""
+    text = re.sub(r"\s+", " ", text).strip().replace("*", "").replace("`", "")
+    return (
+        text.replace("\\", "/")
+        .replace('"', "'")
+        .replace("[", "(")
+        .replace("]", ")")
+    )
+
+
 class Renderer:
     def __init__(self, meta: dict[str, str]):
         self.meta = meta
         self.keywords: list[tuple[str, str, str]] = []  # (slug, term, recall answer)
+        self.sections: dict[str, list[str]] = {}  # section heading -> keyword terms
         self.counts = {k: 0 for k in ("mcq", "tf", "whatis", "calc", "exam")}
         self.answers: list[int] = []
 
     # ---- lesson blocks -------------------------------------------------------------------
-    def keywords_block(self, body: str) -> str:
-        rows = []
+    def keywords_block(self, body: str, section: str = "") -> str:
+        rows, terms = [], []
         for line in filter(str.strip, body.splitlines()):
             slug, term, alt, definition, why = fields(line, 4, 5, "keywords")
             if not re.fullmatch(r"[a-z0-9-]+", slug):
@@ -100,15 +129,26 @@ class Renderer:
             plain = re.sub(r"\s*<span class=\"cite\">.*?</span>", "", definition)
             first = re.split(r"(?<=[.!?])\s", plain)[0]
             self.keywords.append((slug, term, first.strip()))
+            terms.append(term)
             alt_html = f' <span class="alt">{inline(alt)}</span>' if alt else ""
             so = f'\n<span class="so">{inline(why)}</span>' if why else ""
             rows.append(
                 f'<div id="k-{slug}"><dt>{inline(term)}{alt_html}</dt>\n'
                 f"<dd>{inline(definition)}{so}</dd></div>"
             )
+        if section:
+            self.sections.setdefault(section, []).extend(terms)
         return '<dl class="kw">\n' + "\n".join(rows) + "\n</dl>"
 
-    def quiz(self, q: str, options: list[str], answer: int, why: str, cls: str, qtype: str = "") -> str:
+    def quiz(
+        self,
+        q: str,
+        options: list[str],
+        answer: int,
+        why: str,
+        cls: str,
+        qtype: str = "",
+    ) -> str:
         if not 0 <= answer < len(options):
             raise SourceError(f"answer index out of range for: {q[:60]!r}")
         self.answers.append(answer)
@@ -125,9 +165,13 @@ class Renderer:
             t = tagged(it, "Q", "A", "Why")
             opts = t["options"].splitlines()
             if not t.get("Q") or len(opts) != 3 or not t.get("A", "").isdigit():
-                raise SourceError(f"mcq needs Q:, exactly three '- ' options, A: 1-3: {it[:60]!r}")
+                raise SourceError(
+                    f"mcq needs Q:, exactly three '- ' options, A: 1-3: {it[:60]!r}"
+                )
             self.counts["mcq"] += 1
-            out.append(self.quiz(t["Q"], opts, int(t["A"]) - 1, t.get("Why", ""), "quiz"))
+            out.append(
+                self.quiz(t["Q"], opts, int(t["A"]) - 1, t.get("Why", ""), "quiz")
+            )
         return "\n\n".join(out)
 
     def tf_block(self, body: str) -> str:
@@ -137,8 +181,16 @@ class Renderer:
             if tf not in ("T", "F"):
                 raise SourceError(f"tf: first field must be T or F: {line!r}")
             self.counts["tf"] += 1
-            out.append(self.quiz(stmt, ["True", "False"], 0 if tf == "T" else 1, why,
-                                 "item quiz", '<span class="qtype tf">T / F</span>'))
+            out.append(
+                self.quiz(
+                    stmt,
+                    ["True", "False"],
+                    0 if tf == "T" else 1,
+                    why,
+                    "item quiz",
+                    '<span class="qtype tf">T / F</span>',
+                )
+            )
         return '<div class="qbank">\n' + "\n".join(out) + "\n</div>"
 
     def hidden_bank(self, body: str, kind: str) -> str:
@@ -147,16 +199,20 @@ class Renderer:
             for line in filter(str.strip, body.splitlines()):
                 q, a = fields(line, 2, 2, "whatis")
                 self.counts["whatis"] += 1
-                out.append(f'<div class="item"><p><span class="qtype">What is</span>{inline(q)}</p>\n'
-                           f"<details><summary>Show answer</summary><p>{inline(a)}</p></details></div>")
+                out.append(
+                    f'<div class="item"><p><span class="qtype">What is</span>{inline(q)}</p>\n'
+                    f"<details><summary>Show answer</summary><p>{inline(a)}</p></details></div>"
+                )
         else:
             for it in items(body):
                 t = tagged(it, "Q", "S")
                 if not t.get("Q") or not t.get("S"):
                     raise SourceError(f"calc needs Q: and S: {it[:60]!r}")
                 self.counts["calc"] += 1
-                out.append(f'<div class="item"><p><span class="qtype calc">Compute</span>{inline(t["Q"])}</p>\n'
-                           f'<details><summary>Show solution</summary><p>{inline(t["S"])}</p></details></div>')
+                out.append(
+                    f'<div class="item"><p><span class="qtype calc">Compute</span>{inline(t["Q"])}</p>\n'
+                    f"<details><summary>Show solution</summary><p>{inline(t['S'])}</p></details></div>"
+                )
         return '<div class="qbank">\n' + "\n".join(out) + "\n</div>"
 
     def steps_block(self, body: str) -> str:
@@ -166,10 +222,16 @@ class Renderer:
                 key = line[4:].strip()
                 continue
             summary, answer = fields(line, 2, 2, "steps")
-            out.append(f"<details><summary>{inline(summary)}</summary><p>{inline(answer)}</p></details>")
-        key = key or ("Formula → plug in numbers with units → result → name the bottleneck → "
-                      "one sentence on what would change it.")
-        out.append(f'<div class="key"><strong>Exam answer pattern</strong>\n{inline(key)}</div>')
+            out.append(
+                f"<details><summary>{inline(summary)}</summary><p>{inline(answer)}</p></details>"
+            )
+        key = key or (
+            "Formula → plug in numbers with units → result → name the bottleneck → "
+            "one sentence on what would change it."
+        )
+        out.append(
+            f'<div class="key"><strong>Exam answer pattern</strong>\n{inline(key)}</div>'
+        )
         return "\n".join(out)
 
     def exam_block(self, body: str) -> str:
@@ -178,18 +240,47 @@ class Renderer:
             verb, q = fields(line, 2, 2, "exam")
             self.counts["exam"] += 1
             li.append(f"<li><strong>{inline(verb)}.</strong> {inline(q)}</li>")
-        return '<ol class="examq">\n' + "\n".join(li) + f"\n</ol>\n<p>{EXAM_CLOSING}</p>"
+        return (
+            '<ol class="examq">\n' + "\n".join(li) + f"\n</ol>\n<p>{EXAM_CLOSING}</p>"
+        )
 
     def recall_block(self, body: str) -> str:
-        pairs = [fields(l, 2, 2, "recall") for l in filter(str.strip, body.splitlines())]
-        if not pairs:  # default: one entry per keyword, from the first sentence of its definition
+        pairs = [
+            fields(l, 2, 2, "recall") for l in filter(str.strip, body.splitlines())
+        ]
+        if (
+            not pairs
+        ):  # default: one entry per keyword, from the first sentence of its definition
             pairs = [[term, answer] for _, term, answer in self.keywords]
-        rows = "".join(f"<details><summary>{inline(t)}</summary>{inline(a)}</details>\n" for t, a in pairs)
+        rows = "".join(
+            f"<details><summary>{inline(t)}</summary>{inline(a)}</details>\n"
+            for t, a in pairs
+        )
         return f'<div class="recall">\n{rows}</div>'
 
-    def render_block(self, kind: str, body: str) -> str:
+    def mindmap_html(self) -> str:
+        """Mermaid mindmap: lesson title -> keyword sections -> keyword terms."""
+        if not self.sections:
+            return ""
+        title = mm_label(self.meta.get("title", "Lesson"))
+        lines = ["mindmap", f'  root["{title}"]']
+        # Sort sections and terms for deterministic, coherent output
+        for i, (section, terms) in enumerate(sorted(self.sections.items()), 1):
+            lines.append(f'    s{i}["{mm_label(section)}"]')
+            sorted_terms = sorted(terms)
+            for j, term in enumerate(sorted_terms, 1):
+                lines.append(f'      k{i}_{j}["{mm_label(term)}"]')
+        source = html.escape("\n".join(lines))
+        return (
+            '<div class="mm"><strong>Mind map</strong>\n'
+            '<div class="mm-canvas">\n'
+            f'<pre class="mermaid">\n{source}\n</pre>\n'
+            "</div>\n</div>\n\n"
+        )
+
+    def render_block(self, kind: str, body: str, section: str = "") -> str:
         if kind == "keywords":
-            return self.keywords_block(body)
+            return self.keywords_block(body, section)
         if kind == "mcq":
             return self.mcq_block(body)
         if kind == "tf":
@@ -220,16 +311,21 @@ def parse_front_matter(text: str) -> tuple[dict[str, str], str]:
         if line.strip() and not line.lstrip().startswith("#"):
             k, _, v = line.partition(":")
             meta[k.strip()] = v.strip()
-    return meta, text[m.end():]
+    return meta, text[m.end() :]
 
 
 def body_html(r: Renderer, text: str, recall_body: list[str]) -> str:
     blocks: list[str] = []
 
     def stash(m: re.Match) -> str:
-        if m.group(1) == "recall":
+        kind = m.group(1)
+        section = ""
+        if kind == "keywords":
+            heads = re.findall(r"^##\s+(.+)$", text[: m.start()], re.M)
+            section = heads[-1].strip() if heads else "Keywords"
+        if kind == "recall":
             recall_body.append(m.group(2))
-        blocks.append(r.render_block(m.group(1), m.group(2)))
+        blocks.append(r.render_block(kind, m.group(2), section))
         return f"\n\n@@B{len(blocks) - 1}@@\n\n"
 
     text = FENCE_RE.sub(stash, text)
@@ -237,7 +333,9 @@ def body_html(r: Renderer, text: str, recall_body: list[str]) -> str:
     html_out = re.sub(r"<table>", '<div class="table-wrap"><table>', html_out)
     html_out = re.sub(r"</table>", "</table></div>", html_out)
     # a paragraph that is only a citation (e.g. under a table) becomes <p class="cite">
-    html_out = re.sub(r'<p><span class="cite">([^<]*)</span></p>', r'<p class="cite">\1</p>', html_out)
+    html_out = re.sub(
+        r'<p><span class="cite">([^<]*)</span></p>', r'<p class="cite">\1</p>', html_out
+    )
     for i, b in enumerate(blocks):
         html_out = re.sub(rf"<p>@@B{i}@@</p>", lambda _m, b=b: b, html_out)
     return html_out
@@ -259,7 +357,10 @@ def render(src: Path) -> tuple[str, Path, Renderer]:
     recall_body: list[str] = []
     body = body_html(r, text, recall_body)
     if "@@RECALL@@" in body:
-        body = body.replace("@@RECALL@@", r.recall_block(recall_body[0] if recall_body else ""))
+        body = body.replace(
+            "@@RECALL@@", r.recall_block(recall_body[0] if recall_body else "")
+        )
+    mm = r.mindmap_html() if kind == "lesson" else ""
 
     course, lec, topic = meta["course"], meta["lecture"], meta["topic"]
     course_dir = src.parent.parent if src.parent.name == "src" else src.parent
@@ -273,21 +374,30 @@ def render(src: Path) -> tuple[str, Path, Renderer]:
         if nxt:
             crumbs += f' · next: <a href="{nxt}">{nxt[:4]}</a>'
             footer_next = f'\nNext: <a href="{nxt}">{nxt[:4]} · {inline(meta.get("next_title", nxt))}</a>.'
-        strip = "".join(f'<li><a href="#k-{s}">{inline(t)}</a></li>' for s, t, _ in r.keywords)
+        strip = "".join(
+            f'<li><a href="#k-{s}">{inline(t)}</a></li>' for s, t, _ in r.keywords
+        )
         head = (
             f'<nav class="crumbs">{crumbs}</nav>\n<h1>{inline(meta["title"])}</h1>\n'
             f'<p class="subtitle">{inline(meta.get("subtitle", ""))}</p>\n\n'
             f'<div class="win"><strong>Your win today</strong>\n{inline(meta.get("win", ""))}'
-            f'{" About " + meta["minutes"] + " minutes." if meta.get("minutes") else ""}</div>\n\n'
+            f"{' About ' + meta['minutes'] + ' minutes.' if meta.get('minutes') else ''}</div>\n\n"
+            f"{mm}"
             f'<ul class="kw-strip">\n{strip}\n</ul>\n\n'
         )
         page_title = f"{num} · {meta['title']}"
         tail = f"\n<footer>{FOOTER}{footer_next}</footer>"
-        script = '\n<script src="../assets/quiz.js"></script>'
+        script = ('\n' + MERMAID_INIT if mm else '') + (
+            '\n<script src="../assets/quiz.js"></script>'
+        )
         out_path = course_dir / "lessons" / f"{src.stem}.html"
     else:
         lesson = meta.get("lesson_file", "")
-        link = f' · <a href="../lessons/{lesson}">Lesson {lesson[:4]}</a>' if lesson else ""
+        link = (
+            f' · <a href="../lessons/{lesson}">Lesson {lesson[:4]}</a>'
+            if lesson
+            else ""
+        )
         head = (
             f'<nav class="crumbs">{course} · Reference{link}</nav>\n'
             f"<h1>Lecture {lec} · {inline(topic)}</h1>\n"
@@ -309,14 +419,22 @@ def render(src: Path) -> tuple[str, Path, Renderer]:
 def check(r: Renderer, kind: str, page: str) -> list[str]:
     """Return violations of the counts in SKILL.md / quiz-format.md; empty means OK."""
     if kind != "lesson":
-        return [] if "<script" not in page else ["cheat sheet must not contain a script"]
+        return (
+            [] if "<script" not in page else ["cheat sheet must not contain a script"]
+        )
     c, problems = r.counts, []
     want = {"tf": (8, 10), "whatis": (8, 8), "calc": (5, 5), "exam": (4, 4)}
     for k, (lo, hi) in want.items():
         if not lo <= c[k] <= hi:
             problems.append(f"{k}: {c[k]} items, need {lo}-{hi}")
     if not 10 <= len(r.keywords) <= 16:
-        problems.append(f"keywords: {len(r.keywords)}, need 10-16 (split the deck if more)")
+        problems.append(
+            f"keywords: {len(r.keywords)}, need 10-16 (split the deck if more)"
+        )
+    if len(r.sections) > 6:
+        problems.append(
+            f"sections: {len(r.sections)}, need 5-6 (the mind map gets too wide)"
+        )
     if c["mcq"] < 2 * 5:
         problems.append(f"mcq: {c['mcq']}, need 2 per keyword section (5-6 sections)")
     mcq_answers = r.answers[: c["mcq"]]
@@ -326,9 +444,13 @@ def check(r: Renderer, kind: str, page: str) -> list[str]:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     ap.add_argument("source", type=Path)
-    ap.add_argument("-o", "--output", type=Path, help="override the derived output path")
+    ap.add_argument(
+        "-o", "--output", type=Path, help="override the derived output path"
+    )
     ap.add_argument("--check", action="store_true", help="validate only, write nothing")
     args = ap.parse_args()
     try:

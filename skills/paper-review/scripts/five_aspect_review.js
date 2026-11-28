@@ -1,9 +1,24 @@
 const ASPECTS = [
-  ["contribution", "Contribution sufficiency: are the claimed contributions real, novel, and sufficient for the venue? Attack novelty explicitly."],
-  ["clarity", "Writing clarity: reverse-outline the draft - does each paragraph earn its place? Flag structure breaks and unsupported claims."],
-  ["results", "Results quality: do the experiments support every claim? Score the trust of each headline number."],
-  ["testing", "Testing completeness: missing baselines, ablations, seeds, statistical care."],
-  ["method", "Method design: is the approach sound, are assumptions stated, are limitations promoted honestly?"],
+  [
+    "contribution",
+    "Contribution sufficiency: are the claimed contributions real, novel, and sufficient for the venue? Attack novelty explicitly.",
+  ],
+  [
+    "clarity",
+    "Writing clarity: reverse-outline the draft - does each paragraph earn its place? Flag structure breaks and unsupported claims.",
+  ],
+  [
+    "results",
+    "Results quality: do the experiments support every claim? Score the trust of each headline number.",
+  ],
+  [
+    "testing",
+    "Testing completeness: missing baselines, ablations, seeds, statistical care.",
+  ],
+  [
+    "method",
+    "Method design: is the approach sound, are assumptions stated, are limitations promoted honestly?",
+  ],
 ];
 
 // CHECKLISTS: the knowledge layer for each seat, extracted from SKILL.md
@@ -68,12 +83,18 @@ function dispatchAspect(draftText, aspect) {
   return task({
     description:
       "You are one seat on an adversarial pre-submission review panel.\n" +
-      "Aspect: " + key + ". " + focus + "\n" +
+      "Aspect: " +
+      key +
+      ". " +
+      focus +
+      "\n" +
       "Checklist for this seat (work through every item):\n" +
-      CHECKLISTS[key] + "\n" +
+      CHECKLISTS[key] +
+      "\n" +
       "Review ONLY through this aspect and its checklist. Be concrete: quote or point to the " +
       "exact passage behind every finding and every blocking issue.\n\n" +
-      "--- DRAFT ---\n" + draftText,
+      "--- DRAFT ---\n" +
+      draftText,
     subagentType: "general-purpose",
     label: "review:" + key,
     responseSchema: ASPECT_SCHEMA,
@@ -85,7 +106,7 @@ async function fiveAspectReview(draftText) {
   const results = {};
   for (let round = 0; round < 2 && pending.length > 0; round++) {
     const settled = await Promise.allSettled(
-      pending.map((a) => dispatchAspect(draftText, a))
+      pending.map((a) => dispatchAspect(draftText, a)),
     );
     const failed = [];
     settled.forEach((s, i) => {

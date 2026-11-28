@@ -1,7 +1,8 @@
 # Lesson Format
 
 A lesson is one self-contained HTML file that teaches one lecture deck. It reuses
-`../assets/style.css` and `../assets/quiz.js`; it must not add external CSS, JS, or CDN links.
+`../assets/style.css` and `../assets/quiz.js`; the only external asset is the pinned Mermaid bundle
+that renders the mind map (`render.py` adds it). No other external CSS, JS, or CDN links.
 
 ## File naming and links
 
@@ -15,20 +16,21 @@ A lesson is one self-contained HTML file that teaches one lecture deck. It reuse
 
 Keep this order. Numbers are literal (`1 ·`, `2 ·`, …).
 
-| # | Section | Content |
-| --- | --- | --- |
-| — | Breadcrumb | course · lecture · lesson · cheat sheet · next |
-| — | Title + subtitle | `<h1>` is a claim, subtitle says what the learner can do afterwards |
-| — | `.win` | one-sentence win tied to a real exam question, plus time budget |
-| — | `.kw-strip` | every keyword, each linking to its card (`#k-<slug>`) |
-| 1..N | Keyword sections | 5–6 sections, each a `dl.kw` group of related keywords + 1–2 MCQs |
-| N+1 | Use the keywords | the deck's exam question worked step by step in `<details>` + `.key` answer pattern |
-| N+2 | Keyword recall drill | `.recall` with one `<details>` per keyword, one-sentence answer |
-| N+3 | True / False | 8–10 items in `.qbank` |
-| N+4 | What is …? | 8 items in `.qbank`, answer hidden |
-| N+5 | Calculations | 5 items in `.qbank`, worked solution hidden |
-| N+6 | Exam-style questions (written) | 4 items in `ol.examq`, answers withheld |
-| — | Read next + footer | primary sources, cheat-sheet link, next lesson, "ask in chat" line |
+| #    | Section                        | Content                                                                             |
+| ---- | ------------------------------ | ----------------------------------------------------------------------------------- |
+| —    | Breadcrumb                     | course · lecture · lesson · cheat sheet · next                                      |
+| —    | Title + subtitle               | `<h1>` is a claim, subtitle says what the learner can do afterwards                 |
+| —    | `.win`                         | one-sentence win tied to a real exam question, plus time budget                     |
+| —    | Mind map                       | `.mm` Mermaid `mindmap`: root = lesson title, branches = keyword sections, leaves = keywords. Auto-generated; never hand-write. |
+| —    | `.kw-strip`                    | every keyword, each linking to its card (`#k-<slug>`)                               |
+| 1..N | Keyword sections               | 5–6 sections, each a `dl.kw` group of related keywords + 1–2 MCQs                   |
+| N+1  | Use the keywords               | the deck's exam question worked step by step in `<details>` + `.key` answer pattern |
+| N+2  | Keyword recall drill           | `.recall` with one `<details>` per keyword, one-sentence answer                     |
+| N+3  | True / False                   | 8–10 items in `.qbank`                                                              |
+| N+4  | What is …?                     | 8 items in `.qbank`, answer hidden                                                  |
+| N+5  | Calculations                   | 5 items in `.qbank`, worked solution hidden                                         |
+| N+6  | Exam-style questions (written) | 4 items in `ol.examq`, answers withheld                                             |
+| —    | Read next + footer             | primary sources, cheat-sheet link, next lesson, "ask in chat" line                  |
 
 ## Keyword cards
 
@@ -37,9 +39,14 @@ matters:
 
 ```html
 <dl class="kw">
-<div id="k-seek"><dt>seek time <span class="alt">1–20 ms</span></dt>
-<dd>Time for the arm to move the head to the right track <span class="cite">Deck p.20</span>.
-<span class="so">This is the biggest cost, and it is mechanical.</span></dd></div>
+  <div id="k-seek">
+    <dt>seek time <span class="alt">1–20 ms</span></dt>
+    <dd>
+      Time for the arm to move the head to the right track
+      <span class="cite">Deck p.20</span>.
+      <span class="so">This is the biggest cost, and it is mechanical.</span>
+    </dd>
+  </div>
 </dl>
 ```
 
@@ -68,6 +75,17 @@ matters:
 
 <div class="win"><strong>Your win today</strong>
 <the exam question this lesson makes answerable>. About <N> minutes.</div>
+
+<div class="mm"><strong>Mind map</strong>
+<div class="mm-canvas">
+<pre class="mermaid">
+mindmap
+  root["<lesson title>"]
+    s1["1 · <section>"]
+      k1_1["<keyword>"]
+</pre>
+</div>
+</div>
 
 <ul class="kw-strip">
 <li><a href="#k-<slug>">keyword</a></li>
@@ -111,10 +129,23 @@ Formula → plug in numbers with units → result → name the bottleneck → on
 <footer>Something unclear? Ask me in chat. Say “I don’t get X” and I’ll explain it again, starting from what X builds on.
 Next: <a href="NNNN-<slug>.html">NNNN · <title></a>.</footer>
 </main>
+<!-- render.py inserts the Mermaid script here when a mind map exists -->
 <script src="../assets/quiz.js"></script>
 </body>
 </html>
 ```
+
+## Mind map
+
+The mind map is an orientation aid, not a second table of contents. `render.py` derives it from the
+lesson title and the keyword sections, so it is always consistent with the cards below:
+
+- root: the lesson title;
+- one branch per `## N · <section>` heading;
+- one leaf per keyword in that section.
+
+It is a Mermaid `mindmap` rendered client-side from the pinned bundle. Do not write Mermaid or SVG in
+the source. If the map is unreadable, split the section or the deck — do not add deeper nesting.
 
 ## Writing rules
 

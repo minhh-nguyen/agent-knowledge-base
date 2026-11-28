@@ -2,12 +2,12 @@
 
 Every lesson ends with four banks, in this order. Counts are per lesson, not per section.
 
-| Bank | Count | Answer visibility |
-| --- | --- | --- |
-| True / False | 8–10 | revealed on click, with explanation |
-| What is …? | 8 | hidden in `<details>` |
-| Calculations | 5 | worked solution hidden in `<details>` |
-| Written exam questions | 4 | withheld; graded in chat |
+| Bank                   | Count | Answer visibility                     |
+| ---------------------- | ----- | ------------------------------------- |
+| True / False           | 8–10  | revealed on click, with explanation   |
+| What is …?             | 8     | hidden in `<details>`                 |
+| Calculations           | 5     | worked solution hidden in `<details>` |
+| Written exam questions | 4     | withheld; graded in chat              |
 
 Mid-lesson MCQs are separate: 2 per keyword section, about 9–10 per lesson.
 
@@ -31,12 +31,23 @@ Markup: `.quiz` with `data-answer` = 0-based index of the correct option.
 
 ```html
 <div class="quiz" data-answer="2">
-<p class="q">An application logically writes 1 GB; the SSD physically writes 3 GB. What happened?</p>
-<button class="opt">The OS buffer cache wrote each page three separate times.</button>
-<button class="opt">NVMe split each write into three queue-pair submissions.</button>
-<button class="opt">Garbage collection relocated live data so blocks could be erased.</button>
-<p class="why">Write amplification = 3 GB ÷ 1 GB = 3. The extra writes came from GC copying
-still-valid pages before an erase <span class="cite">Deck p.23</span>.</p>
+  <p class="q">
+    An application logically writes 1 GB; the SSD physically writes 3 GB. What
+    happened?
+  </p>
+  <button class="opt">
+    The OS buffer cache wrote each page three separate times.
+  </button>
+  <button class="opt">
+    NVMe split each write into three queue-pair submissions.
+  </button>
+  <button class="opt">
+    Garbage collection relocated live data so blocks could be erased.
+  </button>
+  <p class="why">
+    Write amplification = 3 GB ÷ 1 GB = 3. The extra writes came from GC copying
+    still-valid pages before an erase <span class="cite">Deck p.23</span>.
+  </p>
 </div>
 ```
 
@@ -48,11 +59,17 @@ Wrap the bank in `.qbank`. Each item is `.item quiz` so `quiz.js` handles the re
 
 ```html
 <div class="qbank">
-<div class="item quiz" data-answer="1">
-<p class="q"><span class="qtype tf">T / F</span>AHCI/SATA supports thousands of queues, just like NVMe.</p>
-<button class="opt">True</button><button class="opt">False</button>
-<p class="why">False. AHCI has 1 queue of 32 commands; NVMe has 64 K queues of 64 K commands each
-<span class="cite">Deck pp.27, 29</span>.</p></div>
+  <div class="item quiz" data-answer="1">
+    <p class="q">
+      <span class="qtype tf">T / F</span>AHCI/SATA supports thousands of queues,
+      just like NVMe.
+    </p>
+    <button class="opt">True</button><button class="opt">False</button>
+    <p class="why">
+      False. AHCI has 1 queue of 32 commands; NVMe has 64 K queues of 64 K
+      commands each <span class="cite">Deck pp.27, 29</span>.
+    </p>
+  </div>
 </div>
 ```
 
@@ -66,10 +83,17 @@ Open questions answered aloud before revealing. No options.
 
 ```html
 <div class="qbank">
-<div class="item"><p><span class="qtype">What is</span>the superblock?</p>
-<details><summary>Show answer</summary><p>Metadata about the file-system instance: bitmap size,
-number of inodes and file blocks, offsets of the components, file-system type
-<span class="cite">Deck p.51</span>.</p></details></div>
+  <div class="item">
+    <p><span class="qtype">What is</span>the superblock?</p>
+    <details>
+      <summary>Show answer</summary>
+      <p>
+        Metadata about the file-system instance: bitmap size, number of inodes
+        and file blocks, offsets of the components, file-system type
+        <span class="cite">Deck p.51</span>.
+      </p>
+    </details>
+  </div>
 </div>
 ```
 
@@ -81,12 +105,21 @@ number of inodes and file blocks, offsets of the components, file-system type
 
 ```html
 <div class="qbank">
-<div class="item"><p><span class="qtype calc">Compute</span>An HDD has 6 ms seek, 4 ms rotation
-and 0.1 ms transfer per 4 KB block. How long do 50 random reads take, and 50 sequential reads?
-What is the speedup?</p>
-<details><summary>Show solution</summary><p>Random: 50 × (10 + 0.1) = <strong>505 ms</strong>.
-Sequential: 10 + 50 × 0.1 = <strong>15 ms</strong>. Speedup ≈ <strong>34×</strong>
-<span class="cite">Deck p.21</span>.</p></details></div>
+  <div class="item">
+    <p>
+      <span class="qtype calc">Compute</span>An HDD has 6 ms seek, 4 ms rotation
+      and 0.1 ms transfer per 4 KB block. How long do 50 random reads take, and
+      50 sequential reads? What is the speedup?
+    </p>
+    <details>
+      <summary>Show solution</summary>
+      <p>
+        Random: 50 × (10 + 0.1) = <strong>505 ms</strong>. Sequential: 10 + 50 ×
+        0.1 = <strong>15 ms</strong>. Speedup ≈ <strong>34×</strong>
+        <span class="cite">Deck p.21</span>.
+      </p>
+    </details>
+  </div>
 </div>
 ```
 
@@ -98,10 +131,14 @@ Sequential: 10 + 50 × 0.1 = <strong>15 ms</strong>. Speedup ≈ <strong>34×</s
 
 ```html
 <ol class="examq">
-<li><strong>Explain why.</strong> Why can an NVMe SSD at queue depth 1 deliver only a fraction
-of its rated bandwidth?</li>
-<li><strong>Compare.</strong> FTL-managed SSD vs ZNS SSD: who does garbage collection, and what
-happens to write amplification and to latency?</li>
+  <li>
+    <strong>Explain why.</strong> Why can an NVMe SSD at queue depth 1 deliver
+    only a fraction of its rated bandwidth?
+  </li>
+  <li>
+    <strong>Compare.</strong> FTL-managed SSD vs ZNS SSD: who does garbage
+    collection, and what happens to write amplification and to latency?
+  </li>
 </ol>
 ```
 
