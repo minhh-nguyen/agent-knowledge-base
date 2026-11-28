@@ -72,11 +72,11 @@ The same pattern covers locks (`std::lock_guard`), transactions (rollback in des
 
 No raw `new`/`delete`. Ownership is expressed by the pointer type.
 
-| Type | Ownership | Use |
-|------|-----------|-----|
-| `std::unique_ptr<T>` | Exclusive | Default choice for heap objects |
-| `std::shared_ptr<T>` | Shared, ref-counted | Genuinely shared lifetime |
-| `std::weak_ptr<T>` | None | Observe a `shared_ptr` without keeping it alive |
+| Type                 | Ownership           | Use                                             |
+| -------------------- | ------------------- | ----------------------------------------------- |
+| `std::unique_ptr<T>` | Exclusive           | Default choice for heap objects                 |
+| `std::shared_ptr<T>` | Shared, ref-counted | Genuinely shared lifetime                       |
+| `std::weak_ptr<T>`   | None                | Observe a `shared_ptr` without keeping it alive |
 
 ```cpp
 class Logger {
@@ -178,12 +178,12 @@ T sum(const std::vector<T>& v) {
 
 Guarantees, strongest first:
 
-| Guarantee | Meaning |
-|-----------|---------|
-| No-throw | Never throws (destructors, move ops, `swap`) |
-| Strong | Either completes or leaves state unchanged (copy-then-swap) |
-| Basic | Valid but unspecified state; no leaks |
-| None | Avoid |
+| Guarantee | Meaning                                                     |
+| --------- | ----------------------------------------------------------- |
+| No-throw  | Never throws (destructors, move ops, `swap`)                |
+| Strong    | Either completes or leaves state unchanged (copy-then-swap) |
+| Basic     | Valid but unspecified state; no leaks                       |
+| None      | Avoid                                                       |
 
 ```cpp
 std::optional<Value> lookup(const Key& k) const {
@@ -203,13 +203,13 @@ Give error messages the operation, the input, and the reason. Never throw from a
 
 ## Containers and Algorithms
 
-| Container | Access | Insert/erase | Notes |
-|-----------|--------|--------------|-------|
-| `std::vector` | O(1) | O(n) | Default; contiguous, cache-friendly |
-| `std::deque` | O(1) | O(1) at ends | Growable at both ends |
-| `std::list` | O(n) | O(1) with iterator | Rarely worth it |
-| `std::map` / `std::set` | O(log n) | O(log n) | Ordered, `std::less` |
-| `std::unordered_map` / `set` | O(1) avg | O(1) avg | Hash-based, no order |
+| Container                    | Access   | Insert/erase       | Notes                               |
+| ---------------------------- | -------- | ------------------ | ----------------------------------- |
+| `std::vector`                | O(1)     | O(n)               | Default; contiguous, cache-friendly |
+| `std::deque`                 | O(1)     | O(1) at ends       | Growable at both ends               |
+| `std::list`                  | O(n)     | O(1) with iterator | Rarely worth it                     |
+| `std::map` / `std::set`      | O(log n) | O(log n)           | Ordered, `std::less`                |
+| `std::unordered_map` / `set` | O(1) avg | O(1) avg           | Hash-based, no order                |
 
 Prefer algorithms and ranges over hand-written loops; they state intent and optimize better.
 
@@ -282,18 +282,18 @@ TEST(StackTest, PushPop) {          // Google Test / Catch2
 
 ## Anti-Patterns
 
-| Anti-pattern | Fix |
-|--------------|-----|
-| Raw `new`/`delete`, owning raw pointers | `unique_ptr` / `shared_ptr` |
-| Manual `close`/`unlock`/`free` | RAII wrapper |
-| Implicit single-arg conversions | `explicit` |
-| Slicing by passing by value to a base type | Pass by reference |
+| Anti-pattern                                       | Fix                                        |
+| -------------------------------------------------- | ------------------------------------------ |
+| Raw `new`/`delete`, owning raw pointers            | `unique_ptr` / `shared_ptr`                |
+| Manual `close`/`unlock`/`free`                     | RAII wrapper                               |
+| Implicit single-arg conversions                    | `explicit`                                 |
+| Slicing by passing by value to a base type         | Pass by reference                          |
 | Dangling pointer/reference to a local or temporary | Return by value, or tie lifetimes together |
-| `shared_ptr` everywhere | `unique_ptr` unless sharing is real |
-| Copying in loops / pass-by-value of big objects | `const&`, moves, `reserve` |
-| Clever one-liners | Named steps, readable loops |
-| Catching `...` and swallowing | Catch specific types, rethrow or handle |
-| Optimizing without profiling | Measure, change one thing, measure |
+| `shared_ptr` everywhere                            | `unique_ptr` unless sharing is real        |
+| Copying in loops / pass-by-value of big objects    | `const&`, moves, `reserve`                 |
+| Clever one-liners                                  | Named steps, readable loops                |
+| Catching `...` and swallowing                      | Catch specific types, rethrow or handle    |
+| Optimizing without profiling                       | Measure, change one thing, measure         |
 
 ## Code Organization and Build
 

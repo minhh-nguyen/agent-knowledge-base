@@ -219,11 +219,11 @@ Always use `functools.wraps`; prefer `contextlib.contextmanager` over hand-writt
 
 ## Concurrency
 
-| Workload | Tool |
-|----------|------|
-| I/O-bound, many tasks | `asyncio` |
-| I/O-bound, blocking libraries, threads needed | `threading` / `ThreadPoolExecutor` |
-| CPU-bound | `multiprocessing` / `ProcessPoolExecutor` (the GIL serializes threads) |
+| Workload                                      | Tool                                                                   |
+| --------------------------------------------- | ---------------------------------------------------------------------- |
+| I/O-bound, many tasks                         | `asyncio`                                                              |
+| I/O-bound, blocking libraries, threads needed | `threading` / `ThreadPoolExecutor`                                     |
+| CPU-bound                                     | `multiprocessing` / `ProcessPoolExecutor` (the GIL serializes threads) |
 
 ```python
 async def fetch_all(urls: list[str]) -> list[str]:
@@ -268,17 +268,17 @@ def test_is_adult(age: int, expected: bool) -> None:
 
 ## Anti-Patterns
 
-| Anti-pattern | Fix |
-|--------------|-----|
-| Mutable default argument (shared across calls) | Default to `None`, then assign a fresh list inside |
-| Bare `except:` / `except Exception: pass` | Catch specific types, handle or re-raise |
-| Untyped functions, bare `list`/`dict` | Full annotations |
-| Loose dicts for records | `TypedDict` or dataclass |
-| `Any` sprinkled through code | Precise types; `object` + narrowing at true boundaries |
-| `is` for value comparison | `is` only for `None`/singletons |
-| Late-binding closures in loops | Bind with a default argument |
-| Wildcard imports | Explicit imports |
-| Catching `Exception` to return `None` | Let errors propagate or translate them |
+| Anti-pattern                                   | Fix                                                    |
+| ---------------------------------------------- | ------------------------------------------------------ |
+| Mutable default argument (shared across calls) | Default to `None`, then assign a fresh list inside     |
+| Bare `except:` / `except Exception: pass`      | Catch specific types, handle or re-raise               |
+| Untyped functions, bare `list`/`dict`          | Full annotations                                       |
+| Loose dicts for records                        | `TypedDict` or dataclass                               |
+| `Any` sprinkled through code                   | Precise types; `object` + narrowing at true boundaries |
+| `is` for value comparison                      | `is` only for `None`/singletons                        |
+| Late-binding closures in loops                 | Bind with a default argument                           |
+| Wildcard imports                               | Explicit imports                                       |
+| Catching `Exception` to return `None`          | Let errors propagate or translate them                 |
 
 ## Project Setup and Type Checking
 

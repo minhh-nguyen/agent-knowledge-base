@@ -23,12 +23,12 @@ review, teaching.
 
 ## Execution Model
 
-| Aspect | CPU | GPU |
-|--------|-----|-----|
-| Cores | 8-32, deep out-of-order | Thousands, simple, in-order |
-| Optimized for | Latency, branchy control flow | Throughput, data parallelism |
-| Memory | Large coherent cache | Small caches, huge bandwidth |
-| Best at | Sequential logic | Same operation over many elements |
+| Aspect        | CPU                           | GPU                               |
+| ------------- | ----------------------------- | --------------------------------- |
+| Cores         | 8-32, deep out-of-order       | Thousands, simple, in-order       |
+| Optimized for | Latency, branchy control flow | Throughput, data parallelism      |
+| Memory        | Large coherent cache          | Small caches, huge bandwidth      |
+| Best at       | Sequential logic              | Same operation over many elements |
 
 Good GPU work: independent elements, high arithmetic intensity, coalesced access. Bad GPU work: heavy
 branching, sequential dependencies, memory-bound pointer chasing.
@@ -97,14 +97,14 @@ kernel<<<grid, block>>>(data, n);
 
 ## Memory Hierarchy
 
-| Memory | Scope | Latency | Bandwidth | Use |
-|--------|-------|---------|-----------|-----|
-| Registers | Thread | ~4 cycles | Highest | Locals, accumulators |
-| Shared / L1 | Block | ~20-30 cycles | Very high | Tiles, block cooperation |
-| L2 | Device | ~100-200 cycles | High | Reused global data |
-| Global (VRAM) | Grid | ~300-600 cycles | High but easy to waste | Inputs/outputs |
-| Constant | Grid, read-only | Cached, broadcast | Medium | Kernel parameters, LUTs |
-| Texture | Grid, read-only | Cached, interpolated | High | 2D/3D spatial reads |
+| Memory        | Scope           | Latency              | Bandwidth              | Use                      |
+| ------------- | --------------- | -------------------- | ---------------------- | ------------------------ |
+| Registers     | Thread          | ~4 cycles            | Highest                | Locals, accumulators     |
+| Shared / L1   | Block           | ~20-30 cycles        | Very high              | Tiles, block cooperation |
+| L2            | Device          | ~100-200 cycles      | High                   | Reused global data       |
+| Global (VRAM) | Grid            | ~300-600 cycles      | High but easy to waste | Inputs/outputs           |
+| Constant      | Grid, read-only | Cached, broadcast    | Medium                 | Kernel parameters, LUTs  |
+| Texture       | Grid, read-only | Cached, interpolated | High                   | 2D/3D spatial reads      |
 
 Shared memory is roughly 10-100x cheaper than an uncached global access — it is the main lever for
 matrix, stencil, and reduction kernels.

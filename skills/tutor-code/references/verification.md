@@ -9,14 +9,14 @@ guide's coverage.
 The student runs every command; you read the output with them. Do not run it for them unless they
 cannot run it themselves, and never accept "it works" without evidence.
 
-| Check | What to demand |
-| --- | --- |
-| Build | Compiler exits 0 with `-Wall -Wextra` (C++), `cargo build` (Rust), import/compile (Python), `nvcc` (CUDA). Zero new warnings. |
-| Reproduce | The smallest input that fails, run before and after the change. |
-| Sanitizers | ASan + UBSan (C++), `compute-sanitizer` (CUDA), Miri for unsafe Rust where available. |
-| Tests | Existing suite passes; a new test fails before the fix and passes after. |
-| Edge cases | Empty input, one element, maximum size, error path. |
-| Performance | Only with a measurement; never infer speed from the code shape. |
+| Check       | What to demand                                                                                                                |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Build       | Compiler exits 0 with `-Wall -Wextra` (C++), `cargo build` (Rust), import/compile (Python), `nvcc` (CUDA). Zero new warnings. |
+| Reproduce   | The smallest input that fails, run before and after the change.                                                               |
+| Sanitizers  | ASan + UBSan (C++), `compute-sanitizer` (CUDA), Miri for unsafe Rust where available.                                         |
+| Tests       | Existing suite passes; a new test fails before the fix and passes after.                                                      |
+| Edge cases  | Empty input, one element, maximum size, error path.                                                                           |
+| Performance | Only with a measurement; never infer speed from the code shape.                                                               |
 
 Report what actually ran: command, result, and what was not run. If the student ran it, quote
 their output instead of restating it as your own result.
@@ -29,17 +29,17 @@ their output instead of restating it as your own result.
 
 ## Language guide coverage
 
-| Topic | C++ | Python | Rust | CUDA |
-| --- | --- | --- | --- | --- |
-| Fundamentals | yes | yes | yes | yes |
-| Memory and ownership | yes | yes | yes | yes |
-| Type system | yes | yes | yes | — |
-| Error handling | yes | yes | yes | yes |
-| Concurrency | yes | yes | yes | streams, atomics |
-| Performance | yes | yes | yes | yes |
-| Testing | yes | yes | yes | debugging, profiling |
-| Anti-patterns | yes | yes | yes | implicit |
-| Project layout | yes | yes | yes | — |
+| Topic                | C++ | Python | Rust | CUDA                 |
+| -------------------- | --- | ------ | ---- | -------------------- |
+| Fundamentals         | yes | yes    | yes  | yes                  |
+| Memory and ownership | yes | yes    | yes  | yes                  |
+| Type system          | yes | yes    | yes  | —                    |
+| Error handling       | yes | yes    | yes  | yes                  |
+| Concurrency          | yes | yes    | yes  | streams, atomics     |
+| Performance          | yes | yes    | yes  | yes                  |
+| Testing              | yes | yes    | yes  | debugging, profiling |
+| Anti-patterns        | yes | yes    | yes  | implicit             |
+| Project layout       | yes | yes    | yes  | —                    |
 
 CUDA has no separate concurrency section by design: kernels are parallel execution, and the guide
 covers synchronization, atomics, and streams instead.

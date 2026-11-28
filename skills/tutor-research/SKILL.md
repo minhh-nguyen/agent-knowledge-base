@@ -116,7 +116,7 @@ Challenge weak assumptions instead of automatically agreeing with the user.
 
 ### Reviewing a paper
 
-When the user asks to summarize, review, or critique a paper, follow
+When the user asks to summarize, visualize, review, or critique a paper, follow
 [`/skills/read-research-papaer/SKILL.md`](/skills/read-research-papaer/SKILL.md).
 
 - First, `/read-research-paper <input>` to full visual rendering, then explain the paper using `/explain-paper <input>` then `/visualize-paper <input>`

@@ -217,12 +217,12 @@ must span awaits. CPU-heavy work goes to `spawn_blocking` / `rayon`.
 
 ## Smart Pointers
 
-| Type | Use |
-|------|-----|
-| `Box<T>` | Single owner on the heap; recursive types; trait objects |
-| `Rc<T>` / `Arc<T>` | Shared ownership (single-threaded / thread-safe) |
-| `RefCell<T>` / `Mutex<T>` | Interior mutability behind a shared reference |
-| `Cow<'a, T>` | Borrow when possible, allocate on write |
+| Type                      | Use                                                      |
+| ------------------------- | -------------------------------------------------------- |
+| `Box<T>`                  | Single owner on the heap; recursive types; trait objects |
+| `Rc<T>` / `Arc<T>`        | Shared ownership (single-threaded / thread-safe)         |
+| `RefCell<T>` / `Mutex<T>` | Interior mutability behind a shared reference            |
+| `Cow<'a, T>`              | Borrow when possible, allocate on write                  |
 
 ```rust
 use std::cell::RefCell;
@@ -282,18 +282,18 @@ cargo miri test          # UB detection in unsafe code
 
 ## Anti-Patterns
 
-| Anti-pattern | Fix |
-|--------------|-----|
-| `.clone()` to silence the borrow checker | Borrow, restructure, or split the function |
-| Fighting the borrow checker with `unsafe` | Redesign ownership; `unsafe` needs a documented invariant |
-| `Rc<RefCell<T>>` webs for everything | Plain ownership; `Arc`/locks only when sharing is real |
-| `unwrap()` on external input | `?` with a typed error |
-| Over-generic APIs with many bounds | Concrete types until a second use case exists |
-| `String` everywhere | `&str` for parameters, `impl Into<String>` / `Cow` where flexible |
-| `&Vec<T>` parameters | `&[T]` |
-| Giant `match` with duplicated arms | Extract methods; use enum methods |
-| Blocking work inside async | `spawn_blocking`, separate runtime, or sync code |
-| Ignoring `RUSTFLAGS`/release for benchmarks | Always measure `--release` |
+| Anti-pattern                                | Fix                                                               |
+| ------------------------------------------- | ----------------------------------------------------------------- |
+| `.clone()` to silence the borrow checker    | Borrow, restructure, or split the function                        |
+| Fighting the borrow checker with `unsafe`   | Redesign ownership; `unsafe` needs a documented invariant         |
+| `Rc<RefCell<T>>` webs for everything        | Plain ownership; `Arc`/locks only when sharing is real            |
+| `unwrap()` on external input                | `?` with a typed error                                            |
+| Over-generic APIs with many bounds          | Concrete types until a second use case exists                     |
+| `String` everywhere                         | `&str` for parameters, `impl Into<String>` / `Cow` where flexible |
+| `&Vec<T>` parameters                        | `&[T]`                                                            |
+| Giant `match` with duplicated arms          | Extract methods; use enum methods                                 |
+| Blocking work inside async                  | `spawn_blocking`, separate runtime, or sync code                  |
+| Ignoring `RUSTFLAGS`/release for benchmarks | Always measure `--release`                                        |
 
 ## Project Layout
 
